@@ -1,0 +1,77 @@
+TYPES: int, dec, boolean, string. Extended: int64
+
+case class Person (String name, int age);
+
+class Cat(String name, int age){
+
+    void praise(){
+        println("Meow");
+    }
+
+}
+
+/*
+
+Ideas: Easy swapping of array elements
+
+
+*/
+
+static Main {
+
+    void main() {
+        n = input("Enter a number: ");
+        i = [0-10] {
+
+        }
+
+        x = (n == 3 ? "Hi" : "Bye"); //No need for local variable type???
+
+        print("Hello"[4]); //Prints 'o'
+        print("Hello"[5]); //Exception
+        print("Hello"[:3]); //Prints 'hel'
+        print("Hello"[3:]); //Prints 'lo'
+
+        print("Hello"[(5)]); //Prints '1', impossible to have out of bounds, circular
+
+        if(n == 3, 4){ //test if n is 3 or 4
+
+        }
+
+        i = [1-10] -> i*(i+1)/2 {
+            println(i);
+        }
+    }
+
+    boolean isPrime(int n){
+        return false if n % 2 != 0;
+
+        i = [3-sqrt(n), 2] {
+            return false if n | i; //The pipe symbol means divides
+        }
+        return true;
+    }
+
+
+
+
+    boolean isPrime(n) = n| length < 2
+
+
+    /*
+    Mathematical Functions:
+
+    Divides: |
+    Divisors: {|}
+
+    0 and 1 == 0; //True
+
+
+    sum(List)
+    divisors(n):
+    */
+
+
+
+
+}

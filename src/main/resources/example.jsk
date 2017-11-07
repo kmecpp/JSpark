@@ -1,0 +1,7 @@
+static Main {
+
+	public main() {
+		Console.println("Hello World!");
+	}
+
+}

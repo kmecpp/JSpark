@@ -1,5 +1,8 @@
 package com.kmecpp.jspark.tokenizer;
 
+import com.kmecpp.jspark.language.Keyword;
+import com.kmecpp.jspark.language.Operator;
+
 public enum TokenType {
 
 	LITERAL,
@@ -12,10 +15,6 @@ public enum TokenType {
 
 	;
 
-	public static final String[] KEYWORDS = new String[] { "static", "class" };
-
-	public static final String[] OPERATORS = new String[] { "+", "-", "*", "/", "%", "^", "|", "?", ":", "" };
-
 	//	DECIMAL_LITERAL,
 	//
 	//	INTEGER_LITERAL,
@@ -24,25 +23,16 @@ public enum TokenType {
 	//
 	//	BOOLEAN_LITERAL;
 
-	public static boolean isIn(String[] list, String str) {
-		for (String keyword : KEYWORDS) {
-			if (keyword.equals(str)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static TokenType getType(String str) {
 		if (str == null || str.isEmpty() || str.contains(" ")) {
 			throw new IllegalArgumentException("Invalid token format: '" + str + "'");
 		}
 
-		return str.startsWith("\"") || Character.isDigit(str.charAt(0)) || str.charAt(0) == '-' || str.equals("true") || str.equals("false")
-				? LITERAL
-				: isIn(KEYWORDS, str) ? KEYWORD
-						: isIn(OPERATORS, str) ? OPERATOR
-								: IDENTIFIER;
+		return (str.length() > 1 && str.charAt(0) == '-' && Character.isDigit(str.charAt(1)) || Character.isDigit(str.charAt(0)))
+				|| str.startsWith("\"") || str.equals("true") || str.equals("false") ? LITERAL
+						: Keyword.isKeyword(str) ? KEYWORD
+								: Operator.isOperator(str) ? OPERATOR
+										: IDENTIFIER;
 
 		//		if (str.startsWith("\"")) {
 		//			return STRING_LITERAL;

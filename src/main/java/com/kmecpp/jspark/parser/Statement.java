@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Statement {
 
-	private ArrayList<Expression> expressions;
+	protected ArrayList<Expression> expressions;
 
 	public Statement(Expression expression) {
 		this.expressions = new ArrayList<>();

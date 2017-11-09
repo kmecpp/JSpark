@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import com.kmecpp.jspark.parser.Expression;
 import com.kmecpp.jspark.parser.Statement;
 
-public class ClassStatement extends Statement {
+public class Loop extends Statement {
 
-	public ClassStatement(ArrayList<Expression> expressions) {
+	public Loop(ArrayList<Expression> expressions) {
 		super(expressions);
 	}
 

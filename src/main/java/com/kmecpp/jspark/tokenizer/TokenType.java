@@ -5,6 +5,8 @@ import com.kmecpp.jspark.language.Operator;
 
 public enum TokenType {
 
+	SYMBOL,
+
 	LITERAL,
 
 	KEYWORD,
@@ -28,11 +30,16 @@ public enum TokenType {
 			throw new IllegalArgumentException("Invalid token format: '" + str + "'");
 		}
 
-		return (str.length() > 1 && str.charAt(0) == '-' && Character.isDigit(str.charAt(1)) || Character.isDigit(str.charAt(0)))
-				|| str.startsWith("\"") || str.equals("true") || str.equals("false") ? LITERAL
-						: Keyword.isKeyword(str) ? KEYWORD
-								: Operator.isOperator(str) ? OPERATOR
-										: IDENTIFIER;
+		if ((str.length() > 1 && str.charAt(0) == '-' && Character.isDigit(str.charAt(1)) || Character.isDigit(str.charAt(0)))
+				|| str.startsWith("\"") || str.equals("true") || str.equals("false")) {
+			return LITERAL;
+		} else if (Keyword.isKeyword(str)) {
+			return KEYWORD;
+		} else if (Operator.isOperator(str)) {
+			return OPERATOR;
+		} else {
+			return IDENTIFIER;
+		}
 
 		//		if (str.startsWith("\"")) {
 		//			return STRING_LITERAL;

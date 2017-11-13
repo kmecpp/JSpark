@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.parser.statements.modules.Class;
+import com.kmecpp.jspark.parser.statements.modules.Method;
 import com.kmecpp.jspark.parser.statements.modules.Module;
+import com.kmecpp.jspark.parser.statements.modules.Static;
 import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.TokenType;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
@@ -16,13 +18,16 @@ public class Parser {
 
 	public Parser(Tokenizer tokenizer) {
 		this.tokenizer = tokenizer;
+
+		Token keyword = tokenizer.read(TokenType.KEYWORD);
+		module = keyword.is(Keyword.STATIC) ? new Static(tokenizer.readName())
+				: keyword.is(Keyword.CLASS) ? new Class(tokenizer.readName()) : null;
 	}
 
-	public ArrayList<Statement> parse() {
-		ArrayList<Statement> statements = new ArrayList<>();
-
+	public Module parse() {
 		while (tokenizer.hasNext()) {
 			Token token = tokenizer.getNext();
+			System.out.println("Parsing token: " + token);
 
 			//IDENTIFIERS
 			if (token.getType() == TokenType.IDENTIFIER) {
@@ -31,17 +36,16 @@ public class Parser {
 
 			//KEYWORDS
 			else if (token.getType() == TokenType.KEYWORD) {
+				if (token.is(Keyword.PUBLIC)) {
+					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
+				}
+
 				if (token.is(Keyword.CLASS)) {
-					Token name = tokenizer.read(TokenType.IDENTIFIER);
-					if (module == null) {
-						module = new Class(name);
-					} else {
-						module.addStatement();
-					}
-					module = module != null ? module : new Class(name);
+					module.addStatement(new Class(tokenizer.readName()));
 					parse();
 				} else if (token.is(Keyword.STATIC)) {
-
+					module.addStatement(new Static(tokenizer.readName()));
+					parse();
 				}
 			}
 
@@ -53,10 +57,12 @@ public class Parser {
 			//LITERALS
 			else if (token.getType() == TokenType.LITERAL) {
 
+			} else {
+				System.err.println("Unknown token: '" + token + "'");
 			}
 		}
 
-		return statements;
+		return module;
 	}
 
 }

@@ -9,8 +9,7 @@ public enum Operator {
 	MODULUS("%"),
 	EXPONENT("^"),
 	DIVIDES("|"),
-	TERNARY_TRUE("?"),
-	TERNARY_FALSE(":"),
+	INVOCATION("."),
 
 	;
 
@@ -22,6 +21,15 @@ public enum Operator {
 
 	public String getCharacter() {
 		return character;
+	}
+
+	public static Operator fromString(String operator) {
+		for (Operator op : values()) {
+			if (op.character.equalsIgnoreCase(operator)) {
+				return op;
+			}
+		}
+		return null;
 	}
 
 	public static boolean isOperator(String str) {

@@ -1,5 +1,6 @@
 static Main {
 
+	//This is the main method
 	public main() {
 		Console.println("Hello World!");
 	}

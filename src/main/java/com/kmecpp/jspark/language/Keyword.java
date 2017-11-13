@@ -22,9 +22,20 @@ public enum Keyword {
 		return value;
 	}
 
+	public static Keyword fromString(String keyword) {
+		for (Keyword key : values()) {
+			if (key.name().equalsIgnoreCase(keyword)) {
+				return key;
+			}
+		}
+		return null;
+	}
+
 	public static boolean isKeyword(String str) {
 		for (Keyword keyword : values()) {
-			if (keyword.value.equals(str)) ;
+			if (keyword.value.equals(str)) {
+				return true;
+			}
 		}
 		return false;
 	}

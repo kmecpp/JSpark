@@ -8,7 +8,6 @@ import com.kmecpp.jspark.parser.Statement;
 public class Loop extends Statement {
 
 	public Loop(ArrayList<Expression> expressions) {
-		super(expressions);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.kmecpp.jspark.language;
 
-public enum Keyword {
+public enum Keyword implements TokenText {
 
 	THIS,
 	CLASS,
@@ -10,16 +10,17 @@ public enum Keyword {
 
 	;
 
-	private String value;
+	private String string;
 
 	static {
 		for (Keyword keyword : values()) {
-			keyword.value = keyword.name().toLowerCase();
+			keyword.string = keyword.name().toLowerCase();
 		}
 	}
 
-	public String getValue() {
-		return value;
+	@Override
+	public String getString() {
+		return string;
 	}
 
 	public static Keyword fromString(String keyword) {
@@ -33,7 +34,7 @@ public enum Keyword {
 
 	public static boolean isKeyword(String str) {
 		for (Keyword keyword : values()) {
-			if (keyword.value.equals(str)) {
+			if (keyword.string.equals(str)) {
 				return true;
 			}
 		}

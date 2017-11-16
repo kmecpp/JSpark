@@ -49,6 +49,11 @@ public class Parser {
 				}
 			}
 
+			//SYMBOLS
+			else if (token.getType() == TokenType.SYMBOL) {
+
+			}
+
 			//OPERATORS
 			else if (token.getType() == TokenType.OPERATOR) {
 
@@ -57,8 +62,10 @@ public class Parser {
 			//LITERALS
 			else if (token.getType() == TokenType.LITERAL) {
 
-			} else {
-				System.err.println("Unknown token: '" + token + "'");
+			}
+
+			else {
+				System.err.println("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
 			}
 		}
 

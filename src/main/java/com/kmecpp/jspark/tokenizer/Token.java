@@ -19,7 +19,7 @@ public class Token {
 		this.type = type;
 	}
 
-	public String getToken() {
+	public String getText() {
 		return token;
 	}
 
@@ -28,7 +28,7 @@ public class Token {
 	}
 
 	public boolean is(Keyword keyword) {
-		return token.equals(keyword.getValue());
+		return token.equals(keyword.getString());
 	}
 
 	public ObjectValue getValue() {

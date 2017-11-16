@@ -1,25 +1,39 @@
 package com.kmecpp.jspark.language;
 
-public enum Symbol {
+public enum Symbol implements TokenText {
 
-	COLON(":"),
-	SEMICOLON(";"),
-	OPEN_PAREN("("),
-	CLOSE_PAREN(")"),
-	OPEN_BRACE("{"),
-	CLOSE_BRACE("}"),
-	QUESTION_MARK("?"),
+	COLON(':'),
+	SEMICOLON(';'),
+	OPEN_PAREN('('),
+	CLOSE_PAREN(')'),
+	OPEN_BRACE('{'),
+	CLOSE_BRACE('}'),
+	QUESTION_MARK('?'),
 
 	;
 
-	private String symbol;
+	private char symbol;
 
-	private Symbol(String symbol) {
+	private Symbol(char symbol) {
 		this.symbol = symbol;
 	}
 
-	public String getSymbol() {
+	@Override
+	public String getString() {
+		return String.valueOf(symbol);
+	}
+
+	public char getSymbol() {
 		return symbol;
+	}
+
+	public static boolean isSymbol(char c) {
+		for (Symbol symbol : values()) {
+			if (symbol.symbol == c) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -6,7 +6,6 @@ import com.kmecpp.jlib.utils.IOUtil;
 import com.kmecpp.jspark.parser.Parser;
 import com.kmecpp.jspark.parser.Statement;
 import com.kmecpp.jspark.parser.statements.modules.Module;
-import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
 
 public class JSpark {
@@ -26,23 +25,19 @@ public class JSpark {
 
 	public static void runProgram(String program) {
 		Tokenizer tokenizer = new Tokenizer(program);
-		while (tokenizer.hasNext()) {
-			Token token = tokenizer.getNext();
-			if (token != null) {
-				System.out.println(token);
-			}
+
+		System.out.println("Token List: " + tokenizer.getTokenList());
+
+		Module module = new Parser(new Tokenizer(program)).parse();
+		System.out.println("Parsed program!");
+		System.out.println(module.getStatements().size());
+		System.out.println(module.getName());
+		for (Statement statement : module.getStatements()) {
+			System.out.println(statement);
 		}
 
-		//		Module module = new Parser(new Tokenizer(program)).parse();
-		//		System.out.println("Parsed program!");
-		//		System.out.println(module.getStatements().size());
-		//		System.out.println(module.getName());
-		//		for (Statement statement : module.getStatements()) {
-		//			System.out.println(statement);
-		//		}
-		//
-		//		System.out.println("Executing...");
-		//		module.execute();
+		System.out.println("Executing...");
+		module.execute();
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.kmecpp.jspark.language;
 
-public enum Operator {
+public enum Operator implements TokenText {
 
 	PLUS("+"),
 	MINUS("-"),
@@ -13,19 +13,20 @@ public enum Operator {
 
 	;
 
-	private String character;
+	private String string;
 
 	private Operator(String character) {
-		this.character = character;
+		this.string = character;
 	}
 
-	public String getCharacter() {
-		return character;
+	@Override
+	public String getString() {
+		return string;
 	}
 
 	public static Operator fromString(String operator) {
 		for (Operator op : values()) {
-			if (op.character.equalsIgnoreCase(operator)) {
+			if (op.string.equalsIgnoreCase(operator)) {
 				return op;
 			}
 		}
@@ -34,7 +35,7 @@ public enum Operator {
 
 	public static boolean isOperator(String str) {
 		for (Operator operator : values()) {
-			if (operator.character.equals(str)) {
+			if (operator.string.equals(str)) {
 				return true;
 			}
 		}

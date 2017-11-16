@@ -1,6 +1,11 @@
 package com.kmecpp.jspark.tokenizer;
 
+import java.util.ArrayList;
+
 import com.kmecpp.jspark.language.Keyword;
+import com.kmecpp.jspark.language.Operator;
+import com.kmecpp.jspark.language.Symbol;
+import com.kmecpp.jspark.language.TokenText;
 
 public class Tokenizer {
 
@@ -19,8 +24,16 @@ public class Tokenizer {
 		return new Tokenizer(str);
 	}
 
+	public ArrayList<String> getTokenList() {
+		ArrayList<String> tokens = new ArrayList<>();
+		while (hasNext()) {
+			tokens.add(getNext().getText());
+		}
+		return tokens;
+	}
+
 	public String readName() {
-		return read(TokenType.IDENTIFIER).getToken();
+		return read(TokenType.IDENTIFIER).getText();
 	}
 
 	public Token read(TokenType type) {
@@ -31,15 +44,33 @@ public class Tokenizer {
 		throw invalidToken(token, type);
 	}
 
+	public Token read(TokenText text) {
+		Token token = getNext();
+		if (token.getText().equals(text.getString())) {
+			return token;
+		}
+		throw invalidToken(token, text);
+	}
+
 	public Token getNext() {
 		while (Character.isWhitespace(chars[current])) {
 			current++;
 		}
 
-		char c = chars[current];
+		char c = chars[current++];
 
-		if (Character.isLetter(c)) {
-			StringBuilder sb = new StringBuilder();
+		//Comments
+		if (c == '/') {
+			if (chars[current] == '/') {
+				while (chars[current++] != '\n');
+			} else if (chars[current] == '*') {
+				while (!(chars[current++] == '*' && chars[current] == '/'));
+			}
+			return getNext();
+		}
+
+		else if (Character.isLetter(c)) {
+			StringBuilder sb = new StringBuilder(String.valueOf(c));
 			while (Character.isLetterOrDigit(chars[current])) {
 				sb.append(chars[current]);
 				current++;
@@ -52,25 +83,22 @@ public class Tokenizer {
 		//Strings
 		else if (c == '"') {
 			StringBuilder sb = new StringBuilder();
-			while (chars[++current] != '"') { //Skips closing quote because ++ is in the condition
-				sb.append(chars[current]);
+			while (chars[current] != '"') { //Skips closing quote because ++ is in the condition
+				sb.append(chars[current++]);
 			}
 			current++;
 			return new Token(sb.toString(), TokenType.LITERAL);
-		}
-
-		//Comments
-		else if (c == '/' && offset(1) == '/') {
-			System.out.println("Skipping comment!");
-			while (chars[++current] != '\n');
+		} else if (Operator.isOperator(String.valueOf(c))) {
+			return new Token(String.valueOf(c), TokenType.OPERATOR);
+		} else if (Symbol.isSymbol(c)) {
+			return new Token(String.valueOf(c), TokenType.SYMBOL);
 		}
 
 		else {
 			System.err.println("Unknown token: '" + c + "'");
+			return null;
 		}
 
-		current++;
-		return null;
 		//		return new Token(tokens.pop());
 	}
 
@@ -78,16 +106,20 @@ public class Tokenizer {
 		return chars[current + offset];
 	}
 
-	private void next() {
-		current++;
-	}
+	//	private void next() {
+	//		current++;
+	//	}
 
 	public boolean hasNext() {
 		return current < chars.length;
 	}
 
 	private static InvalidTokenException invalidToken(Token token, TokenType expected) {
-		return new InvalidTokenException("Invalid token: '" + token.getToken() + "' (" + token.getType() + ")! Expected " + expected);
+		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
+	}
+
+	private static InvalidTokenException invalidToken(Token token, TokenText expected) {
+		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
 	}
 
 	//	public ArrayList<Token> tokenize() {

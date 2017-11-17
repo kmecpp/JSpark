@@ -75,3 +75,43 @@ static Main {
 
 
 }
+
+
+//Static/Top Down Inheritance Example:
+
+interface TokenText {
+
+	public String getString();
+	
+	public static abstract TokenText[] getValues();
+
+	public static TokenText fromString(String str){
+		for(TokenText text : getValues()){
+			if(text.getString().equals(str)){
+				return text;
+			}
+		}
+	}
+
+}
+
+enum Keyword implements TokenText {
+
+	DEF,
+	THIS,
+	ETC,
+	
+	@Override
+	public static Keyword[] getValues(){
+		return values();
+	}
+
+}
+
+static Main {
+
+	def main(){
+		Keyword.fromString("def"); //DEF
+	}
+
+}

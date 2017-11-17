@@ -3,70 +3,75 @@ package com.kmecpp.jspark.tokenizer;
 import com.kmecpp.jspark.ObjectValue;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
+import com.kmecpp.jspark.language.TokenText;
 
 public class Token {
 
-	private String token;
+	private String string;
 	private TokenType type;
 
-	//	public Token(String token) {
-	//		this.token = token;
-	//		this.type = TokenType.getType(token);
+	//	public string(String string) {
+	//		this.string = string;
+	//		this.type = stringType.getType(string);
 	//	}
 
-	public Token(String token, TokenType type) {
-		this.token = token;
+	public Token(String string, TokenType type) {
+		this.string = string;
 		this.type = type;
 	}
 
 	public String getText() {
-		return token;
+		return string;
 	}
 
 	public TokenType getType() {
 		return type;
 	}
 
-	public boolean is(Keyword keyword) {
-		return token.equals(keyword.getString());
+	//	public boolean is(Keyword keyword) {
+	//		return string.equals(keyword.getString());
+	//	}
+
+	public boolean is(TokenText tokenText) {
+		return string.equals(tokenText.getString());
 	}
 
 	public boolean isAccessModifier() {
-		return token.equals(Keyword.PUBLIC.getString()) || token.equals(Keyword.PRIVATE.getString());
+		return string.equals(Keyword.PUBLIC.getString()) || string.equals(Keyword.PRIVATE.getString());
 	}
 
 	public ObjectValue getValue() {
 		if (type == TokenType.IDENTIFIER) {
-			return new ObjectValue(token);
+			return new ObjectValue(string);
 		} else if (type == TokenType.KEYWORD) {
-			return new ObjectValue(Keyword.fromString(token));
+			return new ObjectValue(Keyword.fromString(string));
 		} else if (type == TokenType.OPERATOR) {
-			return new ObjectValue(Operator.fromString(token));
+			return new ObjectValue(Operator.fromString(string));
 		} else if (type == TokenType.LITERAL) {
-			if (token.startsWith("\"")) {
-				return new ObjectValue(token);
-			} else if (token.startsWith("t") || token.startsWith("f")) {
-				return new ObjectValue(token.equals("true") ? true : false);
-			} else if (token.contains(".")) {
+			if (string.startsWith("\"")) {
+				return new ObjectValue(string);
+			} else if (string.startsWith("t") || string.startsWith("f")) {
+				return new ObjectValue(string.equals("true") ? true : false);
+			} else if (string.contains(".")) {
 				try {
-					return new ObjectValue(Integer.parseInt(token));
+					return new ObjectValue(Integer.parseInt(string));
 				} catch (NumberFormatException e) {
-					return new ObjectValue(Long.parseLong(token));
+					return new ObjectValue(Long.parseLong(string));
 				}
 			} else {
-				return new ObjectValue(Double.parseDouble(token));
+				return new ObjectValue(Double.parseDouble(string));
 			}
 		}
 		return new ObjectValue(null);
 	}
 
 	public boolean asBoolean() {
-		if (token.equals("true")) {
+		if (string.equals("true")) {
 			return true;
-		} else if (token.equals("false")) {
+		} else if (string.equals("false")) {
 			return false;
 		}
-		throw new IllegalArgumentException("Not a boolean! '" + token + "'");
+		throw new IllegalArgumentException("Not a boolean! '" + string + "'");
 	}
 
 	public boolean isBoolean() {
@@ -79,15 +84,15 @@ public class Token {
 	}
 
 	public String asString() {
-		return token.substring(1, token.length() - 1);
+		return string.substring(1, string.length() - 1);
 	}
 
 	public boolean isString() {
-		return token.startsWith("\"");
+		return string.startsWith("\"");
 	}
 
 	public int asInt() {
-		return Integer.parseInt(token);
+		return Integer.parseInt(string);
 	}
 
 	public boolean isInt() {
@@ -100,7 +105,7 @@ public class Token {
 	}
 
 	public long asLong() {
-		return Long.parseLong(token);
+		return Long.parseLong(string);
 	}
 
 	public boolean isLong() {
@@ -113,7 +118,7 @@ public class Token {
 	}
 
 	public float asFloat() {
-		return Float.parseFloat(token);
+		return Float.parseFloat(string);
 	}
 
 	public boolean isFloat() {
@@ -126,7 +131,7 @@ public class Token {
 	}
 
 	public double asDouble() {
-		return Double.parseDouble(token);
+		return Double.parseDouble(string);
 	}
 
 	public boolean isDouble() {
@@ -140,7 +145,7 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return type + ": " + token;
+		return type + ": " + string;
 	}
 
 }

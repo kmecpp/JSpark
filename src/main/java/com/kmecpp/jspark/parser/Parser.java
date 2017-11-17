@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
+import com.kmecpp.jspark.parser.statements.Variable;
 import com.kmecpp.jspark.parser.statements.modules.Class;
 import com.kmecpp.jspark.parser.statements.modules.Method;
 import com.kmecpp.jspark.parser.statements.modules.Module;
@@ -28,7 +29,7 @@ public class Parser {
 
 	public Module parse() {
 		while (tokenizer.hasNext()) {
-			Token token = tokenizer.getNext();
+			Token token = tokenizer.next();
 			System.out.println("Parsing token: " + token);
 
 			//IDENTIFIERS
@@ -38,9 +39,21 @@ public class Parser {
 
 			//KEYWORDS
 			else if (token.getType() == TokenType.KEYWORD) {
-				if (token.is(Keyword.PUBLIC)) {
-					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
+				if (token.is(Keyword.DEF)) {
+					String name = tokenizer.readName();
+					ArrayList<Variable> params = new ArrayList<>();
+
+					tokenizer.read(Symbol.OPEN_PAREN);
+					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
+						params.add(new Variable(tokenizer.readType(), tokenizer.readName()));
+					}
+					tokenizer.read(Symbol.CLOSE_PAREN);
+					tokenizer.read(Symbol.OPEN_BRACE);
+					module.addStatement(new Method(name, new ArrayList<>()));
 				}
+				//				if (token.is(Keyword.PUBLIC)) {
+				//					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
+				//				}
 
 				if (token.is(Keyword.CLASS)) {
 					module.addStatement(new Class(tokenizer.readName()));

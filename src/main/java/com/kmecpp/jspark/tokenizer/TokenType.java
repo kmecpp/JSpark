@@ -24,7 +24,7 @@ public enum TokenType {
 	//	STRING_LITERAL,
 	//
 	//	BOOLEAN_LITERAL;
-
+	
 	public static TokenType getType(String str) {
 		if (str == null || str.isEmpty() || str.contains(" ")) {
 			throw new IllegalArgumentException("Invalid token format: '" + str + "'");

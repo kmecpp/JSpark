@@ -1,7 +1,13 @@
 package com.kmecpp.jspark.language;
 
 public enum Keyword implements TokenText {
+	
+	INT,
+	DEC,
+	STRING,
+	BOOLEAN,
 
+	DEF,
 	THIS,
 	CLASS,
 	STATIC,
@@ -25,7 +31,7 @@ public enum Keyword implements TokenText {
 
 	public static Keyword fromString(String keyword) {
 		for (Keyword key : values()) {
-			if (key.name().equalsIgnoreCase(keyword)) {
+			if (key.name().toLowerCase().equals(keyword)) {
 				return key;
 			}
 		}

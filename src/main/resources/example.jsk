@@ -19,21 +19,13 @@ static Main {
 	def primes(int n) {
 		i = [1, n) :: if i|*.length == 2 :: print(i);
 	}
-	*/
-	
-	
-	def primes(n){
-	
-	}
-	
-	def class Person(string name, int id);
 	
 	public class Car {
 	
-		
-	
-	
 	}
+	*/
+	
+
 
 
 }

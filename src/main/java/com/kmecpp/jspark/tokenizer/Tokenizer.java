@@ -6,6 +6,7 @@ import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
 import com.kmecpp.jspark.language.TokenText;
+import com.kmecpp.jspark.language.Type;
 
 public class Tokenizer {
 
@@ -27,9 +28,13 @@ public class Tokenizer {
 	public ArrayList<String> getTokenList() {
 		ArrayList<String> tokens = new ArrayList<>();
 		while (hasNext()) {
-			tokens.add(getNext().getText());
+			tokens.add(next().getText());
 		}
 		return tokens;
+	}
+
+	public Type readType() {
+		return Type.fromString(read(TokenType.KEYWORD).getText());
 	}
 
 	public String readName() {
@@ -37,7 +42,7 @@ public class Tokenizer {
 	}
 
 	public Token read(TokenType type) {
-		Token token = getNext();
+		Token token = next();
 		if (token.getType() == type) {
 			return token;
 		}
@@ -45,14 +50,22 @@ public class Tokenizer {
 	}
 
 	public Token read(TokenText text) {
-		Token token = getNext();
+		Token token = next();
 		if (token.getText().equals(text.getString())) {
 			return token;
 		}
 		throw invalidToken(token, text);
 	}
 
-	public Token getNext() {
+	public Token next() {
+		return getNext(true);
+	}
+
+	public Token peekNext() {
+		return getNext(false);
+	}
+
+	public Token getNext(boolean movePos) {
 		while (Character.isWhitespace(chars[current])) {
 			current++;
 		}
@@ -66,7 +79,7 @@ public class Tokenizer {
 			} else if (chars[current] == '*') {
 				while (!(chars[current++] == '*' && chars[current] == '/'));
 			}
-			return getNext();
+			return getNext(movePos);
 		}
 
 		else if (Character.isLetter(c)) {
@@ -95,8 +108,7 @@ public class Tokenizer {
 		}
 
 		else {
-			System.err.println("Unknown token: '" + c + "'");
-			return null;
+			throw new InvalidTokenException("Unknown token: '" + c + "'");
 		}
 
 		//		return new Token(tokens.pop());

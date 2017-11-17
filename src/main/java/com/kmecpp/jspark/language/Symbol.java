@@ -3,6 +3,7 @@ package com.kmecpp.jspark.language;
 public enum Symbol implements TokenText {
 
 	COLON(':'),
+	COMMMA(','),
 	SEMICOLON(';'),
 	OPEN_PAREN('('),
 	CLOSE_PAREN(')'),

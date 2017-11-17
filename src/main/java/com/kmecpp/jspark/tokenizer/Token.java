@@ -31,6 +31,10 @@ public class Token {
 		return token.equals(keyword.getString());
 	}
 
+	public boolean isAccessModifier() {
+		return token.equals(Keyword.PUBLIC.getString()) || token.equals(Keyword.PRIVATE.getString());
+	}
+
 	public ObjectValue getValue() {
 		if (type == TokenType.IDENTIFIER) {
 			return new ObjectValue(token);

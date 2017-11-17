@@ -3,6 +3,7 @@ package com.kmecpp.jspark.parser;
 import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
+import com.kmecpp.jspark.language.Symbol;
 import com.kmecpp.jspark.parser.statements.modules.Class;
 import com.kmecpp.jspark.parser.statements.modules.Method;
 import com.kmecpp.jspark.parser.statements.modules.Module;
@@ -22,6 +23,7 @@ public class Parser {
 		Token keyword = tokenizer.read(TokenType.KEYWORD);
 		module = keyword.is(Keyword.STATIC) ? new Static(tokenizer.readName())
 				: keyword.is(Keyword.CLASS) ? new Class(tokenizer.readName()) : null;
+		tokenizer.read(Symbol.OPEN_BRACE);
 	}
 
 	public Module parse() {

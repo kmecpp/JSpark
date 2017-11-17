@@ -3,8 +3,36 @@ static Main {
 	/**
 	*  This is the main method
 	*/
-	public main() {
+	def main() {
 		Console.println("Hello World!");
+	}
+	
+	/*
+	def primes(int n) {
+		i = [1, n) {
+			if (i|*.length == 2){
+				print(i);
+			}
+		}
+	}
+	
+	def primes(int n) {
+		i = [1, n) :: if i|*.length == 2 :: print(i);
+	}
+	*/
+	
+	
+	def primes(n){
+	
+	}
+	
+	def class Person(string name, int id);
+	
+	public class Car {
+	
+		
+	
+	
 	}
 
 

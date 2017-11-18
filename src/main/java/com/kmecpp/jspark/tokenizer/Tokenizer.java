@@ -13,6 +13,8 @@ public class Tokenizer {
 	private char[] chars;
 	private int current;
 
+	private Token lastToken;
+
 	public Tokenizer(String program) {
 		this.chars = program.toCharArray();
 
@@ -58,14 +60,23 @@ public class Tokenizer {
 	}
 
 	public Token next() {
-		return getNext(true);
+		return getNext();
 	}
 
 	public Token peekNext() {
-		return getNext(false);
+		int start = current;
+		Token token = getNext();
+		current = start;
+		return token;
 	}
 
-	public Token getNext(boolean movePos) {
+	private Token getNext() {
+		if (lastToken != null) {
+			Token token = lastToken;
+			lastToken = null;
+			return token;
+		}
+
 		while (Character.isWhitespace(chars[current])) {
 			current++;
 		}
@@ -76,14 +87,18 @@ public class Tokenizer {
 		if (c == '/') {
 			if (chars[current] == '/') {
 				while (chars[current++] != '\n');
+				return getNext();
 			} else if (chars[current] == '*') {
 				while (!(chars[current++] == '*' && chars[current] == '/'));
+				current++;
+				return getNext();
 			}
-			return getNext(movePos);
 		}
 
-		else if (Character.isLetter(c)) {
+		//IDENTIFIERS
+		if (Character.isLetter(c)) {
 			StringBuilder sb = new StringBuilder(String.valueOf(c));
+
 			while (Character.isLetterOrDigit(chars[current])) {
 				sb.append(chars[current]);
 				current++;
@@ -93,7 +108,7 @@ public class Tokenizer {
 			return new Token(token, Keyword.isKeyword(token) ? TokenType.KEYWORD : TokenType.IDENTIFIER);
 		}
 
-		//Strings
+		//STRINGS
 		else if (c == '"') {
 			StringBuilder sb = new StringBuilder();
 			while (chars[current] != '"') { //Skips closing quote because ++ is in the condition
@@ -101,17 +116,21 @@ public class Tokenizer {
 			}
 			current++;
 			return new Token(sb.toString(), TokenType.LITERAL);
-		} else if (Operator.isOperator(String.valueOf(c))) {
+		}
+
+		//OPERATORS
+		else if (Operator.isOperator(String.valueOf(c))) {
 			return new Token(String.valueOf(c), TokenType.OPERATOR);
-		} else if (Symbol.isSymbol(c)) {
+		}
+
+		//SYMBOLS
+		else if (Symbol.isSymbol(c)) {
 			return new Token(String.valueOf(c), TokenType.SYMBOL);
 		}
 
 		else {
 			throw new InvalidTokenException("Unknown token: '" + c + "'");
 		}
-
-		//		return new Token(tokens.pop());
 	}
 
 	public char offset(int offset) {

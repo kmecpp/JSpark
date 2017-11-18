@@ -32,4 +32,9 @@ public class Variable extends Statement {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return type + " " + name + (value == null ? "" : " = " + value);
+	}
+
 }

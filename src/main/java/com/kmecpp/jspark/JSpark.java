@@ -32,10 +32,10 @@ public class JSpark {
 
 		Module module = new Parser(new Tokenizer(program)).parse();
 		System.out.println("Parsed program!");
-		System.out.println(module.getStatements().size());
+		System.out.println();
 		System.out.println(module.getName());
 		for (Statement statement : module.getStatements()) {
-			System.out.println(statement);
+			System.out.println("    " + statement);
 		}
 
 		System.out.println("Executing...");

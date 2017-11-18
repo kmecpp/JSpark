@@ -1,5 +1,29 @@
 TYPES: int, dec, boolean, string. Extended: int64
 
+IDEAS:
+
+#################################
+
+- RETURN THEN:
+
+	private Object obj;
+
+	def main(){
+		return obj then obj = null;
+	}
+	
+	VS.
+	
+	public static void main(){
+		Object old = obj;
+		obj = null;
+		return old;
+	}
+	
+	
+	
+#################################
+
 case class Person (String name, int age);
 
 class Cat(String name, int age){

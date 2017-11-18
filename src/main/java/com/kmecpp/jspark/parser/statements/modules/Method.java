@@ -17,4 +17,13 @@ public class Method extends Module {
 		return args;
 	}
 
+	@Override
+	public String toString() {
+		ArrayList<String> vars = new ArrayList<>();
+		for (Variable var : args) {
+			vars.add(var.toString());
+		}
+		return getName() + "(" + String.join(", ", vars) + ")";
+	}
+
 }

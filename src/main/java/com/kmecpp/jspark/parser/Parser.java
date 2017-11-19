@@ -34,12 +34,24 @@ public class Parser {
 
 			//IDENTIFIERS
 			if (token.getType() == TokenType.IDENTIFIER) {
-
+				System.out.println();
 			}
 
 			//KEYWORDS
 			else if (token.getType() == TokenType.KEYWORD) {
-				if (token.is(Keyword.DEF)) {
+				if (token.is(Keyword.IMPORT)) {
+					StringBuilder importStr = new StringBuilder();
+					while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
+						importStr.append(tokenizer.readName());
+						importStr.append(tokenizer.read(Symbol.PERIOD));
+					}
+					int index = importStr.lastIndexOf(".");
+					String className = importStr.substring(index == -1 ? 0 : index);
+
+					module.addImport(new Import(importStr.toString(), className));
+				}
+
+				else if (token.is(Keyword.DEF)) {
 					String name = tokenizer.readName();
 					ArrayList<Variable> params = new ArrayList<>();
 

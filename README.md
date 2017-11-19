@@ -4,7 +4,7 @@ A simple programming language for the JVM
 
 ## Hello World
 
-Here is a Hello World program written in JSpark
+A basic Hello World program written in JSpark
 
 	static MainClass {
 

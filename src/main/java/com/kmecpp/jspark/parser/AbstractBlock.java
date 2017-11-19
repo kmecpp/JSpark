@@ -2,7 +2,7 @@ package com.kmecpp.jspark.parser;
 
 import java.util.ArrayList;
 
-public class CodeBlock extends Statement {
+public class AbstractBlock extends Statement {
 
 	private ArrayList<Statement> statements = new ArrayList<>();
 

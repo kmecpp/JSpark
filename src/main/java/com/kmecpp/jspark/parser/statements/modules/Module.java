@@ -1,17 +1,24 @@
 package com.kmecpp.jspark.parser.statements.modules;
 
-import com.kmecpp.jspark.parser.CodeBlock;
+import java.util.ArrayList;
 
-public class Module extends CodeBlock {
+import com.kmecpp.jspark.parser.Import;
+import com.kmecpp.jspark.parser.NamedBlock;
 
-	private String name;
+public class Module extends NamedBlock {
+
+	private ArrayList<Import> imports = new ArrayList<>();
 
 	public Module(String name) {
-		this.name = name;
+		super(name);
 	}
 
-	public String getName() {
-		return name;
+	public ArrayList<Import> getImports() {
+		return imports;
+	}
+
+	public void addImport(Import imprt) {
+		imports.add(imprt);
 	}
 
 }

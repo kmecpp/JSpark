@@ -2,9 +2,10 @@ package com.kmecpp.jspark.parser.statements.modules;
 
 import java.util.ArrayList;
 
+import com.kmecpp.jspark.parser.NamedBlock;
 import com.kmecpp.jspark.parser.statements.Variable;
 
-public class Method extends Module {
+public class Method extends NamedBlock {
 
 	private ArrayList<Variable> args;
 

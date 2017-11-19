@@ -1,7 +1,7 @@
 package com.kmecpp.jspark.language;
 
 public enum Keyword implements TokenText {
-	
+
 	INT,
 	DEC,
 	STRING,
@@ -11,6 +11,7 @@ public enum Keyword implements TokenText {
 	THIS,
 	CLASS,
 	STATIC,
+	IMPORT,
 	PUBLIC,
 	PRIVATE
 

@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.defaults;
+package com.kmecpp.jspark.language.builtin;
 
 public class Console {
 

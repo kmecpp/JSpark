@@ -34,7 +34,6 @@ public class Parser {
 
 			//IDENTIFIERS
 			if (token.getType() == TokenType.IDENTIFIER) {
-				System.out.println();
 			}
 
 			//KEYWORDS

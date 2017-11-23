@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.language.TokenText;
+import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Type;
 
 public class Tokenizer {
@@ -51,7 +51,7 @@ public class Tokenizer {
 		throw invalidToken(token, type);
 	}
 
-	public Token read(TokenText text) {
+	public Token read(AbstractToken text) {
 		Token token = next();
 		if (token.getText().equals(text.getString())) {
 			return token;
@@ -64,10 +64,7 @@ public class Tokenizer {
 	}
 
 	public Token peekNext() {
-		int start = current;
-		Token token = getNext();
-		current = start;
-		return token;
+		return lastToken = getNext();
 	}
 
 	private Token getNext() {
@@ -149,7 +146,7 @@ public class Tokenizer {
 		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
 	}
 
-	private static InvalidTokenException invalidToken(Token token, TokenText expected) {
+	private static InvalidTokenException invalidToken(Token token, AbstractToken expected) {
 		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
 	}
 

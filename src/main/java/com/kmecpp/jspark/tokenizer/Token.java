@@ -3,7 +3,7 @@ package com.kmecpp.jspark.tokenizer;
 import com.kmecpp.jspark.ObjectValue;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
-import com.kmecpp.jspark.language.TokenText;
+import com.kmecpp.jspark.language.AbstractToken;
 
 public class Token {
 
@@ -32,7 +32,7 @@ public class Token {
 	//		return string.equals(keyword.getString());
 	//	}
 
-	public boolean is(TokenText tokenText) {
+	public boolean is(AbstractToken tokenText) {
 		return string.equals(tokenText.getString());
 	}
 

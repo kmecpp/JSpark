@@ -1,8 +1,9 @@
 package com.kmecpp.jspark.language;
 
-public enum Symbol implements TokenText {
+public enum Symbol implements AbstractToken {
 
 	COLON(':'),
+	EQUALS('='),
 	PERIOD('.'),
 	COMMMA(','),
 	SEMICOLON(';'),

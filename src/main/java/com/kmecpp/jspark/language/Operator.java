@@ -1,6 +1,6 @@
 package com.kmecpp.jspark.language;
 
-public enum Operator implements TokenText {
+public enum Operator implements AbstractToken {
 
 	PLUS("+"),
 	MINUS("-"),

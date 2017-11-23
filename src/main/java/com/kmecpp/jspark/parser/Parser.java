@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.parser.statements.Variable;
+import com.kmecpp.jspark.parser.data.Value;
+import com.kmecpp.jspark.parser.data.Variable;
 import com.kmecpp.jspark.parser.statements.block.Method;
 import com.kmecpp.jspark.parser.statements.block.module.Class;
 import com.kmecpp.jspark.parser.statements.block.module.Module;
 import com.kmecpp.jspark.parser.statements.block.module.Static;
+import com.kmecpp.jspark.parser.statements.logic.MethodInvocation;
 import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.TokenType;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
@@ -27,17 +29,14 @@ public class Parser {
 		tokenizer.read(Symbol.OPEN_BRACE);
 	}
 
-	public Module parse() {
+	public Module parseModule() {
+		System.out.println("Parsing module: " + module.getName());
 		while (tokenizer.hasNext()) {
 			Token token = tokenizer.next();
 			System.out.println("Parsing token: " + token);
 
-			//IDENTIFIERS
-			if (token.getType() == TokenType.IDENTIFIER) {
-			}
-
 			//KEYWORDS
-			else if (token.getType() == TokenType.KEYWORD) {
+			if (token.getType() == TokenType.KEYWORD) {
 				if (token.is(Keyword.IMPORT)) {
 					StringBuilder importStr = new StringBuilder();
 					while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
@@ -60,7 +59,9 @@ public class Parser {
 					}
 					tokenizer.read(Symbol.CLOSE_PAREN);
 					tokenizer.read(Symbol.OPEN_BRACE);
-					module.addStatement(new Method(name, new ArrayList<>()));
+
+					module.addMethod(new Method(name, params, parseBlock()));
+					//					module.addStatement(new Method(name, new ArrayList<>()));
 				}
 				//				if (token.is(Keyword.PUBLIC)) {
 				//					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
@@ -68,10 +69,10 @@ public class Parser {
 
 				if (token.is(Keyword.CLASS)) {
 					module.addStatement(new Class(tokenizer.readName()));
-					parse();
+					parseModule();
 				} else if (token.is(Keyword.STATIC)) {
 					module.addStatement(new Static(tokenizer.readName()));
-					parse();
+					parseModule();
 				}
 			}
 
@@ -96,6 +97,36 @@ public class Parser {
 		}
 
 		return module;
+	}
+
+	private ArrayList<Statement> parseBlock() {
+		ArrayList<Statement> statements = new ArrayList<>();
+		while (!tokenizer.peekNext().is(Symbol.CLOSE_BRACE)) {
+			Token token = tokenizer.next();
+
+			if (token.getType() == TokenType.IDENTIFIER) {
+				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
+					String target = token.getText();
+					tokenizer.read(Symbol.PERIOD);
+					String method = tokenizer.readName();
+					tokenizer.read(Symbol.OPEN_PAREN);
+
+					ArrayList<Value> params = new ArrayList<>();
+					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
+						params.add(new Variable(tokenizer.readType(), tokenizer.readName()));
+					}
+					tokenizer.read(Symbol.CLOSE_PAREN);
+
+					new MethodInvocation(target, method, params);
+				}
+
+				else if (tokenizer.peekNext().is(Symbol.EQUALS)) {
+
+				}
+			}
+		}
+		return statements;
+
 	}
 
 }

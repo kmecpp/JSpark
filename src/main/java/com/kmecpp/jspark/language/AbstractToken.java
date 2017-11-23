@@ -1,6 +1,6 @@
 package com.kmecpp.jspark.language;
 
-public interface TokenText {
+public interface AbstractToken {
 
 	public String getString();
 

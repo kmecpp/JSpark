@@ -14,7 +14,7 @@ public abstract class Module extends NamedBlock {
 	private ArrayList<Method> methods = new ArrayList<>();
 
 	public Module(String name) {
-		super(name);
+		super(name, new ArrayList<>());
 	}
 
 	public ArrayList<Method> getMethods() {

@@ -1,6 +1,6 @@
 package com.kmecpp.jspark.language;
 
-public enum Keyword implements TokenText {
+public enum Keyword implements AbstractToken {
 
 	INT,
 	DEC,

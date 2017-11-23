@@ -3,14 +3,15 @@ package com.kmecpp.jspark.parser.statements.block;
 import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.statements.Variable;
+import com.kmecpp.jspark.parser.Statement;
+import com.kmecpp.jspark.parser.data.Variable;
 
 public class Method extends NamedBlock {
 
 	private ArrayList<Variable> args;
 
-	public Method(String name, ArrayList<Variable> args) {
-		super(name);
+	public Method(String name, ArrayList<Variable> args, ArrayList<Statement> statements) {
+		super(name, statements);
 		this.args = args;
 	}
 
@@ -42,6 +43,12 @@ public class Method extends NamedBlock {
 
 	public ArrayList<Variable> getArgs() {
 		return args;
+	}
+
+	@Override
+	public ArrayList<Statement> getStatements() {
+		// TODO Auto-generated method stub
+		return super.getStatements();
 	}
 
 	@Override

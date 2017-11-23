@@ -3,11 +3,12 @@ package com.kmecpp.jspark;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.parser.Parser;
 import com.kmecpp.jspark.parser.Statement;
 import com.kmecpp.jspark.parser.statements.block.module.Module;
-import com.kmecpp.jspark.parser.statements.block.module.Static;
 import com.kmecpp.jspark.runtime.Runtime;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
 import com.kmecpp.jspark.util.FileUtil;
@@ -32,15 +33,25 @@ public class JSpark {
 	}
 
 	public static void runProject(String path) throws IOException {
-		Runtime runtime = new Runtime();
-		Files.walk(new File(path).toPath()).filter(Files::isRegularFile).forEach((file) -> {
-			System.out.println(file.toAbsolutePath());
-			Module module = new Parser(new Tokenizer(FileUtil.readFile(file))).parse();
-			if (module instanceof Static && module.hasMethod("main")) {
+		ArrayList<Module> modules = Files.walk(new File(path).toPath())
+				.filter(Files::isRegularFile)
+				.map((p) -> new Parser(new Tokenizer(FileUtil.readFile(p))).parseModule())
+				.collect(Collectors.toCollection(ArrayList::new));
 
-			}
-			System.out.println(module);
-		});
+		Runtime runtime = new Runtime(modules);
+		runtime.start();
+
+		//			System.out.println(file.toAbsolutePath());
+		//			Module module = new Parser(new Tokenizer(FileUtil.readFile(file))).parse();
+		//			if (module instanceof Static && module.hasMethod("main")) {
+		//				if (main == null) {
+		//					main = module;
+		//				} else {
+		//					throw new IllegalStateException("Main method already defined in '" + main.getName() + "'");
+		//				}
+		//			}
+		//			System.out.println(module);
+		//		});
 	}
 
 	public static void runProgram(String program) {
@@ -48,7 +59,7 @@ public class JSpark {
 
 		System.out.println("Token List: " + tokenizer.getTokenList());
 
-		Module module = new Parser(new Tokenizer(program)).parse();
+		Module module = new Parser(new Tokenizer(program)).parseModule();
 		System.out.println("Parsed program!");
 		System.out.println();
 		System.out.println(module.getName());

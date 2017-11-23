@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.data.Variable;
-import com.kmecpp.jspark.parser.statements.block.Method;
-import com.kmecpp.jspark.parser.statements.block.module.Class;
-import com.kmecpp.jspark.parser.statements.block.module.Module;
-import com.kmecpp.jspark.parser.statements.block.module.Static;
-import com.kmecpp.jspark.parser.statements.logic.MethodInvocation;
+import com.kmecpp.jspark.parser.statement.Import;
+import com.kmecpp.jspark.parser.statement.Statement;
+import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
+import com.kmecpp.jspark.parser.statement.block.Method;
+import com.kmecpp.jspark.parser.statement.block.module.Class;
+import com.kmecpp.jspark.parser.statement.block.module.Module;
+import com.kmecpp.jspark.parser.statement.block.module.Static;
+import com.kmecpp.jspark.parser.statement.logic.MethodInvocation;
 import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.TokenType;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
@@ -60,20 +62,24 @@ public class Parser {
 					tokenizer.read(Symbol.CLOSE_PAREN);
 					tokenizer.read(Symbol.OPEN_BRACE);
 
-					module.addMethod(new Method(name, params, parseBlock()));
+					Method method = new Method(module, name, params);
+					method.addStatements(parseBlock(method));
+					System.out.println(method.getStatements().size());
+
+					module.addMethod(method);
 					//					module.addStatement(new Method(name, new ArrayList<>()));
 				}
 				//				if (token.is(Keyword.PUBLIC)) {
 				//					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
 				//				}
 
-				if (token.is(Keyword.CLASS)) {
-					module.addStatement(new Class(tokenizer.readName()));
-					parseModule();
-				} else if (token.is(Keyword.STATIC)) {
-					module.addStatement(new Static(tokenizer.readName()));
-					parseModule();
-				}
+				//				if (token.is(Keyword.CLASS)) {
+				//					module.addStatement(new Class(tokenizer.readName()));
+				//					parseModule();
+				//				} else if (token.is(Keyword.STATIC)) {
+				//					module.addStatement(new Static(tokenizer.readName()));
+				//					parseModule();
+				//				}
 			}
 
 			//SYMBOLS
@@ -99,7 +105,7 @@ public class Parser {
 		return module;
 	}
 
-	private ArrayList<Statement> parseBlock() {
+	private ArrayList<Statement> parseBlock(AbstractBlock parent) {
 		ArrayList<Statement> statements = new ArrayList<>();
 		while (!tokenizer.peekNext().is(Symbol.CLOSE_BRACE)) {
 			Token token = tokenizer.next();
@@ -111,13 +117,24 @@ public class Parser {
 					String method = tokenizer.readName();
 					tokenizer.read(Symbol.OPEN_PAREN);
 
-					ArrayList<Value> params = new ArrayList<>();
+					ArrayList<Expression> params = new ArrayList<>();
 					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
-						params.add(new Variable(tokenizer.readType(), tokenizer.readName()));
+						ArrayList<Token> expression = new ArrayList<>();
+						while (true) {
+							expression.add(tokenizer.next());
+
+							if (tokenizer.peekNext().is(Symbol.COMMMA)) {
+								tokenizer.read(Symbol.COMMMA);
+							} else {
+								break;
+							}
+
+						}
+						params.add(new Expression(expression));
 					}
 					tokenizer.read(Symbol.CLOSE_PAREN);
 
-					new MethodInvocation(target, method, params);
+					statements.add(new MethodInvocation(parent, target, method, params));
 				}
 
 				else if (tokenizer.peekNext().is(Symbol.EQUALS)) {

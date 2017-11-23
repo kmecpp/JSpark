@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.parser.statements.block.module;
+package com.kmecpp.jspark.parser.statement.block.module;
 
 public class Class extends Module {
 

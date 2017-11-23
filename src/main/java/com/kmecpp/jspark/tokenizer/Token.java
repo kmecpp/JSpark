@@ -143,6 +143,10 @@ public class Token {
 		}
 	}
 
+	public boolean isNumber() {
+		return isDouble();
+	}
+
 	@Override
 	public String toString() {
 		return type + ": " + string;

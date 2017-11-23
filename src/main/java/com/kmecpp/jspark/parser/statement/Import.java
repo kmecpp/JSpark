@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.parser;
+package com.kmecpp.jspark.parser.statement;
 
 public class Import {
 

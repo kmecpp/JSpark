@@ -1,8 +1,4 @@
-package com.kmecpp.jspark.parser.statements.block;
-
-import java.util.ArrayList;
-
-import com.kmecpp.jspark.parser.Statement;
+package com.kmecpp.jspark.parser.statement.block;
 
 public abstract class NamedBlock extends AbstractBlock {
 
@@ -12,8 +8,8 @@ public abstract class NamedBlock extends AbstractBlock {
 	//		this.name = name;
 	//	}
 
-	public NamedBlock(String name, ArrayList<Statement> statements) {
-		super(statements);
+	public NamedBlock(String name, AbstractBlock parent) {
+		super(parent);
 		this.name = name;
 	}
 

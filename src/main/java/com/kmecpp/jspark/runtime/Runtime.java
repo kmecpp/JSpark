@@ -3,8 +3,8 @@ package com.kmecpp.jspark.runtime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.kmecpp.jspark.parser.statements.block.module.Module;
-import com.kmecpp.jspark.parser.statements.block.module.Static;
+import com.kmecpp.jspark.parser.statement.block.module.Module;
+import com.kmecpp.jspark.parser.statement.block.module.Static;
 
 public class Runtime {
 
@@ -24,6 +24,10 @@ public class Runtime {
 			}
 			this.modules.put(module.getName(), module);
 		}
+	}
+
+	public Module getModule(String name, Module context) {
+		return modules.get(name);
 	}
 
 	public void start() {

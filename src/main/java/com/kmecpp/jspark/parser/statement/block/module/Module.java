@@ -1,12 +1,12 @@
-package com.kmecpp.jspark.parser.statements.block.module;
+package com.kmecpp.jspark.parser.statement.block.module;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.Import;
-import com.kmecpp.jspark.parser.statements.block.Method;
-import com.kmecpp.jspark.parser.statements.block.NamedBlock;
+import com.kmecpp.jspark.parser.statement.Import;
+import com.kmecpp.jspark.parser.statement.block.Method;
+import com.kmecpp.jspark.parser.statement.block.NamedBlock;
 
 public abstract class Module extends NamedBlock {
 
@@ -14,7 +14,7 @@ public abstract class Module extends NamedBlock {
 	private ArrayList<Method> methods = new ArrayList<>();
 
 	public Module(String name) {
-		super(name, new ArrayList<>());
+		super(name, null);
 	}
 
 	public ArrayList<Method> getMethods() {

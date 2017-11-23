@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.parser.Parser;
-import com.kmecpp.jspark.parser.Statement;
-import com.kmecpp.jspark.parser.statements.block.module.Module;
+import com.kmecpp.jspark.parser.statement.Statement;
+import com.kmecpp.jspark.parser.statement.block.module.Module;
 import com.kmecpp.jspark.runtime.Runtime;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
 import com.kmecpp.jspark.util.FileUtil;
 
 public class JSpark {
+
+	private static Runtime runtime;
 
 	public static void main(String[] args) throws IOException {
 		// Tokenizer tokenizer = Tokenizer.tokenize("HelloWorld = \"shit\" 304 and
@@ -32,14 +34,17 @@ public class JSpark {
 		// }
 	}
 
+	public static Runtime getRuntime() {
+		return runtime;
+	}
+
 	public static void runProject(String path) throws IOException {
 		ArrayList<Module> modules = Files.walk(new File(path).toPath())
 				.filter(Files::isRegularFile)
 				.map((p) -> new Parser(new Tokenizer(FileUtil.readFile(p))).parseModule())
 				.collect(Collectors.toCollection(ArrayList::new));
 
-		Runtime runtime = new Runtime(modules);
-		runtime.start();
+		(runtime = new Runtime(modules)).start();
 
 		//			System.out.println(file.toAbsolutePath());
 		//			Module module = new Parser(new Tokenizer(FileUtil.readFile(file))).parse();

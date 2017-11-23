@@ -1,0 +1,7 @@
+static Main {
+
+	def main() {
+		Console.println("Hello World!");
+	}
+	
+}

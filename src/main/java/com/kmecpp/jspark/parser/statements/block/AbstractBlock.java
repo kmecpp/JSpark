@@ -1,6 +1,8 @@
-package com.kmecpp.jspark.parser;
+package com.kmecpp.jspark.parser.statements.block;
 
 import java.util.ArrayList;
+
+import com.kmecpp.jspark.parser.Statement;
 
 public class AbstractBlock extends Statement {
 

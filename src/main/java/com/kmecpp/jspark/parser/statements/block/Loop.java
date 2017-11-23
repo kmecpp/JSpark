@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.parser.statements;
+package com.kmecpp.jspark.parser.statements.block;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.parser.statements.modules;
+package com.kmecpp.jspark.parser.statements.block.module;
 
 public class Static extends Module {
 

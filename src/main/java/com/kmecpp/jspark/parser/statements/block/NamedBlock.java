@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.parser;
+package com.kmecpp.jspark.parser.statements.block;
 
 public class NamedBlock extends AbstractBlock {
 

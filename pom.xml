@@ -7,14 +7,13 @@
 	<name>JSpark</name>
 	<description>The most concise programming language for the JVM</description>
 
-	<dependencies>
-		<!-- JLib -->
-		<dependency>
-			<groupId>com.kmecpp</groupId>
-			<artifactId>jlib</artifactId>
-			<version>LATEST</version>
-		</dependency>
-	</dependencies>
+	<!-- <dependencies> -->
+	<!-- <dependency> -->
+	<!-- <groupId>com.kmecpp</groupId> -->
+	<!-- <artifactId>jlib</artifactId> -->
+	<!-- <version>LATEST</version> -->
+	<!-- </dependency> -->
+	<!-- </dependencies> -->
 
 
 	<build>

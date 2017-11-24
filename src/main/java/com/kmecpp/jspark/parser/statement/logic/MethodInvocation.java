@@ -1,10 +1,14 @@
 package com.kmecpp.jspark.parser.statement.logic;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.kmecpp.jspark.JSpark;
+import com.kmecpp.jspark.language.Keyword;
+import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.Expression;
-import com.kmecpp.jspark.parser.data.Variable;
+import com.kmecpp.jspark.parser.data.Value;
+import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.Statement;
 import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.parser.statement.block.module.Module;
@@ -42,10 +46,22 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public void execute() {
-		Variable target = parent.getVariable(this.target);
+		Value target = Keyword.THIS.is(this.target) ? new Value(Type.OBJECT, parent.getModule()) : parent.getVariable(this.target);
+
 		if (target == null) {
-			Module module = JSpark.getRuntime().getModule(this.target, parent.getModule());
-			
+			Optional<Import> imprt = parent.getModule().getImport(this.target);
+			if (imprt.isPresent()) {
+				Module module = JSpark.getRuntime().getModule(imprt.get().getClassName());
+				module.execute();
+			} else if (this.target.equals("Console")) {
+				//				Console2.getInstance().getMethod(name, params)
+				//				if (this.method.equals("println")) {
+				//					Console.println(params.get(0).evaluate().getValue());
+				//				}
+			} else {
+
+			}
+
 		}
 	}
 

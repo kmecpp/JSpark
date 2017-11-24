@@ -2,16 +2,16 @@ package com.kmecpp.jspark.parser.statement;
 
 public class Import {
 
-	private final String string;
+	private final String fullName;
 	private final String className;
 
-	public Import(String string, String className) {
-		this.string = string;
+	public Import(String fullName, String className) {
+		this.fullName = fullName;
 		this.className = className;
 	}
 
-	public String getString() {
-		return string;
+	public String getFullName() {
+		return fullName;
 	}
 
 	public String getClassName() {

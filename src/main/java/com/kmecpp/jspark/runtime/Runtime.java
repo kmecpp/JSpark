@@ -26,7 +26,7 @@ public class Runtime {
 		}
 	}
 
-	public Module getModule(String name, Module context) {
+	public Module getModule(String name) {
 		return modules.get(name);
 	}
 
@@ -34,6 +34,9 @@ public class Runtime {
 		if (main == null) {
 			throw new IllegalStateException("No main method defined!");
 		}
+
+		System.out.println();
+		System.out.println("Running program...");
 		main.getMethod("main").get().execute();
 	}
 

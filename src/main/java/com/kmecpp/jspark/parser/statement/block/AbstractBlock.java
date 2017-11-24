@@ -9,9 +9,9 @@ import com.kmecpp.jspark.parser.statement.block.module.Module;
 
 public class AbstractBlock extends Statement {
 
-	private final AbstractBlock parent;
-	private final ArrayList<Statement> statements;
-	private final HashMap<String, Variable> variables;
+	protected final AbstractBlock parent;
+	protected final ArrayList<Statement> statements;
+	protected final HashMap<String, Variable> variables;
 
 	//	public AbstractBlock() {
 	//		this(new ArrayList<>());

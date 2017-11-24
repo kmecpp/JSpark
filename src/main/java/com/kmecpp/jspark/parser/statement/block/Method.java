@@ -3,15 +3,17 @@ package com.kmecpp.jspark.parser.statement.block;
 import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.data.Variable;
+import com.kmecpp.jspark.parser.data.Parameter;
+import com.kmecpp.jspark.parser.data.Value;
+import com.kmecpp.jspark.parser.statement.Statement;
 
 public class Method extends NamedBlock {
 
-	private ArrayList<Variable> args;
+	private Parameter[] parameters;
 
-	public Method(AbstractBlock parent, String name, ArrayList<Variable> args) {
+	public Method(AbstractBlock parent, String name, Parameter[] params) {
 		super(name, parent);
-		this.args = args;
+		this.parameters = params;
 	}
 
 	/**
@@ -27,11 +29,11 @@ public class Method extends NamedBlock {
 	 */
 	public boolean matches(String name, Type... params) {
 		if (getName().equals(name)) {
-			if (args.size() != params.length) {
+			if (this.parameters.length != params.length) {
 				return false;
 			}
 			for (int i = 0; i < params.length; i++) {
-				if (args.get(i).getType() != params[i]) {
+				if (this.parameters[i].getType() != params[i]) {
 					return false;
 				}
 			}
@@ -40,15 +42,27 @@ public class Method extends NamedBlock {
 		return false;
 	}
 
-	public ArrayList<Variable> getArgs() {
-		return args;
+	public Parameter[] getParameters() {
+		return parameters;
+	}
+
+	@Override
+	public final void execute() {
+		invoke();
+	}
+
+	public Value invoke(Value... values) {
+		for (Statement statement : statements) {
+			statement.execute();
+		}
+		return null;
 	}
 
 	@Override
 	public String toString() {
 		ArrayList<String> vars = new ArrayList<>();
-		for (Variable var : args) {
-			vars.add(var.toString());
+		for (Parameter param : parameters) {
+			vars.add(param.getName());
 		}
 		return getName() + "(" + String.join(", ", vars) + ")";
 	}

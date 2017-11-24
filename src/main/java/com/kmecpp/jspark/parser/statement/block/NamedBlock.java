@@ -2,7 +2,7 @@ package com.kmecpp.jspark.parser.statement.block;
 
 public abstract class NamedBlock extends AbstractBlock {
 
-	private String name;
+	protected String name;
 
 	//	public NamedBlock(String name) {
 	//		this.name = name;

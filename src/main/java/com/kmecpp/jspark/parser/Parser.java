@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.parser.data.Variable;
+import com.kmecpp.jspark.parser.data.Parameter;
 import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.Statement;
 import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
@@ -53,16 +53,16 @@ public class Parser {
 
 				else if (token.is(Keyword.DEF)) {
 					String name = tokenizer.readName();
-					ArrayList<Variable> params = new ArrayList<>();
+					ArrayList<Parameter> params = new ArrayList<>();
 
 					tokenizer.read(Symbol.OPEN_PAREN);
 					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
-						params.add(new Variable(tokenizer.readType(), tokenizer.readName()));
+						params.add(new Parameter(tokenizer.readType(), tokenizer.readName()));
 					}
 					tokenizer.read(Symbol.CLOSE_PAREN);
 					tokenizer.read(Symbol.OPEN_BRACE);
 
-					Method method = new Method(module, name, params);
+					Method method = new Method(module, name, params.toArray(new Parameter[params.size()]));
 					method.addStatements(parseBlock(method));
 					System.out.println(method.getStatements().size());
 
@@ -92,10 +92,10 @@ public class Parser {
 
 			}
 
-			//LITERALS
-			else if (token.getType() == TokenType.LITERAL) {
-
-			}
+			//			//LITERALS
+			//			else if (token.getType() == TokenType.LITERAL) {
+			//
+			//			}
 
 			else {
 				System.err.println("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));

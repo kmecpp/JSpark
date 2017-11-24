@@ -6,9 +6,9 @@ public class Variable extends Value {
 
 	private String name;
 
-	public Variable(Type type, String name) {
-		this(type, name, null);
-	}
+	//	public Variable(Type type, String name) {
+	//		this(type, name, null);
+	//	}
 
 	public Variable(Type type, String name, Object value) {
 		super(type, value);

@@ -1,9 +1,8 @@
 package com.kmecpp.jspark.tokenizer;
 
-import com.kmecpp.jspark.ObjectValue;
+import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
-import com.kmecpp.jspark.language.AbstractToken;
 
 public class Token {
 
@@ -28,6 +27,10 @@ public class Token {
 		return type;
 	}
 
+	public Operator asOperator() {
+		return Operator.fromString(string);
+	}
+
 	//	public boolean is(Keyword keyword) {
 	//		return string.equals(keyword.getString());
 	//	}
@@ -40,30 +43,30 @@ public class Token {
 		return string.equals(Keyword.PUBLIC.getString()) || string.equals(Keyword.PRIVATE.getString());
 	}
 
-	public ObjectValue getValue() {
-		if (type == TokenType.IDENTIFIER) {
-			return new ObjectValue(string);
-		} else if (type == TokenType.KEYWORD) {
-			return new ObjectValue(Keyword.fromString(string));
-		} else if (type == TokenType.OPERATOR) {
-			return new ObjectValue(Operator.fromString(string));
-		} else if (type == TokenType.LITERAL) {
-			if (string.startsWith("\"")) {
-				return new ObjectValue(string);
-			} else if (string.startsWith("t") || string.startsWith("f")) {
-				return new ObjectValue(string.equals("true") ? true : false);
-			} else if (string.contains(".")) {
-				try {
-					return new ObjectValue(Integer.parseInt(string));
-				} catch (NumberFormatException e) {
-					return new ObjectValue(Long.parseLong(string));
-				}
-			} else {
-				return new ObjectValue(Double.parseDouble(string));
-			}
-		}
-		return new ObjectValue(null);
-	}
+	//	public ObjectValue getValue() {
+	//		if (type == TokenType.IDENTIFIER) {
+	//			return new ObjectValue(string);
+	//		} else if (type == TokenType.KEYWORD) {
+	//			return new ObjectValue(Keyword.fromString(string));
+	//		} else if (type == TokenType.OPERATOR) {
+	//			return new ObjectValue(Operator.fromString(string));
+	//		} else if (type == TokenType.LITERAL) {
+	//			if (string.startsWith("\"")) {
+	//				return new ObjectValue(string);
+	//			} else if (string.startsWith("t") || string.startsWith("f")) {
+	//				return new ObjectValue(string.equals("true") ? true : false);
+	//			} else if (string.contains(".")) {
+	//				try {
+	//					return new ObjectValue(Integer.parseInt(string));
+	//				} catch (NumberFormatException e) {
+	//					return new ObjectValue(Long.parseLong(string));
+	//				}
+	//			} else {
+	//				return new ObjectValue(Double.parseDouble(string));
+	//			}
+	//		}
+	//		return new ObjectValue(null);
+	//	}
 
 	public boolean asBoolean() {
 		if (string.equals("true")) {
@@ -149,7 +152,7 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return type + ": " + string;
+		return string;
 	}
 
 }

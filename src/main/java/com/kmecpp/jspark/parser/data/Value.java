@@ -26,7 +26,7 @@ public class Value {
 
 	@Override
 	public String toString() {
-		return type + " = " + value;
+		return type.getIdentifier() + " = " + value;
 	}
 
 }

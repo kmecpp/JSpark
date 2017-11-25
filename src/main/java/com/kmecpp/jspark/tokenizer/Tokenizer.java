@@ -30,7 +30,7 @@ public class Tokenizer {
 
 	public ArrayList<Token> readAll() {
 		ArrayList<Token> tokens = new ArrayList<>();
-		while (this.hasNext()) {
+		while (hasNext()) {
 			tokens.add(next());
 		}
 		return tokens;
@@ -64,21 +64,22 @@ public class Tokenizer {
 		throw invalidToken(token, text);
 	}
 
-	public Token next() {
-		return getNext();
+	public boolean hasNext() {
+		while (current < chars.length && Character.isWhitespace(chars[current])) {
+			current++;
+		}
+		return current < chars.length;
 	}
 
 	public Token peekNext() {
-		return lastToken = getNext();
+		if (lastToken == null) {
+			lastToken = getNext();
+		}
+		return lastToken;
 	}
 
-	public boolean hasNext() {
-		try {
-			peekNext();
-			return true;
-		} catch (RuntimeException e) {
-			return false;
-		}
+	public Token next() {
+		return getNext();
 	}
 
 	private Token getNext() {
@@ -143,7 +144,7 @@ public class Tokenizer {
 					while (Character.isDigit(chars[current])) {
 						sb.append(chars[current++]);
 					}
-					//TODO: E notation?
+					//TODO: E notation?					
 					return new Token(sb.toString(), TokenType.DECIMAL_LITERAL);
 				} else {
 					return new Token(sb.toString(), TokenType.INTEGER_LITERAL);

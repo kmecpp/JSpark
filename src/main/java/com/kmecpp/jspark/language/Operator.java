@@ -1,5 +1,7 @@
 package com.kmecpp.jspark.language;
 
+import javax.naming.OperationNotSupportedException;
+
 public enum Operator implements AbstractToken {
 
 	PLUS("+", 1),
@@ -8,12 +10,12 @@ public enum Operator implements AbstractToken {
 	DIVIDE("/", 2),
 	MODULUS("%", 3),
 	EXPONENT("^", 3),
-	DIVIDES("|", 3),
+	//	DIVIDES("|", 3),
 
-	OR("||", 1),
-	XOR("^", 1),
-	AND("&&", 1),
-	NOT("!", 1),
+	//	OR("||", 1),
+	//	XOR("^", 1),
+	//	AND("&&", 1),
+	//	NOT("!", 1),
 
 	;
 
@@ -23,6 +25,34 @@ public enum Operator implements AbstractToken {
 	private Operator(String character, int precedence) {
 		this.string = character;
 		this.precedence = precedence;
+	}
+
+	public double apply(double a, double b) {
+		switch (this) {
+		case PLUS:
+			return a + b;
+		case MINUS:
+			return a - b;
+		case MULTIPLY:
+			return a * b;
+		case DIVIDE:
+			return a / b;
+		case MODULUS:
+			return a % b;
+		case EXPONENT:
+			return Math.pow(a, b);
+		//		case DIVIDES:
+		//			return a % b == 0;
+		default:
+			throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator: " + this));
+		}
+	}
+
+	public String apply(String a, Object b) {
+		if (this == PLUS) {
+			return a + b;
+		}
+		throw new IllegalArgumentException("Invalid string operator: " + this.string);
 	}
 
 	@Override

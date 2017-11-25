@@ -4,4 +4,4 @@ static Main {
 		Console.println("Hello World!");
 	}
 	
-}
+}//

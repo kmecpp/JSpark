@@ -28,9 +28,13 @@ public class Console2 extends Class {
 
 		@Override
 		public Value invoke(Value... values) {
-			return super.invoke(values);
+			return null;
 		}
 
+	}
+
+	public static void println(Object obj) {
+		System.out.println(obj);
 	}
 
 }

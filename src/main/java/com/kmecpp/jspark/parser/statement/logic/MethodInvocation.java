@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.builtin.Console;
 import com.kmecpp.jspark.parser.Expression;
 import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.statement.Import;
@@ -54,10 +55,9 @@ public class MethodInvocation extends Statement {
 				Module module = JSpark.getRuntime().getModule(imprt.get().getClassName());
 				module.execute();
 			} else if (this.target.equals("Console")) {
-				//				Console2.getInstance().getMethod(name, params)
-				//				if (this.method.equals("println")) {
-				//					Console.println(params.get(0).evaluate().getValue());
-				//				}
+				if (this.method.equals("println")) {
+					Console.println(params.get(0).evaluate().getValue());
+				}
 			} else {
 
 			}

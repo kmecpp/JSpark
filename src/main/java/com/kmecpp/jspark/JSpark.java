@@ -52,7 +52,10 @@ public class JSpark {
 
 		System.out.println();
 		System.out.println("Running program...");
+		long runStart = System.nanoTime();
 		(runtime = new Runtime(modules)).start();
+		System.out.println();
+		System.out.println("Runtime: " + (System.nanoTime() - runStart) / 1000000F + "ms");
 	}
 
 	public static void runProgram(Path path) {

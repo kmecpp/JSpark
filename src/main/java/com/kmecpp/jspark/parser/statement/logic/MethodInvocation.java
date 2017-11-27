@@ -68,7 +68,7 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public String toString() {
-		return target + "." + method + "(" + String.join(", ", params.stream().map(e -> String.valueOf(e.evaluate())).collect(Collectors.toList())) + ")";
+		return target + "." + method + "(" + params.stream().map(String::valueOf).collect(Collectors.joining(", ")) + ")";
 	}
 
 }

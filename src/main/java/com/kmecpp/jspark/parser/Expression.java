@@ -3,6 +3,7 @@ package com.kmecpp.jspark.parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
@@ -11,7 +12,6 @@ import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.tokenizer.LiteralToken;
 import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.TokenType;
-import com.kmecpp.jspark.tokenizer.Tokenizer;
 
 public class Expression {
 
@@ -25,11 +25,11 @@ public class Expression {
 		return evaluate(new HashMap<>());
 	}
 
-	public static void main(String[] args) {
-		String program = "\"Hi\" + 1 + (3 - 1 + 8) / 2^2 - \"Hi\" ";//"3.43 - (4 + 5) ";
-		System.out.println(new Tokenizer(program).readAll());
-		System.out.println(new Expression(new Tokenizer(program).readAll()).evaluate());
-	}
+	//	public static void main(String[] args) {
+	//		String program = "\"Hi\" + 1 + (3 - 1 + 8) / 2^2 - \"Hi\" ";//"3.43 - (4 + 5) ";
+	//		System.out.println(new Tokenizer(program).readAll());
+	//		System.out.println(new Expression(new Tokenizer(program).readAll()).evaluate());
+	//	}
 
 	public Value evaluate(HashMap<String, Value> values) {
 		long start = System.nanoTime();
@@ -58,7 +58,7 @@ public class Expression {
 			process(operands, operators);
 		}
 		System.out.println(operators + ", " + operands);
-		System.out.println("Time: " + (System.nanoTime() - start) / 1000000F + "ms");
+		System.out.println("Evaluation Time: " + (System.nanoTime() - start) / 1000000F + "ms");
 		if (operands.size() == 1) {
 			Token value = operands.pop();
 			if (value.isNumber()) {
@@ -93,6 +93,11 @@ public class Expression {
 			return operands.push(new LiteralToken(operator.apply(first.asDouble(), post.asDouble())));
 
 		}
+	}
+
+	@Override
+	public String toString() {
+		return tokens.stream().map(String::valueOf).collect(Collectors.joining(", "));
 	}
 
 }

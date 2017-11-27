@@ -38,7 +38,7 @@ public class Parser {
 			//			System.out.println("Parsing token: " + token);
 
 			//KEYWORDS
-			if (token.getType() == TokenType.KEYWORD) {
+			if (token.isKeyword()) {
 				if (token.is(Keyword.IMPORT)) {
 					StringBuilder importStr = new StringBuilder();
 					while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
@@ -81,20 +81,24 @@ public class Parser {
 				//				}
 			}
 
-			//SYMBOLS
-			else if (token.getType() == TokenType.SYMBOL) {
-
+			else if (token.isLiteral()) {
+				
 			}
 
-			//OPERATORS
-			else if (token.getType() == TokenType.OPERATOR) {
-
-			}
-
-			//			//LITERALS
-			//			else if (token.getType() == TokenType.LITERAL) {
+			//			//SYMBOLS
+			//			else if (token.getType() == TokenType.SYMBOL) {
 			//
 			//			}
+			//
+			//			//OPERATORS
+			//			else if (token.getType() == TokenType.OPERATOR) {
+			//
+			//			}
+			//
+			//			//			//LITERALS
+			//			//			else if (token.getType() == TokenType.LITERAL) {
+			//			//
+			//			//			}
 
 			else {
 				System.err.println("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));

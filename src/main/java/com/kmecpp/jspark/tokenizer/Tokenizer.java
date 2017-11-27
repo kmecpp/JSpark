@@ -181,9 +181,9 @@ public class Tokenizer {
 		}
 	}
 
-	public char offset(int offset) {
-		return chars[current + offset];
-	}
+	//	public char offset(int offset) {
+	//		return chars[current + offset];
+	//	}
 
 	//	private void next() {
 	//		current++;

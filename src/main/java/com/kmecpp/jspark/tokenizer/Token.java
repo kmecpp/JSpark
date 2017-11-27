@@ -39,6 +39,14 @@ public class Token {
 		return string.equals(tokenText.getString());
 	}
 
+	public boolean isKeyword() {
+		return type == TokenType.KEYWORD;
+	}
+
+	public boolean isLiteral() {
+		return type == TokenType.STRING_LITERAL || type == TokenType.INTEGER_LITERAL || type == TokenType.DECIMAL_LITERAL || type == TokenType.BOOLEAN_LITERAL;
+	}
+
 	public boolean isAccessModifier() {
 		return string.equals(Keyword.PUBLIC.getString()) || string.equals(Keyword.PRIVATE.getString());
 	}

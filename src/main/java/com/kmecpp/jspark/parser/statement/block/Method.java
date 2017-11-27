@@ -62,7 +62,7 @@ public class Method extends NamedBlock {
 	public String toString() {
 		ArrayList<String> vars = new ArrayList<>();
 		for (Parameter param : parameters) {
-			vars.add(param.getName());
+			vars.add(param.getType().getIdentifier() + " " + param.getName());
 		}
 		return getName() + "(" + String.join(", ", vars) + ")";
 	}

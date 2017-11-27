@@ -2,6 +2,7 @@ package com.kmecpp.jspark.parser.statement.logic;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.language.Keyword;
@@ -63,6 +64,11 @@ public class MethodInvocation extends Statement {
 			}
 
 		}
+	}
+
+	@Override
+	public String toString() {
+		return target + "." + method + "(" + String.join(", ", params.stream().map(e -> String.valueOf(e.evaluate())).collect(Collectors.toList())) + ")";
 	}
 
 }

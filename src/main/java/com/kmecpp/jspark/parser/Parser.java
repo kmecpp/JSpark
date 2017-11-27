@@ -1,5 +1,6 @@
 package com.kmecpp.jspark.parser;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
@@ -22,20 +23,19 @@ public class Parser {
 	private Tokenizer tokenizer;
 	private Module module;
 
-	public Parser(Tokenizer tokenizer) {
+	public Parser(Path path, Tokenizer tokenizer) {
 		this.tokenizer = tokenizer;
 
 		Token keyword = tokenizer.read(TokenType.KEYWORD);
-		module = keyword.is(Keyword.STATIC) ? new Static(tokenizer.readName())
-				: keyword.is(Keyword.CLASS) ? new Class(tokenizer.readName()) : null;
+		module = keyword.is(Keyword.STATIC) ? new Static(path, tokenizer.readName())
+				: keyword.is(Keyword.CLASS) ? new Class(path, tokenizer.readName()) : null;
 		tokenizer.read(Symbol.OPEN_BRACE);
 	}
 
 	public Module parseModule() {
-		System.out.println("Parsing module: " + module.getName());
 		while (tokenizer.hasNext()) {
 			Token token = tokenizer.next();
-			System.out.println("Parsing token: " + token);
+			//			System.out.println("Parsing token: " + token);
 
 			//KEYWORDS
 			if (token.getType() == TokenType.KEYWORD) {
@@ -64,7 +64,6 @@ public class Parser {
 
 					Method method = new Method(module, name, params.toArray(new Parameter[params.size()]));
 					method.addStatements(parseBlock(method));
-					System.out.println(method.getStatements().size());
 
 					module.addMethod(method);
 					//					module.addStatement(new Method(name, new ArrayList<>()));
@@ -133,6 +132,7 @@ public class Parser {
 						params.add(new Expression(expression));
 					}
 					tokenizer.read(Symbol.CLOSE_PAREN);
+					System.out.println(new MethodInvocation(parent, target, method, params));
 
 					statements.add(new MethodInvocation(parent, target, method, params));
 				}

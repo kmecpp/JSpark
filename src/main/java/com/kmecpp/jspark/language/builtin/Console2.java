@@ -11,7 +11,7 @@ public class Console2 extends Class {
 	private static final Console2 instance = new Console2("Console");
 
 	public Console2(String name) {
-		super(name);
+		super(null, name);
 
 		addMethod(new Println());
 	}

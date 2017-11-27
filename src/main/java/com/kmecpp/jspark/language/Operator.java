@@ -10,10 +10,10 @@ public enum Operator implements AbstractToken {
 	DIVIDE("/", 2),
 	MODULUS("%", 3),
 	EXPONENT("^", 3),
-	//	DIVIDES("|", 3),
 
+	//	DIVIDES("%%", 3),
 	//	OR("||", 1),
-	//	XOR("^", 1),
+	//	XOR("^^", 1),
 	//	AND("&&", 1),
 	//	NOT("!", 1),
 
@@ -44,7 +44,7 @@ public enum Operator implements AbstractToken {
 		//		case DIVIDES:
 		//			return a % b == 0;
 		default:
-			throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator: " + this));
+			throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator to numbers: " + a + " " + this.string + " " + b));
 		}
 	}
 
@@ -52,7 +52,7 @@ public enum Operator implements AbstractToken {
 		if (this == PLUS) {
 			return a + b;
 		}
-		throw new IllegalArgumentException("Invalid string operator: " + this.string);
+		throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator to strings: " + a + " " + this.string + " " + b));
 	}
 
 	@Override

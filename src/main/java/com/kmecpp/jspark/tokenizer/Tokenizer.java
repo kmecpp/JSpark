@@ -65,10 +65,11 @@ public class Tokenizer {
 	}
 
 	public boolean hasNext() {
-		while (current < chars.length && Character.isWhitespace(chars[current])) {
-			current++;
-		}
-		return current < chars.length;
+		return peekNext() != null;
+		//		while (current < chars.length && Character.isWhitespace(chars[current])) {
+		//			current++;
+		//		}
+		//		return current < chars.length;
 	}
 
 	public Token peekNext() {
@@ -90,8 +91,12 @@ public class Tokenizer {
 		}
 
 		try {
-			while (Character.isWhitespace(chars[current])) {
+			while (current < chars.length && Character.isWhitespace(chars[current])) {
 				current++;
+			}
+
+			if (current >= chars.length) {
+				return null;
 			}
 
 			char c = chars[current++];
@@ -99,9 +104,9 @@ public class Tokenizer {
 			//Comments
 			if (c == '/') {
 				if (chars[current] == '/') {
-					while (chars[current++] != '\n');
+					while (current < chars.length && chars[current++] != '\n');
 					return getNext();
-				} else if (chars[current] == '*') {
+				} else if (current < chars.length && chars[current] == '*') {
 					while (!(chars[current++] == '*' && chars[current] == '/'));
 					current++;
 					return getNext();
@@ -118,7 +123,7 @@ public class Tokenizer {
 				}
 
 				String token = sb.toString();
-				return new Token(token, Keyword.isKeyword(token) ? TokenType.KEYWORD : TokenType.IDENTIFIER);
+				return new Token(Keyword.isKeyword(token) ? TokenType.KEYWORD : TokenType.IDENTIFIER, token);
 			}
 
 			//STRINGS
@@ -128,7 +133,7 @@ public class Tokenizer {
 					sb.append(chars[current++]);
 				}
 				current++;
-				return new Token("\"" + sb + "\"", TokenType.STRING_LITERAL);
+				return new LiteralToken(sb.toString());
 			}
 
 			//NUMBERS
@@ -145,27 +150,27 @@ public class Tokenizer {
 						sb.append(chars[current++]);
 					}
 					//TODO: E notation?					
-					return new Token(sb.toString(), TokenType.DECIMAL_LITERAL);
+					return new LiteralToken(Double.parseDouble(sb.toString()));
 				} else {
-					return new Token(sb.toString(), TokenType.INTEGER_LITERAL);
+					return new LiteralToken(Integer.parseInt(sb.toString()));
 				}
 			}
 
 			//BOOLEANS
 			else if (c == 't' && chars[current] == 'r' && chars[current + 1] == 'u' && chars[current + 2] == 'e' && chars[current + 3] == ' ') {
-				return new Token(String.valueOf(true), TokenType.BOOLEAN_LITERAL);
+				return new LiteralToken(true);
 			} else if (c == 'f' && chars[current] == 'a' && chars[current + 1] == 'l' && chars[current + 2] == 's' && chars[current + 3] == 'e' && chars[current + 4] == ' ') {
-				return new Token(String.valueOf(false), TokenType.BOOLEAN_LITERAL);
+				return new LiteralToken(false);
 			}
 
 			//OPERATORS
 			else if (Operator.isOperator(String.valueOf(c))) {
-				return new Token(String.valueOf(c), TokenType.OPERATOR);
+				return new Token(TokenType.OPERATOR, String.valueOf(c));
 			}
 
 			//SYMBOLS
 			else if (Symbol.isSymbol(c)) {
-				return new Token(String.valueOf(c), TokenType.SYMBOL);
+				return new Token(TokenType.SYMBOL, String.valueOf(c));
 			}
 
 			else {

@@ -4,4 +4,8 @@ static Main {
 		Console.println("Hello World!");
 	}
 	
-}//
+	def print(string s){
+		Console.println(s);
+	}
+	
+}

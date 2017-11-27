@@ -6,17 +6,17 @@ import com.kmecpp.jspark.language.Operator;
 
 public class Token {
 
-	private String string;
 	private TokenType type;
+	private String string;
 
 	//	public string(String string) {
 	//		this.string = string;
 	//		this.type = stringType.getType(string);
 	//	}
 
-	public Token(String string, TokenType type) {
-		this.string = string;
+	public Token(TokenType type, String string) {
 		this.type = type;
+		this.string = string;
 	}
 
 	public String getText() {
@@ -78,20 +78,23 @@ public class Token {
 	}
 
 	public boolean isBoolean() {
-		try {
-			asBoolean();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return type == TokenType.BOOLEAN_LITERAL;
+		//		try {
+		//			asBoolean();
+		//			return true;
+		//		} catch (Exception e) {
+		//			return false;
+		//		}
 	}
 
 	public String asString() {
-		return string.substring(1, string.length() - 1);
+		return string;
+		//		return string.substring(1, string.length() - 1);
 	}
 
 	public boolean isString() {
-		return string.startsWith("\"");
+		return type == TokenType.STRING_LITERAL;
+		//		return string.startsWith("\"");
 	}
 
 	public int asInt() {
@@ -99,12 +102,13 @@ public class Token {
 	}
 
 	public boolean isInt() {
-		try {
-			asInt();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return type == TokenType.INTEGER_LITERAL;
+		//		try {
+		//			asInt();
+		//			return true;
+		//		} catch (Exception e) {
+		//			return false;
+		//		}
 	}
 
 	public long asLong() {
@@ -112,12 +116,13 @@ public class Token {
 	}
 
 	public boolean isLong() {
-		try {
-			asLong();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return type == TokenType.INTEGER_LITERAL;
+		//		try {
+		//			asLong();
+		//			return true;
+		//		} catch (Exception e) {
+		//			return false;
+		//		}
 	}
 
 	public float asFloat() {
@@ -125,12 +130,13 @@ public class Token {
 	}
 
 	public boolean isFloat() {
-		try {
-			asFloat();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return type == TokenType.DECIMAL_LITERAL;
+		//		try {
+		//			asFloat();
+		//			return true;
+		//		} catch (Exception e) {
+		//			return false;
+		//		}
 	}
 
 	public double asDouble() {
@@ -138,12 +144,13 @@ public class Token {
 	}
 
 	public boolean isDouble() {
-		try {
-			asDouble();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return type == TokenType.DECIMAL_LITERAL;
+		//		try {
+		//			asDouble();
+		//			return true;
+		//		} catch (Exception e) {
+		//			return false;
+		//		}
 	}
 
 	public boolean isNumber() {

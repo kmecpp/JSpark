@@ -1,5 +1,6 @@
 package com.kmecpp.jspark.parser.statement.block.module;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -13,11 +14,17 @@ import com.kmecpp.jspark.parser.statement.block.NamedBlock;
 
 public abstract class Module extends NamedBlock {
 
+	private Path path;
 	private ArrayList<Import> imports = new ArrayList<>();
 	private ArrayList<Method> methods = new ArrayList<>();
 
-	public Module(String name) {
+	public Module(Path path, String name) {
 		super(name, null);
+		this.path = path;
+	}
+
+	public Path getPath() {
+		return path;
 	}
 
 	public ArrayList<Method> getMethods() {

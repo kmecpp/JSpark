@@ -22,6 +22,7 @@ public class Runtime {
 					throw new IllegalStateException("Main method already defined in '" + main.getName() + "'");
 				}
 			}
+			System.out.println(module.getPath());
 			this.modules.put(module.getName(), module);
 		}
 	}
@@ -35,9 +36,7 @@ public class Runtime {
 			throw new IllegalStateException("No main method defined!");
 		}
 
-		System.out.println();
-		System.out.println("Running program...");
-		main.getMethod("main").get().execute();
+		main.getMethod("main").get().invoke();
 	}
 
 }

@@ -82,7 +82,13 @@ public class Parser {
 			}
 
 			else if (token.isLiteral()) {
-				
+
+			}
+
+			else if (token.is(Symbol.CLOSE_BRACE)) {
+				if (tokenizer.hasNext()) {
+					System.err.println("Encounted extra closing brace: " + token);
+				}
 			}
 
 			//			//SYMBOLS
@@ -146,6 +152,7 @@ public class Parser {
 				}
 			}
 		}
+		tokenizer.read(Symbol.CLOSE_BRACE);
 		return statements;
 
 	}

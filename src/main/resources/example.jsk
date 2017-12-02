@@ -23,6 +23,8 @@ static Main {
 		i = [1, n) :: if [i%].length == 2 :: print(i);
 	}
 	
+	def primes(int n) = 
+	
 	public class Car {
 	
 	}

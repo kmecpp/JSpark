@@ -24,6 +24,16 @@ IDEAS:
 	
 #################################
 
+
+- INCREMENT/DECREMENT TO N ??
+
+	{
+		n-- > 0; 
+	}
+
+
+#################################
+
 case class Person (String name, int age);
 
 class Cat(String name, int age){
@@ -101,7 +111,7 @@ static Main {
 }
 
 
-//Static/Top Down Inheritance Example:
+//Static Inheritance Example:
 
 interface TokenText {
 

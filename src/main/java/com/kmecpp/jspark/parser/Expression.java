@@ -58,7 +58,7 @@ public class Expression {
 			process(operands, operators);
 		}
 		System.out.println(operators + ", " + operands);
-		System.out.println("Evaluation Time: " + (System.nanoTime() - start) / 1000000F + "ms");
+		System.out.println("Evaluation Time: " + (System.nanoTime()  - start) / 1000000F + "ms");
 		if (operands.size() == 1) {
 			Token value = operands.pop();
 			if (value.isNumber()) {

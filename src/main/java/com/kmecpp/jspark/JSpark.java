@@ -19,6 +19,9 @@ public class JSpark {
 
 	private static Runtime runtime;
 
+	String s = "";
+	String b = s + 3;
+
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		// Tokenizer tokenizer = Tokenizer.tokenize("HelloWorld = \"shit\" 304 and
 		// 3.40");
@@ -30,7 +33,6 @@ public class JSpark {
 		//		runProgram(IOUtil.readString(JSpark.class.getResource("/example.jsk")));
 
 		runProject(Paths.get(JSpark.class.getResource("/ExampleProject").toURI()));
-
 	}
 
 	public static Runtime getRuntime() {
@@ -43,7 +45,7 @@ public class JSpark {
 				.filter(Files::isRegularFile)
 				.map((p) -> {
 					long s = System.nanoTime();
-					Module module = new Parser(p, new Tokenizer(FileUtil.readFile(p))).parseModule();
+					Module module = new Parser(p).parseModule();
 					System.out.println("Parsed File: " + module.getName() + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
 					return module;
 				})
@@ -64,7 +66,7 @@ public class JSpark {
 
 		System.out.println("Token List: " + tokenizer.getTokenList());
 
-		Module module = new Parser(path, new Tokenizer(program)).parseModule();
+		Module module = new Parser(path).parseModule();
 		System.out.println("Parsed program!");
 		System.out.println();
 		System.out.println(module.getName());

@@ -1,5 +1,8 @@
 static Main {
 
+	string name;
+	int id;
+
 	def main() {
 		Console.println("Hello World!");
 	}
@@ -8,4 +11,5 @@ static Main {
 		Console.println(s);
 	}
 	
+	//Shits a dick
 }

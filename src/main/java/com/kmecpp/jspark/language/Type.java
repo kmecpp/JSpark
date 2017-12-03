@@ -21,10 +21,21 @@ public enum Type {
 		return identifier;
 	}
 
+	public static boolean isPrimitive(String text) {
+		if (text != null) {
+			for (Type type : values()) {
+				if (text.equals(type.identifier)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static Type getPrimitiveType(String text) {
 		if (text != null) {
 			for (Type type : values()) {
-				if (type.identifier.equals(text)) {
+				if (text.equals(type.identifier)) {
 					return type;
 				}
 			}

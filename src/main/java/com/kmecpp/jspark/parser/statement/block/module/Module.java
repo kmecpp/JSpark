@@ -16,6 +16,7 @@ public abstract class Module extends NamedBlock {
 
 	private Path path;
 	private ArrayList<Import> imports = new ArrayList<>();
+	private ArrayList<Field> fields = new ArrayList<>();
 	private ArrayList<Method> methods = new ArrayList<>();
 
 	public Module(Path path, String name) {
@@ -25,6 +26,35 @@ public abstract class Module extends NamedBlock {
 
 	public Path getPath() {
 		return path;
+	}
+
+	public String getFileName() {
+		return path.getFileName().toString();
+	}
+
+	public ArrayList<Import> getImports() {
+		return imports;
+	}
+
+	public void addImport(Import imprt) {
+		imports.add(imprt);
+	}
+
+	public Optional<Import> getImport(String className) {
+		for (Import imprt : imports) {
+			if (imprt.getClassName().equals(className)) {
+				return Optional.of(imprt);
+			}
+		}
+		return Optional.empty();
+	}
+
+	public ArrayList<Field> getFields() {
+		return fields;
+	}
+
+	public void addField(Field field) {
+		fields.add(field);
 	}
 
 	public ArrayList<Method> getMethods() {
@@ -46,23 +76,6 @@ public abstract class Module extends NamedBlock {
 
 	public boolean hasMethod(String name, Type... params) {
 		return getMethod(name, params).isPresent();
-	}
-
-	public Optional<Import> getImport(String className) {
-		for (Import imprt : imports) {
-			if (imprt.getClassName().equals(className)) {
-				return Optional.of(imprt);
-			}
-		}
-		return Optional.empty();
-	}
-
-	public ArrayList<Import> getImports() {
-		return imports;
-	}
-
-	public void addImport(Import imprt) {
-		imports.add(imprt);
 	}
 
 	public void executeStaticMethod(String name, ArrayList<Value> args) {

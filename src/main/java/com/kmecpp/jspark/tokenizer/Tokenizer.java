@@ -16,12 +16,12 @@ public class Tokenizer {
 
 	private Token lastToken;
 
+	//These values are used for errors so if the user peeks the next token, the proper behavior is for them to change
+	private int line = 1;
+	private int lineStartIndex = 0;
+
 	public Tokenizer(String program) {
 		this.chars = program.toCharArray();
-
-		//		for (String token : program.split(" ")) {
-		//			tokens.add(token.trim());
-		//		}
 	}
 
 	public static Tokenizer tokenize(String str) {
@@ -92,6 +92,9 @@ public class Tokenizer {
 
 		try {
 			while (current < chars.length && Character.isWhitespace(chars[current])) {
+				if (chars[current] == '\n') {
+					newLine();
+				}
 				current++;
 			}
 
@@ -105,6 +108,9 @@ public class Tokenizer {
 			if (c == '/') {
 				if (chars[current] == '/') {
 					while (current < chars.length && chars[current++] != '\n');
+					if (chars[current - 1] == '\n') {
+						newLine();
+					}
 					return getNext();
 				} else if (current < chars.length && chars[current] == '*') {
 					while (!(chars[current++] == '*' && chars[current] == '/'));
@@ -192,6 +198,73 @@ public class Tokenizer {
 	//	private boolean hasNextChar() {
 	//		return current < chars.length;
 	//	}
+
+	public int getLine() {
+		return line;
+	}
+
+	public int getColumn() {
+		return current - lineStartIndex;
+	}
+
+	public String getPreviousLine() {
+		int start;
+		for (start = lineStartIndex - 1; start > 0 && chars[--start] != '\n';);
+		return substring(start + 1, lineStartIndex - 1);
+	}
+
+	public String getCurrentLine() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = lineStartIndex; i < chars.length && chars[i] != '\n'; i++) {
+			sb.append(chars[i]);
+		}
+		return sb.toString();
+	}
+
+	//	private String getLineText(int lineOffset) {
+	//		for (int i = 0; lineOffset != 0; i += lineOffset > 0 ? 1 : -1) {
+	//			if (chars[current + i] == '\n') {
+	//
+	//			}
+	//		}
+	//		if (lineOffset < 0) {
+	//
+	//		} else {
+	//			int i = lineStartIndex;
+	//			for (; i < chars.length && lineOffset > 0; i++) {
+	//				if (chars[i] == '\n') {
+	//					lineOffset--;
+	//				}
+	//			} 
+	//			return substring()
+	//		}
+	//
+	//		//		int i = 0;
+	//		//		if (lineOffset < 0) {
+	//		//			
+	//		//		}else {
+	//		//			while(true) {
+	//		//				if(chars[i++] == '\n') {
+	//		//					lineOffset--;
+	//		//				}
+	//		//				if(lineOffset > 0) {
+	//		//					return substring(lineStartIndex, 
+	//		//				}
+	//		//			}
+	//		//		}
+	//	}
+
+	private String substring(int start, int end) {
+		int length = end - start;
+		char[] chars = new char[end - start];
+		System.arraycopy(this.chars, start, chars, 0, length);
+		return new String(chars);
+	}
+
+	private void newLine() {
+		line++;
+		lineStartIndex = current;
+	}
 
 	private static InvalidTokenException invalidToken(Token token, TokenType expected) {
 		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);

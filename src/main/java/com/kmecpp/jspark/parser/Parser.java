@@ -5,26 +5,29 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
+import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.data.Parameter;
 import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.Statement;
 import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.parser.statement.block.Method;
 import com.kmecpp.jspark.parser.statement.block.module.Class;
+import com.kmecpp.jspark.parser.statement.block.module.Field;
 import com.kmecpp.jspark.parser.statement.block.module.Module;
 import com.kmecpp.jspark.parser.statement.block.module.Static;
 import com.kmecpp.jspark.parser.statement.logic.MethodInvocation;
 import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.TokenType;
 import com.kmecpp.jspark.tokenizer.Tokenizer;
+import com.kmecpp.jspark.util.FileUtil;
 
 public class Parser {
 
 	private Tokenizer tokenizer;
 	private Module module;
 
-	public Parser(Path path, Tokenizer tokenizer) {
-		this.tokenizer = tokenizer;
+	public Parser(Path path) {
+		this.tokenizer = new Tokenizer(FileUtil.readFile(path));
 
 		Token keyword = tokenizer.read(TokenType.KEYWORD);
 		module = keyword.is(Keyword.STATIC) ? new Static(path, tokenizer.readName())
@@ -49,6 +52,26 @@ public class Parser {
 					String className = importStr.substring(index == -1 ? 0 : index);
 
 					module.addImport(new Import(importStr.toString(), className));
+				}
+
+				else if (token.isType()) {
+					//Parse Fields
+					Type type = token.getPrimitiveType();
+					String name = tokenizer.readName();
+					Expression expression = null;
+
+					if (tokenizer.peekNext().is(Symbol.EQUALS)) {
+						tokenizer.read(Symbol.EQUALS);
+
+						ArrayList<Token> expressionTokens = new ArrayList<>();
+						while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
+							expressionTokens.add(tokenizer.next());
+						}
+						expression = new Expression(expressionTokens);
+						tokenizer.read(Symbol.SEMICOLON);
+					}
+					tokenizer.read(Symbol.SEMICOLON);
+					module.addField(new Field(type, name, expression));
 				}
 
 				else if (token.is(Keyword.DEF)) {
@@ -85,10 +108,8 @@ public class Parser {
 
 			}
 
-			else if (token.is(Symbol.CLOSE_BRACE)) {
-				if (tokenizer.hasNext()) {
-					System.err.println("Encounted extra closing brace: " + token);
-				}
+			else if (token.is(Symbol.CLOSE_BRACE) && tokenizer.hasNext()) {
+				System.err.println("Encounted extra closing brace: " + token);
 			}
 
 			//			//SYMBOLS
@@ -107,7 +128,8 @@ public class Parser {
 			//			//			}
 
 			else {
-				System.err.println("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
+				System.err.println("ERRORED LINE: " + tokenizer.getCurrentLine());
+				error("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
 			}
 		}
 
@@ -154,7 +176,19 @@ public class Parser {
 		}
 		tokenizer.read(Symbol.CLOSE_BRACE);
 		return statements;
+	}
 
+	public Tokenizer getTokenizer() {
+		return tokenizer;
+	}
+	
+	
+	public Module getModule() {
+		return module;
+	}
+
+	private void error(String message) {
+		throw new ParseException(this, message);
 	}
 
 }

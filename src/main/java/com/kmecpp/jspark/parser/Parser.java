@@ -68,7 +68,6 @@ public class Parser {
 							expressionTokens.add(tokenizer.next());
 						}
 						expression = new Expression(expressionTokens);
-						tokenizer.read(Symbol.SEMICOLON);
 					}
 					tokenizer.read(Symbol.SEMICOLON);
 					module.addField(new Field(type, name, expression));
@@ -108,27 +107,13 @@ public class Parser {
 
 			}
 
-			else if (token.is(Symbol.CLOSE_BRACE) && tokenizer.hasNext()) {
-				System.err.println("Encounted extra closing brace: " + token);
+			else if (token.is(Symbol.CLOSE_BRACE)) {
+				if (tokenizer.hasNext()) {
+					System.err.println("Encounted extra closing brace: " + token);
+				}
 			}
 
-			//			//SYMBOLS
-			//			else if (token.getType() == TokenType.SYMBOL) {
-			//
-			//			}
-			//
-			//			//OPERATORS
-			//			else if (token.getType() == TokenType.OPERATOR) {
-			//
-			//			}
-			//
-			//			//			//LITERALS
-			//			//			else if (token.getType() == TokenType.LITERAL) {
-			//			//
-			//			//			}
-
 			else {
-				System.err.println("ERRORED LINE: " + tokenizer.getCurrentLine());
 				error("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
 			}
 		}
@@ -181,8 +166,7 @@ public class Parser {
 	public Tokenizer getTokenizer() {
 		return tokenizer;
 	}
-	
-	
+
 	public Module getModule() {
 		return module;
 	}

@@ -214,49 +214,91 @@ public class Tokenizer {
 	}
 
 	public String getCurrentLine() {
+		System.out.println("TEXT: " + getLineText(0));
+
 		StringBuilder sb = new StringBuilder();
-		for (int i = lineStartIndex; i < chars.length && chars[i] != '\n'; i++) {
-			sb.append(chars[i]);
-		}
+		//		for (int i = lineStartIndex; i < chars.length && chars[i] != '\n'; i++) {
+		//			sb.append(chars[i]);
+		//		}
 		return sb.toString();
 	}
 
-	//	private String getLineText(int lineOffset) {
-	//		for (int i = 0; lineOffset != 0; i += lineOffset > 0 ? 1 : -1) {
-	//			if (chars[current + i] == '\n') {
-	//
-	//			}
-	//		}
-	//		if (lineOffset < 0) {
-	//
-	//		} else {
-	//			int i = lineStartIndex;
-	//			for (; i < chars.length && lineOffset > 0; i++) {
-	//				if (chars[i] == '\n') {
-	//					lineOffset--;
-	//				}
-	//			} 
-	//			return substring()
-	//		}
-	//
-	//		//		int i = 0;
-	//		//		if (lineOffset < 0) {
-	//		//			
-	//		//		}else {
-	//		//			while(true) {
-	//		//				if(chars[i++] == '\n') {
-	//		//					lineOffset--;
-	//		//				}
-	//		//				if(lineOffset > 0) {
-	//		//					return substring(lineStartIndex, 
-	//		//				}
-	//		//			}
-	//		//		}
-	//	}
+	public String getLineText(int lineOffset) {
+		if (lineOffset < 0) {
+			int start;
+			for (start = lineStartIndex - 1; start > 0 && lineOffset < 0; start--) {
+				if (chars[start] != '\n') {
+
+				}
+			}
+			return substring(start + 1, lineStartIndex - 1);
+		}
+
+		else if (lineOffset == 0) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = lineStartIndex + 1; i < chars.length && chars[i] != '\n'; i++) {
+				sb.append(chars[i]);
+			}
+			return sb.toString();
+		}
+
+		else {
+			for (int start = lineStartIndex, end = lineStartIndex; end < chars.length && lineOffset >= 0; end++) {
+				if (chars[end] == '\n') {
+					lineOffset--;
+					if (lineOffset == 1) {
+						start = end;
+					}
+					System.out.println(lineOffset);
+					if (lineOffset == 0) {
+						System.out.println("Yo");
+						return substring(start, end);
+					}
+				}
+			}
+			return null;
+		}
+
+		//		int i = 0;
+		//		if (lineOffset < 0) {
+		//			
+		//		}else {
+		//			while(true) {
+		//				if(chars[i++] == '\n') {
+		//					lineOffset--;
+		//				}
+		//				if(lineOffset > 0) {
+		//					return substring(lineStartIndex, 
+		//				}
+		//			}
+		//		}
+	}
+
+	private int getLineStartIndex(int lineOffset) {
+		int index = lineStartIndex;
+
+		if (line + lineOffset < 0) {
+			throw new IllegalArgumentException("Invalid line index: " + (line + lineOffset));
+		}
+
+		if (lineOffset > 0) {
+			while (lineOffset > 0) {
+				if (chars[index++] == '\n') {
+					lineOffset--;
+				}
+				if (index >= chars.length) {
+					throw new IllegalArgumentException("Invalid line index: " + (line + lineOffset));
+				}
+			}
+		} else if (lineOffset < 0) {
+
+		}
+		return index;
+	}
 
 	private String substring(int start, int end) {
 		int length = end - start;
-		char[] chars = new char[end - start];
+		char[] chars = new char[length];
 		System.arraycopy(this.chars, start, chars, 0, length);
 		return new String(chars);
 	}

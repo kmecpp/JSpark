@@ -1,6 +1,6 @@
 static Main {
 
-	string name;
+	string name = "hi";
 	int id;
 
 	def main() {
@@ -11,5 +11,6 @@ static Main {
 		Console.println(s);
 	}
 	
-	//Shits a dick
+	fucka dick
+	
 }

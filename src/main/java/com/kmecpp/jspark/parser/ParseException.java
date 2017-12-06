@@ -20,12 +20,12 @@ public class ParseException extends RuntimeException {
 
 	@Override
 	public String toString() {
-
 		return getClass().getSimpleName() + " at (" + module.getFileName() + ":" + tokenizer.getLine() + "): " + message
 		//				+ "\n\t" + (tokenizer.getLine() - 2) + ": " + tokenizer.getLineText(-2)
 		//				+ "\n\t" + (tokenizer.getLine() - 1) + ": " + tokenizer.getLineText(-1)
 		//				+ "\n\t" + tokenizer.getLine() + ": " + tokenizer.getLineText(0)
-				+ "\n\t" + StringUtil.repeat('-', 3 + tokenizer.getColumn()) + "^"
+				+ tokenizer.getContext(3, true, "\n\t")
+				+ "\n\t" + StringUtil.repeat('-', 6 + tokenizer.getColumn() - tokenizer.getCurrentToken().getText().length()) + "^"
 				+ "\n\t";
 	}
 

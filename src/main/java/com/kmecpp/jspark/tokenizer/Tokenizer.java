@@ -14,7 +14,8 @@ public class Tokenizer {
 	private char[] chars;
 	private int current;
 
-	private Token lastToken;
+	private Token peekedToken;
+	private Token currentToken;
 
 	//These values are used for errors so if the user peeks the next token, the proper behavior is for them to change
 	private int line = 1;
@@ -73,20 +74,27 @@ public class Tokenizer {
 	}
 
 	public Token peekNext() {
-		if (lastToken == null) {
-			lastToken = getNext();
+		if (peekedToken == null) {
+			peekedToken = getNext();
 		}
-		return lastToken;
+		return peekedToken;
 	}
 
 	public Token next() {
-		return getNext();
+		return currentToken = getNext();
 	}
 
+	public Token getCurrentToken() {
+		return currentToken;
+	}
+
+	/*
+	 * Implementation
+	 */
 	private Token getNext() {
-		if (lastToken != null) {
-			Token token = lastToken;
-			lastToken = null;
+		if (peekedToken != null) {
+			Token token = peekedToken;
+			peekedToken = null;
 			return token;
 		}
 
@@ -207,97 +215,33 @@ public class Tokenizer {
 		return current - lineStartIndex;
 	}
 
-	//	public String getPreviousLine() {
-	//		int start;
-	//		for (start = lineStartIndex - 1; start > 0 && chars[--start] != '\n';);
-	//		return substring(start + 1, lineStartIndex - 1);
-	//	}
-
 	public String getCurrentLine() {
-		return getContext(0);
-		//		System.out.println("TEXT: " + getLineText(0));
-		//
-		//		StringBuilder sb = new StringBuilder();
-		//		//		for (int i = lineStartIndex; i < chars.length && chars[i] != '\n'; i++) {
-		//		//			sb.append(chars[i]);
-		//		//		}
-		//		return sb.toString();
+		return getContext(0, false);
+
 	}
 
-	//	public String getLineText(int lineOffset) {
-	//		if (lineOffset < 0) {
-	//			int start;
-	//			for (start = lineStartIndex - 1; start > 0 && lineOffset < 0; start--) {
-	//				if (chars[start] != '\n') {
-	//
-	//				}
-	//			}
-	//			return substring(start + 1, lineStartIndex - 1);
-	//		}
-	//
-	//		else if (lineOffset == 0) {
-	//			StringBuilder sb = new StringBuilder();
-	//			for (int i = lineStartIndex + 1; i < chars.length && chars[i] != '\n'; i++) {
-	//				sb.append(chars[i]);
-	//			}
-	//			return sb.toString();
-	//		}
-	//
-	//		else {
-	//			for (int start = lineStartIndex, end = lineStartIndex; end < chars.length && lineOffset >= 0; end++) {
-	//				if (chars[end] == '\n') {
-	//					lineOffset--;
-	//					if (lineOffset == 1) {
-	//						start = end;
-	//					}
-	//					System.out.println(lineOffset);
-	//					if (lineOffset == 0) {
-	//						System.out.println("Yo");
-	//						return substring(start, end);
-	//					}
-	//				}
-	//			}
-	//			return null;
-	//		}
-	//
-	//		//		int i = 0;
-	//		//		if (lineOffset < 0) {
-	//		//			
-	//		//		}else {
-	//		//			while(true) {
-	//		//				if(chars[i++] == '\n') {
-	//		//					lineOffset--;
-	//		//				}
-	//		//				if(lineOffset > 0) {
-	//		//					return substring(lineStartIndex, 
-	//		//				}
-	//		//			}
-	//		//		}
-	//	}
-
-	public static void main(String[] args) {
-		Tokenizer t = new Tokenizer(
-				"Line 1 \nLine 2 \nLine 3 \nLine 4 \nLine 5");
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println(t.next());
-		System.out.println("Get Context: ");
-		System.out.println(t.getContext(3));
+	public String getContext(int lines, boolean showLineNumbers) {
+		return getContext(lines, showLineNumbers, "");
 	}
 
-	public String getContext(int lines) {
+	public String getContext(int lines, boolean showLineNumbers, String linePrefix) {
+		//Find the starting position
 		int start = current;
-		for (int i = current; i > 0;) {
-			if (--i <= 0 || (chars[i] == '\n' && lines-- <= 1)) {
+		for (int i = current; i >= 0 && lines > 0; i--) {
+			if (chars[i] == '\n') {
+				lines--;
+				if (lines == 0) {
+					start = i + 1; //Don't include this newline
+					break;
+				}
+			}
+			if (i == 0) {
 				start = i;
+				break;
 			}
 		}
 
+		//Find the ending position
 		int end = current;
 		for (int i = current; i < chars.length; i++) {
 			if (chars[i] == '\n') {
@@ -305,8 +249,20 @@ public class Tokenizer {
 				break;
 			}
 		}
-		System.out.println(start + ", " + end);
-		return substring(start, end);
+
+		//Calculate line numbers if necessary
+		if (showLineNumbers) {
+			StringBuilder result = new StringBuilder();
+			String[] linesArr = substring(start, end).split("\n");
+			int currentLine = this.line - linesArr.length + 1;
+			for (String line : linesArr) {
+				result.append(linePrefix + currentLine + ": " + line);
+				currentLine++;
+			}
+			return result.toString();
+		} else {
+			return substring(start, end);
+		}
 	}
 
 	private String substring(int start, int end) {

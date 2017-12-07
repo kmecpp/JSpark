@@ -19,7 +19,7 @@ public class Tokenizer {
 
 	//These values are used for errors so if the user peeks the next token, the proper behavior is for them to change
 	private int line = 1;
-	private int lineStartIndex = 0;
+	private int lineStartIndex = 0; //This value is set to the index of every \n character
 
 	public Tokenizer(String program) {
 		this.chars = program.toCharArray();
@@ -216,8 +216,11 @@ public class Tokenizer {
 	}
 
 	public String getCurrentLine() {
-		return getContext(0, false);
-
+		StringBuilder sb = new StringBuilder();
+		for (int i = lineStartIndex + 1; i < chars.length && chars[i] != '\n'; i++) {
+			sb.append(chars[i]);
+		}
+		return sb.toString();
 	}
 
 	public String getContext(int lines, boolean showLineNumbers) {

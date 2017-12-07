@@ -55,22 +55,7 @@ public class Parser {
 				}
 
 				else if (token.isType()) {
-					//Parse Fields
-					Type type = token.getPrimitiveType();
-					String name = tokenizer.readName();
-					Expression expression = null;
-
-					if (tokenizer.peekNext().is(Symbol.EQUALS)) {
-						tokenizer.read(Symbol.EQUALS);
-
-						ArrayList<Token> expressionTokens = new ArrayList<>();
-						while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
-							expressionTokens.add(tokenizer.next());
-						}
-						expression = new Expression(expressionTokens);
-					}
-					tokenizer.read(Symbol.SEMICOLON);
-					module.addField(new Field(type, name, expression));
+					module.addField(readVariableDeclaration()); //Parse Fields
 				}
 
 				else if (token.is(Keyword.DEF)) {
@@ -109,7 +94,7 @@ public class Parser {
 
 			else if (token.is(Symbol.CLOSE_BRACE)) {
 				if (tokenizer.hasNext()) {
-					System.err.println("Encounted extra closing brace: " + token);
+					error("Encounted extra closing brace: " + token);
 				}
 			}
 
@@ -117,7 +102,7 @@ public class Parser {
 				error("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
 			}
 		}
-
+		System.out.println(module.getFields());
 		return module;
 	}
 
@@ -125,6 +110,10 @@ public class Parser {
 		ArrayList<Statement> statements = new ArrayList<>();
 		while (!tokenizer.peekNext().is(Symbol.CLOSE_BRACE)) {
 			Token token = tokenizer.next();
+
+			if (token.isType()) {
+				readVariableDeclaration();
+			}
 
 			if (token.getType() == TokenType.IDENTIFIER) {
 				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
@@ -161,6 +150,24 @@ public class Parser {
 		}
 		tokenizer.read(Symbol.CLOSE_BRACE);
 		return statements;
+	}
+
+	public Field readVariableDeclaration() {
+		Type type = tokenizer.getCurrentToken().getPrimitiveType();
+		String name = tokenizer.readName();
+		Expression expression = null;
+
+		if (tokenizer.peekNext().is(Symbol.EQUALS)) {
+			tokenizer.read(Symbol.EQUALS);
+
+			ArrayList<Token> expressionTokens = new ArrayList<>();
+			while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
+				expressionTokens.add(tokenizer.next());
+			}
+			expression = new Expression(expressionTokens);
+		}
+		tokenizer.read(Symbol.SEMICOLON);
+		return new Field(type, name, expression);
 	}
 
 	public Tokenizer getTokenizer() {

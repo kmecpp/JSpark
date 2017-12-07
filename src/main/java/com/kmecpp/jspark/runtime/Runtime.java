@@ -22,7 +22,6 @@ public class Runtime {
 					throw new IllegalStateException("Main method already defined in '" + main.getName() + "'");
 				}
 			}
-			System.out.println(module.getPath());
 			this.modules.put(module.getName(), module);
 		}
 	}

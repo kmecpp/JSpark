@@ -28,4 +28,9 @@ public class Field {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return type.getIdentifier() + " " + name + " = " + value;
+	}
+
 }

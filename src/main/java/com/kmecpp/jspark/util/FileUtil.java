@@ -8,6 +8,8 @@ import java.nio.file.Path;
 
 public class FileUtil {
 
+	private static final int BUFFER_SIZE = 8192;
+
 	public static String readFile(Path path) {
 		try {
 			return readStream(path.toUri().toURL().openStream());
@@ -28,7 +30,7 @@ public class FileUtil {
 	private static String readStream(InputStream inputStream) throws IOException {
 		InputStreamReader reader = new InputStreamReader(inputStream);
 		StringWriter sw = new StringWriter();
-		char[] buffer = new char[4096];
+		char[] buffer = new char[BUFFER_SIZE];
 		int pos = 0;
 		while ((pos = reader.read(buffer)) != -1) {
 			sw.write(buffer, 0, pos);

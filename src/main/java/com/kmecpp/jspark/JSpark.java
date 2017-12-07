@@ -46,17 +46,17 @@ public class JSpark {
 				.map((p) -> {
 					long s = System.nanoTime();
 					Module module = new Parser(p).parseModule();
-					System.out.println("Parsed File: " + module.getName() + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
+					System.out.println("Parsed File: " + path.relativize(p) + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
 					return module;
 				})
 				.collect(Collectors.toCollection(ArrayList::new));
-		System.out.println("Compile Time: " + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("COMPILED SUCCESSFULLY! (" + (System.currentTimeMillis() - start) + "ms)");
 
 		System.out.println();
 		System.out.println("Running program...");
 		long runStart = System.nanoTime();
 		(runtime = new Runtime(modules)).start();
-		System.out.println();
+		System.out.println("_____________________________________");
 		System.out.println("Runtime: " + (System.nanoTime() - runStart) / 1000000F + "ms");
 	}
 

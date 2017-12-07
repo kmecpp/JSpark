@@ -32,12 +32,12 @@ public class Expression {
 	//	}
 
 	public Value evaluate(HashMap<String, Value> values) {
-		long start = System.nanoTime();
+		//		long start = System.nanoTime();
 		Stack<Token> operators = new Stack<>();
 		Stack<Token> operands = new Stack<>();
 
 		for (Token token : tokens) {
-			System.out.println(operators + ", " + operands);
+			//			System.out.println(operators + ", " + operands);
 			if (token.is(Symbol.OPEN_PAREN)) {
 				operators.push(token);
 			} else if (token.getType() == TokenType.OPERATOR) {
@@ -57,8 +57,8 @@ public class Expression {
 		while (!operators.isEmpty()) {
 			process(operands, operators);
 		}
-		System.out.println(operators + ", " + operands);
-		System.out.println("Evaluation Time: " + (System.nanoTime()  - start) / 1000000F + "ms");
+		//		System.out.println(operators + ", " + operands);
+		//		System.out.println("Evaluation Time: " + (System.nanoTime()  - start) / 1000000F + "ms");
 		if (operands.size() == 1) {
 			Token value = operands.pop();
 			if (value.isNumber()) {
@@ -81,7 +81,7 @@ public class Expression {
 	}
 
 	private static Token process(Stack<Token> operands, Stack<Token> operators) {
-		System.out.println(operators + ", " + operands + "     <----");
+		//		System.out.println(operators + ", " + operands + "     <----");
 		Operator operator = operators.pop().asOperator();
 
 		Token post = operands.pop();

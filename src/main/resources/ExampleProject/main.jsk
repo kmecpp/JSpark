@@ -4,11 +4,13 @@ static Main {
 	int id;
 
 	def main() {
-		Console.println("Hello World!");
+		string message = "hi";
+		Console.println(message);
 	}
 	
 	def print(string s){
 		Console.println(s);
 	}
-	
+
+
 }

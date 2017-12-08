@@ -55,7 +55,7 @@ public class Parser {
 				}
 
 				else if (token.isType()) {
-					module.addField(readVariableDeclaration()); //Parse Fields
+					module.addField(readVariableDeclaration(module)); //Parse Fields
 				}
 
 				else if (token.is(Keyword.DEF)) {
@@ -112,7 +112,7 @@ public class Parser {
 			Token token = tokenizer.next();
 
 			if (token.isType()) {
-				readVariableDeclaration();
+				readVariableDeclaration(parent);
 			}
 
 			if (token.getType() == TokenType.IDENTIFIER) {
@@ -135,7 +135,7 @@ public class Parser {
 							}
 
 						}
-						params.add(new Expression(expression));
+						params.add(new Expression(module, expression));
 					}
 					tokenizer.read(Symbol.CLOSE_PAREN);
 					System.out.println(new MethodInvocation(parent, target, method, params));
@@ -152,7 +152,7 @@ public class Parser {
 		return statements;
 	}
 
-	public Field readVariableDeclaration() {
+	public Field readVariableDeclaration(AbstractBlock block) {
 		Type type = tokenizer.getCurrentToken().getPrimitiveType();
 		String name = tokenizer.readName();
 		Expression expression = null;
@@ -164,7 +164,7 @@ public class Parser {
 			while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
 				expressionTokens.add(tokenizer.next());
 			}
-			expression = new Expression(expressionTokens);
+			expression = new Expression(block, expressionTokens);
 		}
 		tokenizer.read(Symbol.SEMICOLON);
 		return new Field(type, name, expression);

@@ -5,11 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.JSpark;
-import com.kmecpp.jspark.language.Keyword;
-import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.language.builtin.Console;
 import com.kmecpp.jspark.parser.Expression;
-import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.Statement;
 import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
@@ -48,7 +45,7 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public void execute() {
-		Value target = Keyword.THIS.is(this.target) ? new Value(Type.OBJECT, parent.getModule()) : parent.getVariable(this.target);
+		//		Value target = Keyword.THIS.is(this.target) ? new Value(Type.OBJECT, parent.getModule()) : parent.getVariable(this.target);
 
 		if (target == null) {
 			Optional<Import> imprt = parent.getModule().getImport(this.target);

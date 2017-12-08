@@ -4,7 +4,7 @@ static Main {
 	int id;
 
 	def main() {
-		Console.println("wwef bob!");
+		Console.println("Hello World!");
 		
 		//string message = "hi";
 		//Console.println(message);

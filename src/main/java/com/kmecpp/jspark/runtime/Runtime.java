@@ -1,5 +1,6 @@
 package com.kmecpp.jspark.runtime;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,10 +9,11 @@ import com.kmecpp.jspark.parser.statement.block.module.Static;
 
 public class Runtime {
 
+	private Path path;
 	private HashMap<String, Module> modules;
 	private Static main;
 
-	public Runtime(ArrayList<Module> modules) {
+	public Runtime(Path path, ArrayList<Module> modules) {
 		this.modules = new HashMap<>();
 
 		for (Module module : modules) {
@@ -28,6 +30,10 @@ public class Runtime {
 
 	public Module getModule(String name) {
 		return modules.get(name);
+	}
+
+	public Path getProjectPath() {
+		return path;
 	}
 
 	public void start() {

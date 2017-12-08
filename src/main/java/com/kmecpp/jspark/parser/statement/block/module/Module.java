@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.statement.Import;
@@ -26,6 +27,10 @@ public abstract class Module extends NamedBlock {
 
 	public Path getPath() {
 		return path;
+	}
+
+	public String getPackage() {
+		return JSpark.getRuntime().getProjectPath().relativize(path).toString();
 	}
 
 	public String getFileName() {

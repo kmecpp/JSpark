@@ -11,7 +11,7 @@ public class AbstractBlock extends Statement {
 
 	protected final AbstractBlock parent;
 	protected final ArrayList<Statement> statements;
-	protected final HashMap<String, Variable> variables;
+	protected final HashMap<String, Object> variables;
 
 	//	public AbstractBlock() {
 	//		this(new ArrayList<>());
@@ -31,8 +31,12 @@ public class AbstractBlock extends Statement {
 		return parent == null ? (Module) this : parent.getModule();
 	}
 
-	public Variable getVariable(String name) {
-		Variable var = variables.get(name);
+	public HashMap<String, Object> getVariables() {
+		return variables;
+	}
+
+	public Object getVariable(String name) {
+		Object var = variables.get(name);
 		if (var == null && parent != null) {
 			return parent.getVariable(name); //This handles variable scope
 		}

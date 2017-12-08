@@ -9,6 +9,7 @@ import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
 import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.data.Value;
+import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.tokenizer.LiteralToken;
 import com.kmecpp.jspark.tokenizer.Token;
 import com.kmecpp.jspark.tokenizer.TokenType;
@@ -16,22 +17,26 @@ import com.kmecpp.jspark.tokenizer.TokenType;
 public class Expression {
 
 	private ArrayList<Token> tokens;
+	private HashMap<String, Object> variables;
 
-	public Expression(ArrayList<Token> tokens) {
+	public Expression(AbstractBlock block, ArrayList<Token> tokens) {
 		this.tokens = tokens;
+		this.variables = block.getVariables();
 	}
 
-	public Value evaluate() {
-		return evaluate(new HashMap<>());
+	public ArrayList<Token> getTokens() {
+		return tokens;
 	}
 
-	//	public static void main(String[] args) {
-	//		String program = "\"Hi\" + 1 + (3 - 1 + 8) / 2^2 - \"Hi\" ";//"3.43 - (4 + 5) ";
-	//		System.out.println(new Tokenizer(program).readAll());
-	//		System.out.println(new Expression(new Tokenizer(program).readAll()).evaluate());
+	public HashMap<String, Object> getVariables() {
+		return variables;
+	}
+
+	//	public Value evaluate() {
+	//		return evaluate(new HashMap<>());
 	//	}
 
-	public Value evaluate(HashMap<String, Value> values) {
+	public Value evaluate() {
 		//		long start = System.nanoTime();
 		Stack<Token> operators = new Stack<>();
 		Stack<Token> operands = new Stack<>();

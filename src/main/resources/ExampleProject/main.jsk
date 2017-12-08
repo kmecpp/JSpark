@@ -4,8 +4,10 @@ static Main {
 	int id;
 
 	def main() {
-		string message = "hi";
-		Console.println(message);
+		Console.println("wwef bob!");
+		
+		//string message = "hi";
+		//Console.println(message);
 	}
 	
 	def print(string s){

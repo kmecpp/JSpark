@@ -121,7 +121,12 @@ public class Tokenizer {
 					}
 					return getNext();
 				} else if (current < chars.length && chars[current] == '*') {
-					while (!(chars[current++] == '*' && chars[current] == '/'));
+					int start = line;
+					while (!(chars[current++] == '*' && chars[current] == '/')) {
+						if (current == chars.length) {
+							throw new RuntimeException("Multiline comment on line " + start + " was never closed!");
+						}
+					}
 					current++;
 					return getNext();
 				}
@@ -188,11 +193,20 @@ public class Tokenizer {
 			}
 
 			else {
-				throw new InvalidTokenException("Unknown token: '" + c + "'");
+				throw new InvalidTokenException("Unknown token: '" + getCharDisplay(c) + "'");
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new RuntimeException("Unexpected end of file: '" + chars[chars.length - 1] + "'", e);
+			throw new RuntimeException("Unexpected end of file: '" + getCharDisplay(chars[chars.length - 1]) + "'", e);
 		}
+	}
+
+	public String getCharDisplay(char c) {
+		if (c == '\n') {
+			return "\\n";
+		} else if (c == '\t') {
+			return "\\t";
+		}
+		return String.valueOf(c);
 	}
 
 	//	public char offset(int offset) {

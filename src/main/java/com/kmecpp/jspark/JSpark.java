@@ -19,9 +19,6 @@ public class JSpark {
 
 	private static Runtime runtime;
 
-	String s = "";
-	String b = s + 3;
-
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		// Tokenizer tokenizer = Tokenizer.tokenize("HelloWorld = \"shit\" 304 and
 		// 3.40");

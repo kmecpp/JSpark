@@ -34,6 +34,31 @@ IDEAS:
 
 #################################
 
+- Simultaneous var store and existence check
+
+	if(Variable var = block.getVariable(target) != null){
+	
+	}
+	
+	if(Variable var = block.getVariable(target)){
+	
+	}
+	
+	while(String line = br.readLine()){
+	
+	}
+		
+#################################
+
+- Null Values?
+
+Have null but impossible to throw NPE?
+
+
+#################################
+
+
+
 case class Person (String name, int age);
 
 class Cat(String name, int age){

@@ -1,14 +1,12 @@
 package com.kmecpp.jspark.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.data.Value;
+import com.kmecpp.jspark.parser.data.Variable;
 import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.tokenizer.LiteralToken;
 import com.kmecpp.jspark.tokenizer.Token;
@@ -16,27 +14,28 @@ import com.kmecpp.jspark.tokenizer.TokenType;
 
 public class Expression {
 
+	private AbstractBlock block;
 	private ArrayList<Token> tokens;
-	private HashMap<String, Object> variables;
 
 	public Expression(AbstractBlock block, ArrayList<Token> tokens) {
+		this.block = block;
 		this.tokens = tokens;
-		this.variables = block.getVariables();
+		//		this.variables = block.getVariables();
 	}
 
 	public ArrayList<Token> getTokens() {
 		return tokens;
 	}
 
-	public HashMap<String, Object> getVariables() {
-		return variables;
+	public AbstractBlock getBlock() {
+		return block;
 	}
 
 	//	public Value evaluate() {
 	//		return evaluate(new HashMap<>());
 	//	}
 
-	public Value evaluate() {
+	public Object evaluate() {
 		//		long start = System.nanoTime();
 		Stack<Token> operators = new Stack<>();
 		Stack<Token> operands = new Stack<>();
@@ -69,16 +68,25 @@ public class Expression {
 			if (value.isNumber()) {
 				double number = value.asDouble();
 				if (number % 1 == 0) {
-					return new Value(Type.INTEGER, (int) number);
+					return (int) number;
+					//					return new Value(Type.INTEGER, (int) number);
 				} else {
-					return new Value(Type.DECIMAL, value);
+					return number;
+					//					return new Value(Type.DECIMAL, number);
 				}
 			} else if (value.isString()) {
-				return new Value(Type.STRING, value.asString());
+				return value.asString();
+				//				return new Value(Type.STRING, value.asString());
 			} else if (value.isBoolean()) {
-				return new Value(Type.STRING, value.asBoolean());
+				return value.asBoolean();
+				//				return new Value(Type.STRING, value.asBoolean());
 			} else {
-				throw new RuntimeException("Unknown type: " + value);
+				Variable var = block.getVariable(value.getText());
+				if (var != null) {
+					return var.getValue();
+				} else {
+					throw new RuntimeException("Unknown type: " + value);
+				}
 			}
 		} else {
 			throw new RuntimeException("Expression could not be evaluated! Stack: " + operands + ", " + operators);
@@ -96,7 +104,6 @@ public class Expression {
 			return operands.push(new LiteralToken(operator.apply(first.asString(), post.asString())));
 		} else {
 			return operands.push(new LiteralToken(operator.apply(first.asDouble(), post.asDouble())));
-
 		}
 	}
 

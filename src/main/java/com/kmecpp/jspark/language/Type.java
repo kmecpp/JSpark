@@ -2,23 +2,29 @@ package com.kmecpp.jspark.language;
 
 public enum Type {
 
-	INTEGER("int"),
-	DECIMAL("dec"),
-	STRING("string"),
-	BOOLEAN("boolean"),
+	INTEGER("int", 0),
+	DECIMAL("dec", 0.0),
+	STRING("string", ""),
+	BOOLEAN("boolean", false),
 
-	OBJECT(null),
+	OBJECT(null, null),
 
 	;
 
 	private final String identifier;
+	private final Object defaultValue;
 
-	private Type(String identifier) {
+	private Type(String identifier, Object defaultValue) {
 		this.identifier = identifier;
+		this.defaultValue = defaultValue;
 	}
 
 	public String getIdentifier() {
 		return identifier;
+	}
+
+	public Object getDefaultValue() {
+		return defaultValue;
 	}
 
 	public static boolean isPrimitive(String text) {

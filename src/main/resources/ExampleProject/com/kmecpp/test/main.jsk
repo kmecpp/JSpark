@@ -1,10 +1,10 @@
 static Main {
 
-	string name = "hi";
+	string name = "Hello World!";
 	int id;
 
 	def main() {
-		Console.println("Hello World!");
+		Console.println(name);
 		
 		//string message = "hi";
 		//Console.println(message);
@@ -12,6 +12,8 @@ static Main {
 	
 	def print(string s){
 		Console.println(s);
+		
+		int i = 3 + Integer.of(3).abs();
 	}
 
 

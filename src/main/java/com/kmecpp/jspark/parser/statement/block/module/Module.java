@@ -1,14 +1,17 @@
 package com.kmecpp.jspark.parser.statement.block.module;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.data.Value;
+import com.kmecpp.jspark.parser.data.Variable;
 import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.block.Method;
 import com.kmecpp.jspark.parser.statement.block.NamedBlock;
@@ -16,13 +19,15 @@ import com.kmecpp.jspark.parser.statement.block.NamedBlock;
 public abstract class Module extends NamedBlock {
 
 	private Path path;
+	private String packageName;
 	private ArrayList<Import> imports = new ArrayList<>();
-	private ArrayList<Field> fields = new ArrayList<>();
+	//	private ArrayList<Field> fields = new ArrayList<>();
 	private ArrayList<Method> methods = new ArrayList<>();
 
 	public Module(Path path, String name) {
 		super(name, null);
 		this.path = path;
+		this.packageName = JSpark.getProjectPath().relativize(path).getParent().toString().replace(File.separator, ".");
 	}
 
 	public Path getPath() {
@@ -30,11 +35,15 @@ public abstract class Module extends NamedBlock {
 	}
 
 	public String getPackage() {
-		return JSpark.getRuntime().getProjectPath().relativize(path).toString();
+		return packageName;
 	}
 
 	public String getFileName() {
 		return path.getFileName().toString();
+	}
+
+	public String getFullName() {
+		return (packageName.isEmpty() ? "" : packageName + ".") + name;
 	}
 
 	public ArrayList<Import> getImports() {
@@ -54,13 +63,14 @@ public abstract class Module extends NamedBlock {
 		return Optional.empty();
 	}
 
-	public ArrayList<Field> getFields() {
-		return fields;
+	public Collection<Variable> getFields() {
+		//		return fields;
+		return getVars();
 	}
 
-	public void addField(Field field) {
-		fields.add(field);
-	}
+	//	public void addField(Field field) {
+	//		fields.add(field);
+	//	}
 
 	public ArrayList<Method> getMethods() {
 		return methods;

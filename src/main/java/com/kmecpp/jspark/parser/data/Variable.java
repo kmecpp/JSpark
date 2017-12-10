@@ -21,7 +21,7 @@ public class Variable extends Value {
 
 	@Override
 	public String toString() {
-		return type + " " + name + (value == null ? "" : " = " + value);
+		return type.getIdentifier() + " " + name + " = " + value;
 	}
 
 }

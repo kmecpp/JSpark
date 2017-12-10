@@ -1,7 +1,7 @@
 package com.kmecpp.jspark.compiler.transpiler;
 
 import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.statement.block.module.Field;
+import com.kmecpp.jspark.parser.data.Variable;
 import com.kmecpp.jspark.parser.statement.block.module.Module;
 
 public class JavaTranspiler {
@@ -15,10 +15,10 @@ public class JavaTranspiler {
 	public String transpile() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("package " + module.getFileName());
+		sb.append("package " + module.getPackage());
 
 		sb.append("public class " + module.getName() + "{");
-		for (Field field : module.getFields()) {
+		for (Variable field : module.getFields()) {
 			sb.append("private " + getJavaType(field.getType()));
 		}
 		sb.append("}");

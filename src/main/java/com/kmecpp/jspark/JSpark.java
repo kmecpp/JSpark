@@ -18,6 +18,7 @@ import com.kmecpp.jspark.util.FileUtil;
 public class JSpark {
 
 	private static Runtime runtime;
+	private static Path projectPath;
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		// Tokenizer tokenizer = Tokenizer.tokenize("HelloWorld = \"shit\" 304 and
@@ -28,22 +29,37 @@ public class JSpark {
 		// }
 		System.out.println("Loading source files");
 		//		runProgram(IOUtil.readString(JSpark.class.getResource("/example.jsk")));
+		projectPath = Paths.get(JSpark.class.getResource("/ExampleProject").toURI());
 
-		runProject(Paths.get(JSpark.class.getResource("/ExampleProject").toURI()));
+		runProject(projectPath);
 	}
 
 	public static Runtime getRuntime() {
 		return runtime;
 	}
 
+	public static Path getProjectPath() {
+		return projectPath;
+	}
+
 	public static void runProject(Path path) throws IOException {
 		long start = System.currentTimeMillis();
+		System.out.println("Compiling Project: " + path);
+		//		ArrayList<Module> modules = new ArrayList<>();
+		//		for (File file : FileUtil.getFiles(path.toFile())) {
+		//			long s = System.nanoTime();
+		//			Module module = new Parser(file.toPath()).parseModule();
+		//			System.out.println("Package: " + module.getPackage());
+		//			System.out.println("Parsed File: " + path.relativize(file.toPath()) + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
+		//			modules.add(module);
+		//	}
+
 		ArrayList<Module> modules = Files.walk(path)
 				.filter(Files::isRegularFile)
 				.map((p) -> {
 					long s = System.nanoTime();
 					Module module = new Parser(p).parseModule();
-					System.out.println("Parsed File: " + path.relativize(p) + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
+					System.out.println("Parsed Module: " + module.getFullName() + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
 					return module;
 				})
 				.collect(Collectors.toCollection(ArrayList::new));
@@ -52,7 +68,7 @@ public class JSpark {
 		System.out.println();
 		System.out.println("Running program...");
 		long runStart = System.nanoTime();
-		(runtime = new Runtime(path, modules)).start();
+		(runtime = new Runtime(modules)).start();
 		System.out.println("_____________________________________");
 		System.out.println("Runtime: " + (System.nanoTime() - runStart) / 1000000F + "ms");
 	}

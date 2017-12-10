@@ -160,7 +160,7 @@ public class Token {
 		return Double.parseDouble(string);
 	}
 
-	public boolean isDouble() {
+	public boolean isDecimal() {
 		return type == TokenType.DECIMAL_LITERAL;
 		//		try {
 		//			asDouble();
@@ -171,7 +171,7 @@ public class Token {
 	}
 
 	public boolean isNumber() {
-		return isDouble();
+		return isInt() || isDecimal();
 	}
 
 	@Override

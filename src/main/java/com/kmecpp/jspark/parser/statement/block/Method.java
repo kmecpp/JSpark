@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.data.Parameter;
-import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.statement.Statement;
+import com.kmecpp.jspark.runtime.Value;
 
 public class Method extends NamedBlock {
 

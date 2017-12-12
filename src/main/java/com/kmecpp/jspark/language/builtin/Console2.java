@@ -2,9 +2,9 @@ package com.kmecpp.jspark.language.builtin;
 
 import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.parser.data.Parameter;
-import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.statement.block.Method;
 import com.kmecpp.jspark.parser.statement.block.module.Class;
+import com.kmecpp.jspark.runtime.Value;
 
 public class Console2 extends Class {
 

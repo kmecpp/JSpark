@@ -13,11 +13,12 @@ import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.Statement;
 import com.kmecpp.jspark.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.parser.statement.block.module.Module;
+import com.kmecpp.jspark.runtime.Value;
 
 public class MethodInvocation extends Statement {
 
 	private AbstractBlock block;
-	private Variable capture;
+	private Value capture;
 
 	private String target;
 	private String method;
@@ -27,7 +28,7 @@ public class MethodInvocation extends Statement {
 		this(block, null, target, method, params);
 	}
 
-	public MethodInvocation(AbstractBlock block, Variable capture, String target, String method, ArrayList<Expression> params) {
+	public MethodInvocation(AbstractBlock block, Value capture, String target, String method, ArrayList<Expression> params) {
 		this.block = block;
 		this.capture = capture;
 		this.target = target;
@@ -39,7 +40,7 @@ public class MethodInvocation extends Statement {
 		return block;
 	}
 
-	public Variable getCapture() {
+	public Value getCapture() {
 		return capture;
 	}
 

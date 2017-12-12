@@ -2,10 +2,15 @@ static Main {
 
 	string name = "Hello World!";
 	int id;
+	
+	class Person {
+		
+	}
 
 	def main() {
-		Console.println(name);
+		int i = 3 + 9;
 		
+		Console.println(i);
 		//string message = "hi";
 		//Console.println(message);
 	}

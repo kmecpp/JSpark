@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.data.Value;
 import com.kmecpp.jspark.parser.data.Variable;
 import com.kmecpp.jspark.parser.statement.Import;
 import com.kmecpp.jspark.parser.statement.block.Method;
 import com.kmecpp.jspark.parser.statement.block.NamedBlock;
+import com.kmecpp.jspark.runtime.Value;
 
 public abstract class Module extends NamedBlock {
 

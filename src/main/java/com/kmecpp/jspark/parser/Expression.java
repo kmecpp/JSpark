@@ -81,9 +81,10 @@ public class Expression {
 				return value.asBoolean();
 				//				return new Value(Type.STRING, value.asBoolean());
 			} else {
+				//If token is a variable
 				Variable var = block.getVariable(value.getText());
 				if (var != null) {
-					return var.getValue();
+					return var.evaluate();
 				} else {
 					throw new RuntimeException("Unknown type: " + value);
 				}
@@ -109,7 +110,7 @@ public class Expression {
 
 	@Override
 	public String toString() {
-		return tokens.stream().map(String::valueOf).collect(Collectors.joining(", "));
+		return tokens.stream().map(String::valueOf).collect(Collectors.joining());
 	}
 
 }

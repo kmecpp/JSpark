@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.parser.data;
+package com.kmecpp.jspark.runtime;
 
 import com.kmecpp.jspark.language.Type;
 

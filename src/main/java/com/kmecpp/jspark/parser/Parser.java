@@ -118,30 +118,7 @@ public class Parser {
 			if (token.getType() == TokenType.IDENTIFIER) {
 				//Method invocations
 				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
-					String target = token.getText();
-					tokenizer.read(Symbol.PERIOD);
-					String method = tokenizer.readName();
-					tokenizer.read(Symbol.OPEN_PAREN);
-
-					ArrayList<Expression> params = new ArrayList<>();
-					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
-						ArrayList<Token> expression = new ArrayList<>();
-						while (true) {
-							expression.add(tokenizer.next());
-
-							if (tokenizer.peekNext().is(Symbol.COMMMA)) {
-								tokenizer.read(Symbol.COMMMA);
-							} else {
-								break;
-							}
-
-						}
-						params.add(new Expression(parentBlock, expression));
-					}
-					tokenizer.read(Symbol.CLOSE_PAREN);
-					System.out.println(new MethodInvocation(parentBlock, target, method, params));
-
-					statements.add(new MethodInvocation(parentBlock, target, method, params));
+					statements.add(readMethodInvocation(parentBlock));
 				}
 
 				//Variable assignment
@@ -152,6 +129,33 @@ public class Parser {
 		}
 		tokenizer.read(Symbol.CLOSE_BRACE);
 		return statements;
+	}
+
+	public MethodInvocation readMethodInvocation(AbstractBlock block) {
+		String target = tokenizer.getCurrentToken().getText();
+		tokenizer.read(Symbol.PERIOD);
+		String method = tokenizer.readName();
+		tokenizer.read(Symbol.OPEN_PAREN);
+
+		ArrayList<Expression> params = new ArrayList<>();
+		while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
+			ArrayList<Token> expression = new ArrayList<>();
+			while (true) {
+				expression.add(tokenizer.next());
+
+				if (tokenizer.peekNext().is(Symbol.COMMMA)) {
+					tokenizer.read(Symbol.COMMMA);
+				} else {
+					break;
+				}
+
+			}
+			params.add(new Expression(block, expression));
+		}
+		tokenizer.read(Symbol.CLOSE_PAREN);
+		System.out.println(new MethodInvocation(block, target, method, params));
+
+		return new MethodInvocation(block, target, method, params);
 	}
 
 	public Variable readVariableDeclaration(AbstractBlock block) {
@@ -168,12 +172,29 @@ public class Parser {
 			while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
 				expressionTokens.add(tokenizer.next());
 			}
+			/*
+			 * int i = 3 + this.getChicken().deathCount();
+			 * 
+			 * Parser:
+			 * 		var i = 3 + 
+			 * 		Invoke this.getChicken();
+			 * 		Invoke {result}.deathCount();
+			 * 
+			 * AST:
+			 * 		var = {
+			 * 			name: i
+			 * 			expression = 3 + this.getChicken().deathCount();
+			 * 		}
+			 * 
+			 * Runtime: var = var.getExpression().evaluate();
+			 * 
+			 */
 			tokenizer.read(Symbol.SEMICOLON);
 			expression = new Expression(block, expressionTokens);
-			return block.defineVariable(new Variable(type, name, expression.evaluate()));
+			return block.defineVariable(new Variable(type, name, expression));
 		} else {
 			tokenizer.read(Symbol.SEMICOLON);
-			return block.defineVariable(new Variable(type, name, type.getDefaultValue()));
+			return block.defineVariable(new Variable(type, name, null));//type.getDefaultValue()));
 		}
 		//		return new Variable(type, name, expression.evaluate());
 	}

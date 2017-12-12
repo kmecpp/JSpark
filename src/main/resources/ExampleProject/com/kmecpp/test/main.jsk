@@ -3,10 +3,6 @@ static Main {
 	string name = "Hello World!";
 	int id;
 	
-	class Person {
-		
-	}
-
 	def main() {
 		int i = 3 + 9;
 		

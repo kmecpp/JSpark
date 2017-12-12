@@ -162,8 +162,8 @@ public class Parser {
 		Type type = tokenizer.getCurrentToken().getPrimitiveType();
 		String name = tokenizer.readName();
 		Expression expression = null;
-		System.out.println("Reading Variable DEC: " + name);
-		System.out.println("Block: " + block);
+		//		System.out.println("Reading Variable DEC: " + name);
+		//		System.out.println("Block: " + block);
 
 		if (tokenizer.peekNext().is(Symbol.EQUALS)) {
 			tokenizer.read(Symbol.EQUALS);

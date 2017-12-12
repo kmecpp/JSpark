@@ -45,14 +45,19 @@ public class JSpark {
 	public static void runProject(Path path) throws IOException {
 		long start = System.currentTimeMillis();
 		System.out.println("Compiling Project: " + path);
+
+		//		float parseTime = 0;
 		//		ArrayList<Module> modules = new ArrayList<>();
 		//		for (File file : FileUtil.getFiles(path.toFile())) {
 		//			long s = System.nanoTime();
 		//			Module module = new Parser(file.toPath()).parseModule();
-		//			System.out.println("Package: " + module.getPackage());
-		//			System.out.println("Parsed File: " + path.relativize(file.toPath()) + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
+		//
+		//			float time = (System.nanoTime() - s) / 1000000F;
+		//			parseTime += time;
+		//			System.out.println("Parsed Module: " + module.getFullName() + " (" + time + "ms)");
+		//
 		//			modules.add(module);
-		//	}
+		//		}
 
 		ArrayList<Module> modules = Files.walk(path)
 				.filter(Files::isRegularFile)
@@ -63,7 +68,7 @@ public class JSpark {
 					return module;
 				})
 				.collect(Collectors.toCollection(ArrayList::new));
-		System.out.println("COMPILED SUCCESSFULLY! (" + (System.currentTimeMillis() - start) + "ms)");
+		System.out.println("COMPILED SUCCESSFULLY! (" + (System.currentTimeMillis() - start + "ms)"));
 
 		System.out.println();
 		System.out.println("Running program...");

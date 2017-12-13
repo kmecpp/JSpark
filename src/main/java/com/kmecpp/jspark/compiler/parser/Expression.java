@@ -9,6 +9,7 @@ import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.tokenizer.LiteralToken;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
 import com.kmecpp.jspark.compiler.tokenizer.TokenType;
+import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
 
@@ -16,6 +17,10 @@ public class Expression {
 
 	private AbstractBlock block;
 	private ArrayList<Token> tokens;
+
+	public Expression(AbstractBlock block, String expression) {
+		this(block, Tokenizer.parseTokens(expression));
+	}
 
 	public Expression(AbstractBlock block, ArrayList<Token> tokens) {
 		this.block = block;
@@ -34,6 +39,15 @@ public class Expression {
 	//	public Value evaluate() {
 	//		return evaluate(new HashMap<>());
 	//	}
+
+	public boolean isLiteral() {
+		for (Token token : tokens) {
+			if (token.is(Symbol.PERIOD)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public Object evaluate() {
 		//		long start = System.nanoTime();

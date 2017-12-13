@@ -29,6 +29,15 @@ public class Tokenizer {
 		return new Tokenizer(str);
 	}
 
+	public ArrayList<Token> readThrough(AbstractToken token) {
+		ArrayList<Token> tokens = new ArrayList<>();
+		while (!peekNext().is(token)) {
+			tokens.add(next());
+		}
+		read(token);
+		return tokens;
+	}
+
 	public ArrayList<Token> readAll() {
 		ArrayList<Token> tokens = new ArrayList<>();
 		while (hasNext()) {
@@ -136,7 +145,7 @@ public class Tokenizer {
 			if (Character.isLetter(c)) {
 				StringBuilder sb = new StringBuilder(String.valueOf(c));
 
-				while (Character.isLetterOrDigit(chars[current])) {
+				while (current < chars.length && Character.isLetterOrDigit(chars[current])) {
 					sb.append(chars[current]);
 					current++;
 				}
@@ -148,7 +157,7 @@ public class Tokenizer {
 			//STRINGS
 			else if (c == '"') {
 				StringBuilder sb = new StringBuilder();
-				while (chars[current] != '"') {
+				while (current < chars.length && chars[current] != '"') {
 					sb.append(chars[current++]);
 				}
 				current++;
@@ -158,14 +167,14 @@ public class Tokenizer {
 			//NUMBERS
 			else if ((c == '-' && Character.isDigit(c)) || Character.isDigit(c)) {
 				StringBuilder sb = new StringBuilder(String.valueOf(c));
-				while (Character.isDigit(chars[current])) {
+				while (current < chars.length && Character.isDigit(chars[current])) {
 					sb.append(chars[current++]);
 				}
 
-				if (chars[current] == '.') {
+				if (current < chars.length && chars[current] == '.') {
 					sb.append(".");
 					current++;
-					while (Character.isDigit(chars[current])) {
+					while (current < chars.length && Character.isDigit(chars[current])) {
 						sb.append(chars[current++]);
 					}
 					//TODO: E notation?					
@@ -300,6 +309,10 @@ public class Tokenizer {
 
 	private static InvalidTokenException invalidToken(Token token, AbstractToken expected) {
 		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
+	}
+
+	public static ArrayList<Token> parseTokens(String expression) {
+		return new Tokenizer(expression).readAll();
 	}
 
 	//	public ArrayList<Token> tokenize() {

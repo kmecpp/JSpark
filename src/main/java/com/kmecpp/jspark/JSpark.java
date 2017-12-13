@@ -21,28 +21,30 @@ public class JSpark {
 	private static Path projectPath;
 
 	/*
+	 * @formatter:off
 	 * Main.jsk
 	 * 
-	 * def main() { Console.println("Hello World!"); }
+	 * 		def main() { Console.println("Hello World!"); }
 	 * 
 	 * Compiler:
 	 * 
-	 * AST:
-	 * Module: Main
-	 * method: main:
-	 * Console.println("Hello World");
+	 * 		AST:
+	 * 			Module: Main
+	 * 				method: main:
+	 * 					Console.println("Hello World");
 	 * 
-	 * Jpark Library:
-	 * Compiles all classes to
+	 * 		Jpark Library:
+	 * 			Compiles all classes to 
 	 * 
 	 * Interpreter:
 	 * 
-	 * 
+	 * 		
 	 * 
 	 * Transpiler:
 	 * 
-	 * AST -> JAVA
-	 * JAVAC: JAVA -> JAR (bytecode)
+	 * 		AST -> JAVA
+	 * 		JAVAC: JAVA -> JAR (bytecode)
+	 * @formatter:on
 	 */
 
 	public static void main(String[] args) throws IOException, URISyntaxException {

@@ -1,6 +1,5 @@
-package com.kmecpp.jspark.compiler.parser.statement.logic;
+package com.kmecpp.jspark.compiler.parser.statement;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,8 +7,6 @@ import java.util.stream.Collectors;
 import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.compiler.parser.Expression;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
-import com.kmecpp.jspark.compiler.parser.statement.Import;
-import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.language.Keyword;
@@ -67,7 +64,13 @@ public class MethodInvocation extends Statement {
 
 		Variable var = block.getVariable(this.target);
 		if (var != null) {
-
+			Object obj = var.evaluate();
+			try {
+				invokeMethod(obj.getClass(), obj);
+			} catch (Exception e) {
+				System.err.println("Could not invoke method: " + toString());
+				e.printStackTrace();
+			}
 		}
 
 		if (target == null) {
@@ -77,34 +80,10 @@ public class MethodInvocation extends Statement {
 				module.execute();
 			} else {
 				try {
-					Class<?> cls = Class.forName("com.kmecpp.jspark.language.builtin." + this.target);
-
-					Object[] values = new Object[params.size()];
-
-					methodSearch: for (java.lang.reflect.Method method : cls.getMethods()) {
-						Class<?>[] targetTypes = method.getParameterTypes();
-						if (targetTypes.length != values.length || !method.getName().equals(this.method)) {
-							continue;
-						}
-
-						for (int i = 0; i < targetTypes.length; i++) {
-							Object value = params.get(i).evaluate();
-							if (value == null || targetTypes[i].isAssignableFrom(value.getClass())) {
-								values[i] = value;
-							} else {
-								continue methodSearch;
-							}
-						}
-						System.out.println("Values: " + method);
-						Object result = method.invoke(null, values);
-						if (capture != null) {
-							capture.setValue(result);
-						}
-						return;
-					}
-					throw new NoSuchMethodException();
-				} catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-					System.err.println("Could not locate static method invocation: " + toString());
+					invokeMethod(Class.forName("com.kmecpp.jspark.language.builtin." + this.target), null);
+				} catch (Exception e) {
+					System.err.println("Could invoke static method: " + toString());
+					e.printStackTrace();
 				}
 
 			}
@@ -118,6 +97,33 @@ public class MethodInvocation extends Statement {
 			//			}
 
 		}
+	}
+
+	private void invokeMethod(Class<?> cls, Object obj) throws Exception {
+		Object[] values = new Object[params.size()];
+
+		methodSearch: for (java.lang.reflect.Method method : cls.getMethods()) {
+			Class<?>[] targetTypes = method.getParameterTypes();
+			if (targetTypes.length != values.length || !method.getName().equals(this.method)) {
+				continue;
+			}
+
+			for (int i = 0; i < targetTypes.length; i++) {
+				Object value = params.get(i).evaluate();
+				if (value == null || targetTypes[i].isAssignableFrom(value.getClass())) {
+					values[i] = value;
+				} else {
+					continue methodSearch;
+				}
+			}
+
+			Object result = method.invoke(obj, values);
+			if (capture != null) {
+				capture.setValue(result);
+			}
+			return;
+		}
+		throw new NoSuchMethodException();
 	}
 
 	@Override

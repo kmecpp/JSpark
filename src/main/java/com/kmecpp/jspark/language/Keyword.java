@@ -8,6 +8,8 @@ public enum Keyword implements AbstractToken {
 	BOOLEAN,
 
 	DEF,
+	FOR,
+	NEW,
 	THIS,
 	CLASS,
 	STATIC,

@@ -27,7 +27,9 @@ public abstract class Module extends NamedBlock {
 	public Module(Path path, String name) {
 		super(name, null);
 		this.path = path;
-		this.packageName = JSpark.getProjectPath().relativize(path).getParent().toString().replace(File.separator, ".");
+
+		Path directory = JSpark.getProjectPath().relativize(path).getParent();
+		this.packageName = directory == null ? "" : directory.toString().replace(File.separator, ".");
 	}
 
 	public Path getPath() {

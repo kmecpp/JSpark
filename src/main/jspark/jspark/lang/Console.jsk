@@ -6,8 +6,6 @@ static Console {
 	
 	def println(Object obj) {
 		out.println(obj);
-		
-
 	}
 	
 }

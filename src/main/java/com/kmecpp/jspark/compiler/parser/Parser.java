@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import com.kmecpp.jspark.compiler.parser.data.Parameter;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Import;
+import com.kmecpp.jspark.compiler.parser.statement.MethodInvocation;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Static;
-import com.kmecpp.jspark.compiler.parser.statement.logic.MethodInvocation;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
 import com.kmecpp.jspark.compiler.tokenizer.TokenType;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
@@ -106,24 +106,42 @@ public class Parser {
 		return module;
 	}
 
-	private ArrayList<Statement> parseBlock(AbstractBlock parentBlock) {
+	private ArrayList<Statement> parseBlock(AbstractBlock block) {
 		ArrayList<Statement> statements = new ArrayList<>();
 		while (!tokenizer.peekNext().is(Symbol.CLOSE_BRACE)) {
 			Token token = tokenizer.next();
 
 			if (token.isType()) {
-				readVariableDeclaration(parentBlock);
+				readVariableDeclaration(block);
 			}
 
 			if (token.getType() == TokenType.IDENTIFIER) {
 				//Method invocations
 				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
-					statements.add(readMethodInvocation(parentBlock));
+					statements.add(readMethodInvocation(block));
 				}
 
 				//Variable assignment
 				else if (tokenizer.peekNext().is(Symbol.EQUALS)) {
 
+				}
+			}
+
+			if (token.isKeyword()) {
+				if (token.is(Keyword.FOR)) {
+					//For loops
+					ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.OPEN_BRACE);
+					Expression expression = new Expression(block, expressionTokens);
+					if (expression.isLiteral()) {
+						//						statements.add(new Loop(block,
+						//								new Variable(Type.INTEGER, "", new Expression(block, tokens)),
+						//								new Ex,
+						//								iterate))
+					} else {
+						for (int i = 1; i < expressionTokens.size() - 1; i++) {
+
+						}
+					}
 				}
 			}
 		}
@@ -168,28 +186,31 @@ public class Parser {
 		if (tokenizer.peekNext().is(Symbol.EQUALS)) {
 			tokenizer.read(Symbol.EQUALS);
 
-			ArrayList<Token> expressionTokens = new ArrayList<>();
-			while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
-				expressionTokens.add(tokenizer.next());
-			}
+			ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.SEMICOLON);
+			//			= new ArrayList<>();
+			//			while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
+			//				expressionTokens.add(tokenizer.next());
+			//			}
+			//			tokenizer.read(Symbol.SEMICOLON);
+
 			/*
 			 * int i = 3 + this.getChicken().deathCount();
 			 * 
 			 * Parser:
-			 * 		var i = 3 + 
-			 * 		Invoke this.getChicken();
-			 * 		Invoke {result}.deathCount();
+			 * var i = 3 +
+			 * Invoke this.getChicken();
+			 * Invoke {result}.deathCount();
 			 * 
 			 * AST:
-			 * 		var = {
-			 * 			name: i
-			 * 			expression = 3 + this.getChicken().deathCount();
-			 * 		}
+			 * var = {
+			 * name: i
+			 * expression = 3 + this.getChicken().deathCount();
+			 * }
 			 * 
 			 * Runtime: var = var.getExpression().evaluate();
 			 * 
 			 */
-			tokenizer.read(Symbol.SEMICOLON);
+
 			expression = new Expression(block, expressionTokens);
 			return block.defineVariable(new Variable(type, name, expression));
 		} else {

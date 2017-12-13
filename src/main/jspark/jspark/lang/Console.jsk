@@ -1,0 +1,13 @@
+import java.io.PrintStream;
+
+static Console {
+	
+	private PrintStream out = System.out;
+	
+	def println(Object obj) {
+		out.println(obj);
+		
+
+	}
+	
+}

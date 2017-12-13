@@ -3,8 +3,8 @@ package com.kmecpp.jspark.runtime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.kmecpp.jspark.parser.statement.block.module.Module;
-import com.kmecpp.jspark.parser.statement.block.module.Static;
+import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
+import com.kmecpp.jspark.compiler.parser.statement.block.module.Static;
 
 public class Runtime {
 

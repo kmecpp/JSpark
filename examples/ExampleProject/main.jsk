@@ -1,0 +1,27 @@
+static Main {
+
+	string name;
+	int id;
+	
+	List people;
+	
+	def main() {
+		[0, 10] = i {
+			
+		}
+		
+		int i = 3 + 9;
+		
+		Console.println(i);
+		//string message = "hi";
+		//Console.println(message);
+	}
+	
+	def print(string s){
+		Console.println(s);
+		
+		int i = 3 + Integer.of(3).abs();
+	}
+
+
+}

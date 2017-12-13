@@ -1,8 +1,8 @@
 package com.kmecpp.jspark.compiler.transpiler;
 
+import com.kmecpp.jspark.compiler.parser.data.Variable;
+import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.language.Type;
-import com.kmecpp.jspark.parser.data.Variable;
-import com.kmecpp.jspark.parser.statement.block.module.Module;
 
 public class JavaTranspiler {
 

@@ -8,17 +8,42 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import com.kmecpp.jspark.parser.Parser;
-import com.kmecpp.jspark.parser.statement.Statement;
-import com.kmecpp.jspark.parser.statement.block.module.Module;
+import com.kmecpp.jspark.compiler.parser.Parser;
+import com.kmecpp.jspark.compiler.parser.statement.Statement;
+import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
+import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.runtime.Runtime;
-import com.kmecpp.jspark.tokenizer.Tokenizer;
 import com.kmecpp.jspark.util.FileUtil;
 
 public class JSpark {
 
 	private static Runtime runtime;
 	private static Path projectPath;
+
+	/*
+	 * Main.jsk
+	 * 
+	 * def main() { Console.println("Hello World!"); }
+	 * 
+	 * Compiler:
+	 * 
+	 * AST:
+	 * Module: Main
+	 * method: main:
+	 * Console.println("Hello World");
+	 * 
+	 * Jpark Library:
+	 * Compiles all classes to
+	 * 
+	 * Interpreter:
+	 * 
+	 * 
+	 * 
+	 * Transpiler:
+	 * 
+	 * AST -> JAVA
+	 * JAVAC: JAVA -> JAR (bytecode)
+	 */
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		// Tokenizer tokenizer = Tokenizer.tokenize("HelloWorld = \"shit\" 304 and
@@ -76,6 +101,7 @@ public class JSpark {
 		(runtime = new Runtime(modules)).start();
 		System.out.println("_____________________________________");
 		System.out.println("Runtime: " + (System.nanoTime() - runStart) / 1000000F + "ms");
+
 	}
 
 	public static void runProgram(Path path) {

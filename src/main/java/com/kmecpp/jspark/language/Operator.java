@@ -9,13 +9,7 @@ public enum Operator implements AbstractToken {
 	MULTIPLY("*", 2),
 	DIVIDE("/", 2),
 	MODULUS("%", 3),
-	EXPONENT("^", 3),
-
-	//	DIVIDES("%%", 3),
-	//	OR("||", 1),
-	//	XOR("^^", 1),
-	//	AND("&&", 1),
-	//	NOT("!", 1),
+	EXPONENT("**", 3),
 
 	;
 

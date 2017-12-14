@@ -7,15 +7,21 @@ import com.kmecpp.jspark.compiler.parser.data.Variable;
 
 public class Loop extends AbstractBlock {
 
-	private ArrayList<Variable> variables;
 	private Expression test;
-	private Runnable iterate;
 
-	public Loop(AbstractBlock parent, ArrayList<Variable> variables, Expression test, Runnable iterate) {
+	public Loop(AbstractBlock parent, ArrayList<Variable> variables, Expression test) {
 		super(parent);
-		this.variables = variables;
+		for (Variable variable : variables) {
+			this.defineVariable(variable);
+		}
 		this.test = test;
-		this.iterate = iterate;
+	}
+
+	@Override
+	public void execute() {
+		while ((boolean) test.evaluate()) {
+			super.execute();
+		}
 	}
 
 }

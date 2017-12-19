@@ -1,18 +1,18 @@
 package com.kmecpp.jspark.compiler.parser.data;
 
-import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.PrimitiveType;
 
 public class Parameter {
 
-	private final Type type;
+	private final PrimitiveType type;
 	private final String name;
 
-	public Parameter(Type type, String name) {
+	public Parameter(PrimitiveType type, String name) {
 		this.type = type;
 		this.name = name;
 	}
 
-	public Type getType() {
+	public PrimitiveType getType() {
 		return type;
 	}
 

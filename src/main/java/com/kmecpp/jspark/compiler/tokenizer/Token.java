@@ -3,7 +3,7 @@ package com.kmecpp.jspark.compiler.tokenizer;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
-import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.PrimitiveType;
 
 public class Token {
 
@@ -40,6 +40,10 @@ public class Token {
 		return string.equals(tokenText.getString());
 	}
 
+	public boolean isIdentifier() {
+		return type == TokenType.IDENTIFIER;
+	}
+
 	public boolean isKeyword() {
 		return type == TokenType.KEYWORD;
 	}
@@ -48,12 +52,12 @@ public class Token {
 		return type == TokenType.STRING_LITERAL || type == TokenType.INTEGER_LITERAL || type == TokenType.DECIMAL_LITERAL || type == TokenType.BOOLEAN_LITERAL;
 	}
 
-	public boolean isType() {
-		return Type.isPrimitive(string);
+	public boolean isPrimitiveType() {
+		return PrimitiveType.isPrimitive(string);
 	}
 
-	public Type getPrimitiveType() {
-		return Type.getPrimitiveType(string);
+	public PrimitiveType getPrimitiveType() {
+		return PrimitiveType.getPrimitiveType(string);
 	}
 
 	public boolean isAccessModifier() {

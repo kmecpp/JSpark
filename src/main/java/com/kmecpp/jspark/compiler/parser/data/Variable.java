@@ -1,22 +1,21 @@
 package com.kmecpp.jspark.compiler.parser.data;
 
-import com.kmecpp.jspark.compiler.parser.Expression;
-import com.kmecpp.jspark.language.Type;
-
 public class Variable {
 
 	private Type type;
 	private String name;
-	private Expression expression;
+	private Object value;
+	//	private Expression expression;
 
 	//	public Variable(Type type, String name) {
 	//		this(type, name, null);
 	//	}
 
-	public Variable(Type type, String name, Expression expression) {
+	public Variable(Type type, String name, Object value) {//, Expression expression) {
 		this.type = type;
 		this.name = name;
-		this.expression = expression;
+		this.value = value;
+		//		this.expression = expression;
 	}
 
 	public String getName() {
@@ -27,17 +26,17 @@ public class Variable {
 		return type;
 	}
 
-	public Expression getExpression() {
-		return expression;
+	public Object getValue() {
+		return value;
 	}
 
-	public Object evaluate() {
-		return expression.evaluate();
+	public void setValue(Object value) {
+		this.value = value;
 	}
 
 	@Override
 	public String toString() {
-		return type.getIdentifier() + " " + name + " = " + expression;
+		return type.getFullName() + " " + name + " = " + value;
 	}
 
 }

@@ -3,7 +3,7 @@ package com.kmecpp.jspark.language.builtin;
 import com.kmecpp.jspark.compiler.parser.data.Parameter;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
-import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.runtime.Value;
 
 public class Console2 extends Class {
@@ -23,7 +23,7 @@ public class Console2 extends Class {
 	private class Println extends Method {
 
 		public Println() {
-			super(instance, "println", new Parameter[] { new Parameter(Type.OBJECT, "obj") });
+			super(instance, "println", new Parameter[] { new Parameter(PrimitiveType.OBJECT, "obj") });
 		}
 
 		@Override

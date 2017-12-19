@@ -4,8 +4,9 @@ static Main {
 	int id;
 		
 	def main() {
-		Person person = new Person();
+//		Person person = new Person();
 		int i = 3 + 9;
+		i = i / 6;
 		
 		Console.println(i);
 		//string message = "hi";

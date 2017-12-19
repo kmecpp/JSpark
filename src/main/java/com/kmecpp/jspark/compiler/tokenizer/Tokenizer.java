@@ -3,11 +3,13 @@ package com.kmecpp.jspark.compiler.tokenizer;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import com.kmecpp.jspark.compiler.parser.Expression;
+import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
+import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.language.Type;
 
 public class Tokenizer {
 
@@ -27,6 +29,10 @@ public class Tokenizer {
 
 	public static Tokenizer tokenize(String str) {
 		return new Tokenizer(str);
+	}
+
+	public Expression readExpression(AbstractBlock block) {
+		return new Expression(block, readThrough(Symbol.SEMICOLON));
 	}
 
 	public ArrayList<Token> readThrough(AbstractToken token) {
@@ -50,8 +56,8 @@ public class Tokenizer {
 		return new Tokenizer(new String(chars)).readAll().stream().map(Token::getText).collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	public Type readType() {
-		return Type.getPrimitiveType(read(TokenType.KEYWORD).getText());
+	public PrimitiveType readType() {
+		return PrimitiveType.getPrimitiveType(read(TokenType.KEYWORD).getText());
 	}
 
 	public String readName() {

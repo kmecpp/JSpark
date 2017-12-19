@@ -40,12 +40,16 @@ public class AbstractBlock extends Statement {
 	//		return variables;
 	//	}
 
-	public Variable getVariable(String variableName) {
+	public Variable getVarData(String variableName) {
 		Variable var = variables.get(variableName);
 		if (var == null && parent != null) {
-			return parent.getVariable(variableName); //This handles variable scope
+			return parent.getVarData(variableName); //This handles variable scope
 		}
 		return var;
+	}
+
+	public Object getVar(String variableName) {
+		return getVarData(variableName).getValue();
 	}
 
 	public Variable defineVariable(Variable variable) {
@@ -55,6 +59,10 @@ public class AbstractBlock extends Statement {
 
 	public void addStatements(ArrayList<Statement> statements) {
 		this.statements.addAll(statements);
+	}
+
+	public void addStatement(Statement statement) {
+		this.statements.add(statement);
 	}
 
 	public ArrayList<Statement> getStatements() {

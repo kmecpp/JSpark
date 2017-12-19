@@ -4,10 +4,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 import com.kmecpp.jspark.compiler.parser.data.Parameter;
-import com.kmecpp.jspark.compiler.parser.data.Variable;
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.statement.Import;
 import com.kmecpp.jspark.compiler.parser.statement.MethodInvocation;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
+import com.kmecpp.jspark.compiler.parser.statement.VariableAssignment;
+import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
@@ -18,7 +20,6 @@ import com.kmecpp.jspark.compiler.tokenizer.TokenType;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.language.Type;
 import com.kmecpp.jspark.util.FileUtil;
 
 public class Parser {
@@ -54,7 +55,7 @@ public class Parser {
 					module.addImport(new Import(importStr.toString(), className));
 				}
 
-				else if (token.isType()) {
+				else if (token.isPrimitiveType()) {
 					readVariableDeclaration(module); //Parse Fields
 				}
 
@@ -75,6 +76,10 @@ public class Parser {
 					module.addMethod(method);
 					//					module.addStatement(new Method(name, new ArrayList<>()));
 				}
+
+				else {
+					error("Unexpected keyword: " + token.getText());
+				}
 				//				if (token.is(Keyword.PUBLIC)) {
 				//					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
 				//				}
@@ -86,10 +91,6 @@ public class Parser {
 				//					module.addStatement(new Static(tokenizer.readName()));
 				//					parseModule();
 				//				}
-			}
-
-			else if (token.isLiteral()) {
-
 			}
 
 			else if (token.is(Symbol.CLOSE_BRACE)) {
@@ -111,11 +112,11 @@ public class Parser {
 		while (!tokenizer.peekNext().is(Symbol.CLOSE_BRACE)) {
 			Token token = tokenizer.next();
 
-			if (token.isType()) {
+			if (token.isPrimitiveType()) {
 				readVariableDeclaration(block);
 			}
 
-			if (token.getType() == TokenType.IDENTIFIER) {
+			else if (token.getType() == TokenType.IDENTIFIER) {
 				//Method invocations
 				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
 					statements.add(readMethodInvocation(block));
@@ -123,11 +124,18 @@ public class Parser {
 
 				//Variable assignment
 				else if (tokenizer.peekNext().is(Symbol.EQUALS)) {
+					String variableName = token.getText();
+					tokenizer.read(Symbol.EQUALS);
+					Expression expression = tokenizer.readExpression(block);
+					block.addStatement(new VariableAssignment(block, variableName, expression));
+				}
 
+				else if (tokenizer.peekNext().getType() == TokenType.IDENTIFIER) {
+					readVariableDeclaration(block);
 				}
 			}
 
-			if (token.isKeyword()) {
+			else if (token.isKeyword()) {
 				if (token.is(Keyword.FOR)) {
 					//For loops
 					ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.OPEN_BRACE);
@@ -143,6 +151,10 @@ public class Parser {
 						}
 					}
 				}
+			}
+
+			else {
+				error("Invalid start of statement:'" + token + "'");
 			}
 		}
 		tokenizer.read(Symbol.CLOSE_BRACE);
@@ -171,53 +183,40 @@ public class Parser {
 			params.add(new Expression(block, expression));
 		}
 		tokenizer.read(Symbol.CLOSE_PAREN);
+		tokenizer.read(Symbol.SEMICOLON);
 		System.out.println(new MethodInvocation(block, target, method, params));
 
 		return new MethodInvocation(block, target, method, params);
 	}
 
-	public Variable readVariableDeclaration(AbstractBlock block) {
-		Type type = tokenizer.getCurrentToken().getPrimitiveType();
+	/*
+	 * int i = 3 + this.getChicken().deathCount();
+	 * 
+	 * Parser:
+	 * var i = 3 +
+	 * Invoke this.getChicken();
+	 * Invoke {result}.deathCount();
+	 * 
+	 * AST:
+	 * var = {
+	 * name: i
+	 * expression = 3 + this.getChicken().deathCount();
+	 * }
+	 * 
+	 * Runtime: var = var.getExpression().evaluate();
+	 * 
+	 */
+	public void readVariableDeclaration(AbstractBlock block) {
+		Type type = Type.getType(tokenizer.getCurrentToken());
 		String name = tokenizer.readName();
-		Expression expression = null;
-		//		System.out.println("Reading Variable DEC: " + name);
-		//		System.out.println("Block: " + block);
-
 		if (tokenizer.peekNext().is(Symbol.EQUALS)) {
-			tokenizer.read(Symbol.EQUALS);
-
-			ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.SEMICOLON);
-			//			= new ArrayList<>();
-			//			while (!tokenizer.peekNext().is(Symbol.SEMICOLON)) {
-			//				expressionTokens.add(tokenizer.next());
-			//			}
-			//			tokenizer.read(Symbol.SEMICOLON);
-
-			/*
-			 * int i = 3 + this.getChicken().deathCount();
-			 * 
-			 * Parser:
-			 * var i = 3 +
-			 * Invoke this.getChicken();
-			 * Invoke {result}.deathCount();
-			 * 
-			 * AST:
-			 * var = {
-			 * name: i
-			 * expression = 3 + this.getChicken().deathCount();
-			 * }
-			 * 
-			 * Runtime: var = var.getExpression().evaluate();
-			 * 
-			 */
-
-			expression = new Expression(block, expressionTokens);
-			return block.defineVariable(new Variable(type, name, expression));
+			tokenizer.next();
+			Expression expression = tokenizer.readExpression(block);
+			block.addStatement(new VariableDeclaration(block, type, name, expression));
 		} else {
+			block.addStatement(new VariableDeclaration(block, type, name, null));
 			tokenizer.read(Symbol.SEMICOLON);
-			return block.defineVariable(new Variable(type, name, null));//type.getDefaultValue()));
 		}
-		//		return new Variable(type, name, expression.evaluate());
 	}
 
 	public Tokenizer getTokenizer() {

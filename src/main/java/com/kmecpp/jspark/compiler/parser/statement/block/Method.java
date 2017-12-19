@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.compiler.parser.data.Parameter;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
-import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.runtime.Value;
 
 public class Method extends NamedBlock {
@@ -27,7 +27,7 @@ public class Method extends NamedBlock {
 	 *            the type parameters
 	 * @return true if the methods are identical, otherwise false
 	 */
-	public boolean matches(String name, Type... params) {
+	public boolean matches(String name, PrimitiveType... params) {
 		if (getName().equals(name)) {
 			if (this.parameters.length != params.length) {
 				return false;

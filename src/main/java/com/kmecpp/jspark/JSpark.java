@@ -5,19 +5,18 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
+import com.kmecpp.jspark.compiler.Compiler;
 import com.kmecpp.jspark.compiler.parser.Parser;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
-import com.kmecpp.jspark.runtime.Runtime;
+import com.kmecpp.jspark.runtime.Interpreter;
 import com.kmecpp.jspark.util.FileUtil;
 
 public class JSpark {
 
-	private static Runtime runtime;
+	private static Interpreter runtime;
 	private static Path projectPath;
 
 	/*
@@ -61,7 +60,7 @@ public class JSpark {
 		runProject(projectPath);
 	}
 
-	public static Runtime getRuntime() {
+	public static Interpreter getRuntime() {
 		return runtime;
 	}
 
@@ -86,21 +85,24 @@ public class JSpark {
 		//			modules.add(module);
 		//		}
 
-		ArrayList<Module> modules = Files.walk(path)
-				.filter(Files::isRegularFile)
-				.map((p) -> {
-					long s = System.nanoTime();
-					Module module = new Parser(p).parseModule();
-					System.out.println("Parsed Module: " + module.getFullName() + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
-					return module;
-				})
-				.collect(Collectors.toCollection(ArrayList::new));
+		Compiler compiler = new Compiler();
+		Files.walk(path).filter(Files::isRegularFile).forEach(compiler::parseModule);
+
+		//		ArrayList<Module> modules = Files.walk(path)
+		//				.filter(Files::isRegularFile)
+		//				.map((p) -> {
+		//					long s = System.nanoTime();
+		//					Module module = new Parser(p).parseModule();
+		//					System.out.println("Parsed Module: " + module.getFullName() + " (" + (System.nanoTime() - s) / 1000000F + "ms)");
+		//					return module;
+		//				})
+		//				.collect(Collectors.toCollection(ArrayList::new));
 		System.out.println("COMPILED SUCCESSFULLY! (" + (System.currentTimeMillis() - start + "ms)"));
 
 		System.out.println();
 		System.out.println("Running program...");
 		long runStart = System.nanoTime();
-		(runtime = new Runtime(modules)).start();
+		(runtime = new Interpreter(compiler)).startProgram();
 		System.out.println("_____________________________________");
 		System.out.println("Runtime: " + (System.nanoTime() - runStart) / 1000000F + "ms");
 

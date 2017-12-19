@@ -1,22 +1,22 @@
 package com.kmecpp.jspark.runtime;
 
-import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.PrimitiveType;
 
 public class Value {
 
-	protected Type type;
+	protected PrimitiveType type;
 	protected Object value;
 
-	public Value(Type type) {
+	public Value(PrimitiveType type) {
 		this(type, null);
 	}
 
-	public Value(Type type, Object value) {
+	public Value(PrimitiveType type, Object value) {
 		this.type = type;
 		this.value = value;
 	}
 
-	public Type getType() {
+	public PrimitiveType getType() {
 		return type;
 	}
 

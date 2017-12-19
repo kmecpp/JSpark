@@ -13,7 +13,7 @@ import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Import;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.NamedBlock;
-import com.kmecpp.jspark.language.Type;
+import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.runtime.Value;
 
 public abstract class Module extends NamedBlock {
@@ -82,7 +82,7 @@ public abstract class Module extends NamedBlock {
 		methods.add(method);
 	}
 
-	public Optional<Method> getMethod(String name, Type... params) {
+	public Optional<Method> getMethod(String name, PrimitiveType... params) {
 		for (Method method : methods) {
 			if (method.matches(name, params)) {
 				return Optional.of(method);
@@ -91,12 +91,12 @@ public abstract class Module extends NamedBlock {
 		return Optional.empty();
 	}
 
-	public boolean hasMethod(String name, Type... params) {
+	public boolean hasMethod(String name, PrimitiveType... params) {
 		return getMethod(name, params).isPresent();
 	}
 
 	public void executeStaticMethod(String name, ArrayList<Value> args) {
-		Type[] types = new Type[args.size()];
+		PrimitiveType[] types = new PrimitiveType[args.size()];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = args.get(i).getType();
 		}
@@ -104,7 +104,7 @@ public abstract class Module extends NamedBlock {
 		if (method.isPresent()) {
 			method.get().execute();
 		} else {
-			throw new IllegalArgumentException("Method does not exist: " + name + "(" + String.join(", ", Arrays.stream(types).map(Type::getIdentifier).collect(Collectors.toList())) + ")");
+			throw new IllegalArgumentException("Method does not exist: " + name + "(" + String.join(", ", Arrays.stream(types).map(PrimitiveType::getIdentifier).collect(Collectors.toList())) + ")");
 		}
 	}
 

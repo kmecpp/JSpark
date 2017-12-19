@@ -1,8 +1,8 @@
 package com.kmecpp.jspark.compiler.transpiler;
 
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
-import com.kmecpp.jspark.language.Type;
 
 public class JavaTranspiler {
 
@@ -27,18 +27,21 @@ public class JavaTranspiler {
 	}
 
 	private static String getJavaType(Type type) {
-		switch (type) {
-		case BOOLEAN:
-			return "boolean";
-		case DECIMAL:
-			return "double";
-		case INTEGER:
-			return "int";
-		case STRING:
-			return "String";
-		default:
-			throw new IllegalArgumentException("Invalid type! " + type);
+		if (type.isPrimitive()) {
+			switch (type.getPrimitiveType()) {
+			case BOOLEAN:
+				return "boolean";
+			case DECIMAL:
+				return "double";
+			case INTEGER:
+				return "int";
+			case STRING:
+				return "String";
+			default:
+				throw new IllegalArgumentException("Invalid type! " + type);
+			}
 		}
+		return type.getFullName();
 	}
 
 	public Module getModule() {

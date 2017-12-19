@@ -1,6 +1,6 @@
 package com.kmecpp.jspark.language;
 
-public enum Type {
+public enum PrimitiveType {
 
 	INTEGER("int", 0),
 	DECIMAL("dec", 0.0),
@@ -14,7 +14,7 @@ public enum Type {
 	private final String identifier;
 	private final Object defaultValue;
 
-	private Type(String identifier, Object defaultValue) {
+	private PrimitiveType(String identifier, Object defaultValue) {
 		this.identifier = identifier;
 		this.defaultValue = defaultValue;
 	}
@@ -29,7 +29,7 @@ public enum Type {
 
 	public static boolean isPrimitive(String text) {
 		if (text != null) {
-			for (Type type : values()) {
+			for (PrimitiveType type : values()) {
 				if (text.equals(type.identifier)) {
 					return true;
 				}
@@ -38,15 +38,16 @@ public enum Type {
 		return false;
 	}
 
-	public static Type getPrimitiveType(String text) {
+	public static PrimitiveType getPrimitiveType(String text) {
 		if (text != null) {
-			for (Type type : values()) {
+			for (PrimitiveType type : values()) {
 				if (text.equals(type.identifier)) {
 					return type;
 				}
 			}
 		}
-		throw new IllegalArgumentException("Given string is not a valid type: '" + text + "'");
+		return null;
+		//		throw new IllegalArgumentException("Given string is not a valid type: '" + text + "'");
 	}
 
 }

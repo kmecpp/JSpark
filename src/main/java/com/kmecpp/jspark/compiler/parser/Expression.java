@@ -96,9 +96,9 @@ public class Expression {
 				//				return new Value(Type.STRING, value.asBoolean());
 			} else {
 				//If token is a variable
-				Variable var = block.getVariable(value.getText());
+				Variable var = block.getVarData(value.getText());
 				if (var != null) {
-					return var.evaluate();
+					return var.getValue();
 				} else {
 					throw new RuntimeException("Unknown type: " + value);
 				}
@@ -108,17 +108,40 @@ public class Expression {
 		}
 	}
 
-	private static Token process(Stack<Token> operands, Stack<Token> operators) {
+	private Token process(Stack<Token> operands, Stack<Token> operators) {
 		//		System.out.println(operators + ", " + operands + "     <----");
 		Operator operator = operators.pop().asOperator();
 
-		Token post = operands.pop();
-		Token first = operands.pop();
+		Object value2 = evaluateToken(operands.pop());
+		Object value1 = evaluateToken(operands.pop());
 
-		if (first.isString()) {
-			return operands.push(new LiteralToken(operator.apply(first.asString(), post.asString())));
+		//		Token post = operands.pop();
+		//		Token first = operands.pop();
+		Token result;
+
+		if (value1 instanceof String && operator == Operator.PLUS) {
+			result = new LiteralToken(((String) value1) + value2);
+		} else if (value1 instanceof Integer && value2 instanceof Integer) {
+			result = new LiteralToken(operator.apply((int) value1, (int) value2));
 		} else {
-			return operands.push(new LiteralToken(operator.apply(first.asDouble(), post.asDouble())));
+			result = new LiteralToken(operator.apply(((Number) value1).doubleValue(), ((Number) value2).doubleValue()));
+		}
+		return operands.push(result);
+
+		//		if (value1 instanceof String) {
+		//			return operands.push(new LiteralToken(operator.apply((String) value1, String.valueOf(value2))));
+		//		} else {
+		//			return operands.push(new LiteralToken(operator.apply((double) value1, (double) value2)));
+		//		}
+	}
+
+	private Object evaluateToken(Token token) {
+		if (token.isIdentifier()) {
+			return block.getVar(token.getText());
+		} else if (token.isString()) {
+			return token.asString();
+		} else {
+			return token.asDouble();
 		}
 	}
 

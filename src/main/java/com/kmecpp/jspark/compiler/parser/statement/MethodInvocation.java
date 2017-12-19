@@ -60,11 +60,11 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public void execute() {
-		Object target = Keyword.THIS.is(this.target) ? block.getModule() : block.getVariable(this.target);
+		Object target = Keyword.THIS.is(this.target) ? block.getModule() : block.getVarData(this.target);
 
-		Variable var = block.getVariable(this.target);
+		Variable var = block.getVarData(this.target);
 		if (var != null) {
-			Object obj = var.evaluate();
+			Object obj = var.getValue();
 			try {
 				invokeMethod(obj.getClass(), obj);
 			} catch (Exception e) {

@@ -8,9 +8,9 @@ import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 
-public class AbstractBlock extends Statement {
+public abstract class AbstractBlock extends Statement {
 
-	protected final AbstractBlock parent;
+	//	protected final AbstractBlock parent;
 	protected final ArrayList<Statement> statements;
 	protected final HashMap<String, Variable> variables;
 
@@ -19,17 +19,18 @@ public class AbstractBlock extends Statement {
 	//	}
 
 	public AbstractBlock(AbstractBlock parent) {
-		this.parent = parent;
+		super(parent);
+		//		this.parent = parent;
 		this.statements = new ArrayList<>();
 		this.variables = new HashMap<>();
 	}
 
-	public AbstractBlock getParent() {
-		return parent;
+	public AbstractBlock getParentBlock() {
+		return block;
 	}
 
 	public Module getModule() {
-		return parent == null ? (Module) this : parent.getModule();
+		return block == null ? (Module) this : block.getModule();
 	}
 
 	public Collection<Variable> getVars() {
@@ -42,8 +43,8 @@ public class AbstractBlock extends Statement {
 
 	public Variable getVarData(String variableName) {
 		Variable var = variables.get(variableName);
-		if (var == null && parent != null) {
-			return parent.getVarData(variableName); //This handles variable scope
+		if (var == null && block != null) {
+			return block.getVarData(variableName); //This handles variable scope
 		}
 		return var;
 	}
@@ -74,6 +75,15 @@ public class AbstractBlock extends Statement {
 		for (Statement statement : statements) {
 			statement.execute();
 		}
+	}
+
+	@Override
+	public String toJavaCode() {
+		StringBuilder sb = new StringBuilder();
+		for (Statement statement : statements) {
+			sb.append(statement);
+		}
+		return sb.toString();
 	}
 
 }

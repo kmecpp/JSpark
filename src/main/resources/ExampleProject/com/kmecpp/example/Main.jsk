@@ -8,7 +8,11 @@ static Main {
 		int i = 3 + 9;
 		i = i / 6;
 		
-		Console.println(i);
+//		for(int i = 0; i < 10; i = i + 1) {
+//			Console.println(i);
+//		}
+		
+		
 		//string message = "hi";
 		//Console.println(message);
 	}

@@ -21,13 +21,13 @@ Here are two examples of a program which displays the prime numbers up to a give
 
 ### JSpark
 
-	def primes(int n){
-		i = [1, n) :: if i|*.length == 2 :: println(i);
+	def primes(int n) {
+		for n :: if i%% > 2 :: println(n);
 	}
 
 ### Java:
 
-	public static void primes(int n){
+	public void primes(int n){
 		for(int i = 0; i < n; i++){
 			test: {
 				if (i % 2 == 0){

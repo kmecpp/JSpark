@@ -9,16 +9,26 @@ public enum Operator implements AbstractToken {
 	MULTIPLY("*", 2),
 	DIVIDE("/", 2),
 	MODULUS("%", 3),
-	EXPONENT("**", 3),
+	EXPONENT("^", 3),
+
+	//Unary
+	INCREMENT("++", 4),
+	DECREMENT("--", 4);
 
 	;
 
 	private String string;
 	private int precedence;
+	private boolean unary;
 
-	private Operator(String character, int precedence) {
-		this.string = character;
+	private Operator(String string, int precedence) {
+		this(string, precedence, false);
+	}
+
+	private Operator(String string, int precedence, boolean unary) {
+		this.string = string;
 		this.precedence = precedence;
+		this.unary = unary;
 	}
 
 	public double apply(double a, double b) {
@@ -56,6 +66,10 @@ public enum Operator implements AbstractToken {
 
 	public int getPrecedence() {
 		return precedence;
+	}
+
+	public boolean isUnary() {
+		return unary;
 	}
 
 	public static Operator fromString(String operator) {

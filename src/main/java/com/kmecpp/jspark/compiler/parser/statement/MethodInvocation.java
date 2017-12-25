@@ -14,7 +14,7 @@ import com.kmecpp.jspark.runtime.Value;
 
 public class MethodInvocation extends Statement {
 
-	private AbstractBlock block;
+	//	private AbstractBlock block;
 	private Value capture;
 
 	private String target;
@@ -26,7 +26,8 @@ public class MethodInvocation extends Statement {
 	}
 
 	public MethodInvocation(AbstractBlock block, Value capture, String target, String method, ArrayList<Expression> params) {
-		this.block = block;
+		super(block);
+		//		this.block = block;
 		this.capture = capture;
 		this.target = target;
 		this.method = method;
@@ -128,6 +129,11 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public String toString() {
+		return toJavaCode();
+	}
+
+	@Override
+	public String toJavaCode() {
 		return target + "." + method + "(" + params.stream().map(String::valueOf).collect(Collectors.joining(", ")) + ")";
 	}
 

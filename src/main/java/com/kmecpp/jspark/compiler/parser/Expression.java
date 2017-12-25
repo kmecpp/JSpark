@@ -111,6 +111,9 @@ public class Expression {
 	private Token process(Stack<Token> operands, Stack<Token> operators) {
 		//		System.out.println(operators + ", " + operands + "     <----");
 		Operator operator = operators.pop().asOperator();
+		if(operator.isUnary()) {
+			
+		}
 
 		Object value2 = evaluateToken(operands.pop());
 		Object value1 = evaluateToken(operands.pop());
@@ -147,7 +150,7 @@ public class Expression {
 
 	@Override
 	public String toString() {
-		return tokens.stream().map(String::valueOf).collect(Collectors.joining());
+		return tokens.stream().map(String::valueOf).collect(Collectors.joining(" "));
 	}
 
 }

@@ -7,14 +7,15 @@ import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 
 public class VariableDeclaration extends Statement {
 
-	private final AbstractBlock block;
+	//	private final AbstractBlock block;
 
 	private final Type type;
 	private final String name;
 	private final Expression expression;
 
 	public VariableDeclaration(AbstractBlock block, Type type, String name, Expression expression) {
-		this.block = block;
+		super(block);
+		//		this.block = block;
 		this.type = type;
 		this.name = name;
 		this.expression = expression;
@@ -47,6 +48,11 @@ public class VariableDeclaration extends Statement {
 			value = null;
 		}
 		block.defineVariable(new Variable(type, name, value));
+	}
+
+	@Override
+	public String toJavaCode() {
+		return type.getName() + name + " = " + expression;
 	}
 
 }

@@ -199,7 +199,13 @@ public class Tokenizer {
 
 			//OPERATORS
 			else if (Operator.isOperator(String.valueOf(c))) {
-				return new Token(TokenType.OPERATOR, String.valueOf(c));
+				String unary = c + peekNext().getText();
+				if (Operator.isOperator(unary)) {
+					next();
+					return new Token(TokenType.OPERATOR, unary);
+				} else {
+					return new Token(TokenType.OPERATOR, String.valueOf(c));
+				}
 			}
 
 			//SYMBOLS

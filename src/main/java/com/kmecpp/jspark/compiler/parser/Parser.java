@@ -11,6 +11,7 @@ import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.VariableAssignment;
 import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
+import com.kmecpp.jspark.compiler.parser.statement.block.Loop;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
@@ -18,6 +19,7 @@ import com.kmecpp.jspark.compiler.parser.statement.block.module.Static;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
 import com.kmecpp.jspark.compiler.tokenizer.TokenType;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
+import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Symbol;
 import com.kmecpp.jspark.util.FileUtil;
@@ -52,11 +54,11 @@ public class Parser {
 					int index = importStr.lastIndexOf(".");
 					String className = importStr.substring(index == -1 ? 0 : index);
 
-					module.addImport(new Import(importStr.toString(), className));
+					module.addImport(new Import(module, importStr.toString(), className));
 				}
 
 				else if (token.isPrimitiveType()) {
-					readVariableDeclaration(module); //Parse Fields
+					parseVariableDeclaration(module); //Parse Fields
 				}
 
 				else if (token.is(Keyword.DEF)) {
@@ -71,7 +73,7 @@ public class Parser {
 					tokenizer.read(Symbol.OPEN_BRACE);
 
 					Method method = new Method(module, name, params.toArray(new Parameter[params.size()]));
-					method.addStatements(parseBlock(method));
+					method.addStatements(parseStatements(method));
 
 					module.addMethod(method);
 					//					module.addStatement(new Method(name, new ArrayList<>()));
@@ -107,19 +109,32 @@ public class Parser {
 		return module;
 	}
 
-	private ArrayList<Statement> parseBlock(AbstractBlock block) {
+	private ArrayList<Statement> parseStatements(AbstractBlock block) {
 		ArrayList<Statement> statements = new ArrayList<>();
-		while (!tokenizer.peekNext().is(Symbol.CLOSE_BRACE)) {
+
+		int open = 0;
+		while (true) {
 			Token token = tokenizer.next();
 
+			//new stream().invoke(a -> new stream().)
+			//TODO: Does this even work?
+			if (token.is(Symbol.OPEN_PAREN) || token.is(Symbol.OPEN_BRACE)) {
+				open++;
+			} else if (token.is(Symbol.CLOSE_PAREN) || token.is(Symbol.CLOSE_BRACE)) {
+				if (--open < 0) {
+					System.out.println("BREAKKK!!");
+					break;
+				}
+			}
+
 			if (token.isPrimitiveType()) {
-				readVariableDeclaration(block);
+				parseVariableDeclaration(block);
 			}
 
 			else if (token.getType() == TokenType.IDENTIFIER) {
 				//Method invocations
 				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
-					statements.add(readMethodInvocation(block));
+					statements.add(parseMethodInvocation(block));
 				}
 
 				//Variable assignment
@@ -131,25 +146,41 @@ public class Parser {
 				}
 
 				else if (tokenizer.peekNext().getType() == TokenType.IDENTIFIER) {
-					readVariableDeclaration(block);
+					parseVariableDeclaration(block);
 				}
 			}
 
 			else if (token.isKeyword()) {
 				if (token.is(Keyword.FOR)) {
 					//For loops
-					ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.OPEN_BRACE);
-					Expression expression = new Expression(block, expressionTokens);
-					if (expression.isLiteral()) {
-						//						statements.add(new Loop(block,
-						//								new Variable(Type.INTEGER, "", new Expression(block, tokens)),
-						//								new Ex,
-						//								iterate))
-					} else {
-						for (int i = 1; i < expressionTokens.size() - 1; i++) {
+					//					ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.OPEN_BRACE);
+					//					Expression expression = new Expression(block, expressionTokens);
+					Loop loop = new Loop(block);
+					parseVariableDeclaration(loop);
+					loop.setTermination(tokenizer.readExpression(loop));
 
-						}
+					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
+						loop.addStatements(parseStatements(loop));
 					}
+					System.out.println(loop.getStatements());
+					parseVariableDeclaration(block);
+
+					//					Expression termination = tokenizer.readExpression(block);
+					//					ArrayList<VariableAssignment> increment = new ArrayList<>();
+					//					parseVariableDeclaration(loop);
+					//					parseBlock(block);
+
+					//					if (expression.isLiteral()) {
+					//						//						statements.add(new Loop(block,
+					//						//								new Variable(Type.INTEGER, "", new Expression(block, tokens)),
+					//						//								new Ex,
+					//						//								iterate))
+					//					} else {
+					//						for (int i = 1; i < expressionTokens.size() - 1; i++) {
+					//
+					//						}
+					//					}
+					tokenizer.read(Symbol.CLOSE_BRACE);
 				}
 			}
 
@@ -161,7 +192,7 @@ public class Parser {
 		return statements;
 	}
 
-	public MethodInvocation readMethodInvocation(AbstractBlock block) {
+	public MethodInvocation parseMethodInvocation(AbstractBlock block) {
 		String target = tokenizer.getCurrentToken().getText();
 		tokenizer.read(Symbol.PERIOD);
 		String method = tokenizer.readName();
@@ -206,7 +237,7 @@ public class Parser {
 	 * Runtime: var = var.getExpression().evaluate();
 	 * 
 	 */
-	public void readVariableDeclaration(AbstractBlock block) {
+	public void parseVariableDeclaration(AbstractBlock block) {
 		Type type = Type.getType(tokenizer.getCurrentToken());
 		String name = tokenizer.readName();
 		if (tokenizer.peekNext().is(Symbol.EQUALS)) {

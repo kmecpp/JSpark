@@ -7,6 +7,8 @@ public enum Symbol implements AbstractToken {
 	PERIOD('.'),
 	COMMMA(','),
 	SEMICOLON(';'),
+	LESS_THAN('<'),
+	GREATER_THAN('>'),
 	OPEN_PAREN('('),
 	CLOSE_PAREN(')'),
 	OPEN_BRACE('{'),

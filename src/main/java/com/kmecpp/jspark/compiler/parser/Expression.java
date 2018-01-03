@@ -53,6 +53,7 @@ public class Expression {
 		//		long start = System.nanoTime();
 		Stack<Token> operators = new Stack<>();
 		Stack<Token> operands = new Stack<>();
+		System.out.println(tokens);
 
 		for (Token token : tokens) {
 			//			System.out.println(operators + ", " + operands);

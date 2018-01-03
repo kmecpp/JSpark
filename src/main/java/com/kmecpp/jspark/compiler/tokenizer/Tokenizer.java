@@ -1,6 +1,8 @@
 package com.kmecpp.jspark.compiler.tokenizer;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.compiler.parser.Expression;
@@ -16,7 +18,8 @@ public class Tokenizer {
 	private char[] chars;
 	private int current;
 
-	private Token peekedToken;
+	//	private Token peekedToken;
+	private Deque<Token> preprocessedTokens = new LinkedList<>();
 	private Token currentToken;
 
 	//These values are used for errors so if the user peeks the next token, the proper behavior is for them to change
@@ -40,7 +43,7 @@ public class Tokenizer {
 		while (!peekNext().is(token)) {
 			tokens.add(next());
 		}
-		read(token);
+		System.out.println("LAST: " + read(token));
 		return tokens;
 	}
 
@@ -89,9 +92,12 @@ public class Tokenizer {
 	}
 
 	public Token peekNext() {
-		if (peekedToken == null) {
-			peekedToken = getNext();
-		}
+		//		if (peekedToken == null) {
+		//			peekedToken = getNext();
+		//		}
+		//		return peekedToken;
+		Token peekedToken = getNext();
+		preprocessedTokens.push(peekedToken);
 		return peekedToken;
 	}
 
@@ -107,11 +113,14 @@ public class Tokenizer {
 	 * Implementation
 	 */
 	private Token getNext() {
-		if (peekedToken != null) {
-			Token token = peekedToken;
-			peekedToken = null;
-			return token;
+		if (!preprocessedTokens.isEmpty()) {
+			return preprocessedTokens.pop();
 		}
+		//		if (peekedToken != null) {
+		//			Token token = peekedToken;
+		//			peekedToken = null;
+		//			return token;
+		//		}
 
 		try {
 			while (current < chars.length && Character.isWhitespace(chars[current])) {

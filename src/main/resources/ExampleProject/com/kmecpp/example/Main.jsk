@@ -17,11 +17,11 @@ static Main {
 		//Console.println(message);
 	}
 	
-	def print(string s){
-		Console.println(s);
-		
-		int i = 3 + Integer.of(3).abs();
-	}
+//	def print(string s){
+//		Console.println(s);
+//		
+//		int i = 3 + Integer.of(3).abs();
+//	}
 
 
 }

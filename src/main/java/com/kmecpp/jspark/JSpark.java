@@ -53,6 +53,7 @@ public class JSpark {
 		// File(JSpark.class.getResource("/example.jsk").getFile()))) {
 		// System.out.println(line);
 		// }
+
 		System.out.println("Loading source files");
 		//		runProgram(IOUtil.readString(JSpark.class.getResource("/example.jsk")));
 		projectPath = Paths.get(JSpark.class.getResource("/ExampleProject").toURI());

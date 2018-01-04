@@ -51,8 +51,13 @@ public class VariableDeclaration extends Statement {
 	}
 
 	@Override
+	public String toString() {
+		return type.getName() + " " + name + " = " + expression;
+	}
+
+	@Override
 	public String toJavaCode() {
-		return type.getName() + name + " = " + expression;
+		return toString();
 	}
 
 }

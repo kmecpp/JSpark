@@ -34,8 +34,13 @@ public class VariableAssignment extends Statement {
 	}
 
 	@Override
-	public String toJavaCode() {
+	public String toString() {
 		return variableName + " = " + newValue.toString();
+	}
+
+	@Override
+	public String toJavaCode() {
+		return toString();
 	}
 
 }

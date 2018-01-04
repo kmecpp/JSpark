@@ -12,6 +12,7 @@ import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.language.Symbol;
+import com.kmecpp.jspark.util.StringUtil;
 
 public class Tokenizer {
 
@@ -19,15 +20,17 @@ public class Tokenizer {
 	private int current;
 
 	//	private Token peekedToken;
+	private int realIndex;
 	private Deque<Token> preprocessedTokens = new LinkedList<>();
 	private Token currentToken;
 
 	//These values are used for errors so if the user peeks the next token, the proper behavior is for them to change
 	private int line = 1;
-	private int lineStartIndex = 0; //This value is set to the index of every \n character
+	private int lineStartIndex; //This value is set to the index of every \n character
 
 	public Tokenizer(String program) {
 		this.chars = program.toCharArray();
+
 	}
 
 	public static Tokenizer tokenize(String str) {
@@ -40,10 +43,20 @@ public class Tokenizer {
 
 	public ArrayList<Token> readThrough(AbstractToken token) {
 		ArrayList<Token> tokens = new ArrayList<>();
+		int param = 0;
 		while (!peekNext().is(token)) {
-			tokens.add(next());
+			Token t = next();
+			if (t.is(Symbol.OPEN_PAREN)) {
+				param++;
+			} else if (t.is(Symbol.CLOSE_PAREN)) {
+				if (--param < 0) {
+					return tokens;
+				}
+			}
+
+			tokens.add(t);
 		}
-		System.out.println("LAST: " + read(token));
+		read(token);
 		return tokens;
 	}
 
@@ -68,18 +81,19 @@ public class Tokenizer {
 	}
 
 	public Token read(TokenType type) {
-		Token token = next();
+		Token token = peekNext();
 		if (token.getType() == type) {
-			return token;
+			return next();
 		}
 		throw invalidToken(token, type);
 	}
 
 	public Token read(AbstractToken text) {
-		Token token = next();
+		Token token = peekNext();
 		if (token.getText().equals(text.getString())) {
-			return token;
+			return next();
 		}
+
 		throw invalidToken(token, text);
 	}
 
@@ -312,6 +326,18 @@ public class Tokenizer {
 		}
 	}
 
+	public String getPreviousDisplay() {
+		String line = getCurrentLine();
+		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
+		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
+	}
+
+	public String getDisplay() {
+		String line = getCurrentLine();
+		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
+		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
+	}
+
 	private String substring(int start, int end) {
 		int length = end - start;
 		char[] chars = new char[length];
@@ -324,12 +350,12 @@ public class Tokenizer {
 		lineStartIndex = current;
 	}
 
-	private static InvalidTokenException invalidToken(Token token, TokenType expected) {
-		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
+	private RuntimeException invalidToken(Token token, TokenType expected) {
+		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected + getDisplay());
 	}
 
-	private static InvalidTokenException invalidToken(Token token, AbstractToken expected) {
-		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected);
+	private RuntimeException invalidToken(Token token, AbstractToken expected) {
+		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected + getDisplay());
 	}
 
 	public static ArrayList<Token> parseTokens(String expression) {

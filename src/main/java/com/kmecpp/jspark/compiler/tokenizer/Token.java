@@ -7,26 +7,27 @@ import com.kmecpp.jspark.language.PrimitiveType;
 
 public class Token {
 
-	private TokenType type;
-	private String string;
-
-	//	public string(String string) {
-	//		this.string = string;
-	//		this.type = stringType.getType(string);
-	//	}
+	private final TokenType type;
+	private final String string;
+	//	private final int index;
 
 	public Token(TokenType type, String string) {
 		this.type = type;
 		this.string = string;
+		//		this.index = index;
+	}
+
+	public TokenType getType() {
+		return type;
 	}
 
 	public String getText() {
 		return string;
 	}
 
-	public TokenType getType() {
-		return type;
-	}
+	//	public int getIndex() {
+	//		return index;
+	//	}
 
 	public Operator asOperator() {
 		return Operator.fromString(string);

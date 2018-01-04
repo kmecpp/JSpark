@@ -1,15 +1,16 @@
 package com.kmecpp.jspark.compiler.parser.statement.block;
 
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.compiler.parser.Expression;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
+import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 
 public class Loop extends AbstractBlock {
 
-	//	private VariableDeclaration initialization;
+	private VariableDeclaration initialization;
 	private Expression termination;
-	private ArrayList<Statement> increment;
+	private AnonymousBlock increment;
 
 	public Loop(AbstractBlock parent) {//, Expression termination, ArrayList<Statement> increment) {
 		super(parent);
@@ -18,32 +19,36 @@ public class Loop extends AbstractBlock {
 		//		this.increment = increment;
 	}
 
+	public void setInitialization(VariableDeclaration initialization) {
+		this.initialization = initialization;
+	}
+
 	public void setTermination(Expression termination) {
 		this.termination = termination;
 	}
 
-	public void setIncrement(ArrayList<Statement> increment) {
+	public void setIncrement(AnonymousBlock increment) {
 		this.increment = increment;
 	}
 
-	//	public VariableDeclaration getInitialization() {
-	//		return initialization;
-	//	}
+	public VariableDeclaration getInitialization() {
+		return initialization;
+	}
 
 	public Expression getTermination() {
 		return termination;
 	}
 
-	public ArrayList<Statement> getIncrement() {
+	public AnonymousBlock getIncrement() {
 		return increment;
 	}
 
 	@Override
 	public void execute() {
-		//		initialization.execute();
+		initialization.execute();
 		while ((boolean) termination.evaluate()) {
 			super.execute();
-			for (Statement assignment : increment) {
+			for (Statement assignment : increment.getStatements()) {
 				assignment.execute();
 			}
 		}
@@ -51,8 +56,9 @@ public class Loop extends AbstractBlock {
 
 	@Override
 	public String toJavaCode() {
-		StringBuilder sb = new StringBuilder();
-		return "for(" + "";
+		return "for(" + initialization.toJavaCode() + ";" + termination + ";" + increment.toJavaCode() + ") {"
+				+ String.join(";", statements.stream().map(String::valueOf).collect(Collectors.toList()))
+				+ "}";
 	}
 
 }

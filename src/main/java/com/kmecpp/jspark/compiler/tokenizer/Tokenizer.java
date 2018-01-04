@@ -20,7 +20,6 @@ public class Tokenizer {
 	private int current;
 
 	//	private Token peekedToken;
-	private int realIndex;
 	private Deque<Token> preprocessedTokens = new LinkedList<>();
 	private Token currentToken;
 
@@ -37,8 +36,8 @@ public class Tokenizer {
 		return new Tokenizer(str);
 	}
 
-	public Expression readExpression(AbstractBlock block) {
-		return new Expression(block, readThrough(Symbol.SEMICOLON));
+	public Expression readExpression(AbstractBlock block, AbstractToken end) {
+		return new Expression(block, readThrough(end));
 	}
 
 	public ArrayList<Token> readThrough(AbstractToken token) {
@@ -81,20 +80,22 @@ public class Tokenizer {
 	}
 
 	public Token read(TokenType type) {
-		Token token = peekNext();
+		//		int index = current;
+		Token token = next();
 		if (token.getType() == type) {
-			return next();
+			return token;
 		}
-		throw invalidToken(token, type);
+		throw invalidToken(token, "type: " + type);
 	}
 
 	public Token read(AbstractToken text) {
-		Token token = peekNext();
+		//		int index = current;
+		Token token = next();
 		if (token.getText().equals(text.getString())) {
-			return next();
+			return token;
 		}
 
-		throw invalidToken(token, text);
+		throw invalidToken(token, "'" + text.getString() + "'");
 	}
 
 	public boolean hasNext() {
@@ -326,17 +327,32 @@ public class Tokenizer {
 		}
 	}
 
-	public String getPreviousDisplay() {
-		String line = getCurrentLine();
-		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
-		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
-	}
-
 	public String getDisplay() {
 		String line = getCurrentLine();
 		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
 		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
 	}
+
+	//	public String getDisplay(int index) {
+	//		StringBuilder sb = new StringBuilder();
+	//		System.out.println("YYYPYP!");
+	//		for (int i = index, c = 0; i > 0 && c < 2; i--) {
+	//			if (chars[i] == '\n') {
+	//				c++;
+	//			}
+	//			sb.append(chars[i]);
+	//		}
+	//		sb.reverse();
+	//		for (int i = index; chars[i] != '\n'; i++) {
+	//			sb.append(chars[i]);
+	//		}
+	//		sb.append(getCurrentLine());
+	//		System.out.println(sb);
+	//
+	//		String line = getCurrentLine();
+	//		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
+	//		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
+	//	}
 
 	private String substring(int start, int end) {
 		int length = end - start;
@@ -350,11 +366,7 @@ public class Tokenizer {
 		lineStartIndex = current;
 	}
 
-	private RuntimeException invalidToken(Token token, TokenType expected) {
-		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected + getDisplay());
-	}
-
-	private RuntimeException invalidToken(Token token, AbstractToken expected) {
+	private RuntimeException invalidToken(Token token, String expected) {
 		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected + getDisplay());
 	}
 

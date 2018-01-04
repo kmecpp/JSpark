@@ -160,8 +160,7 @@ public class Parser {
 				else if (tokenizer.peekNext().is(Symbol.EQUALS)) {
 					String variableName = token.getText();
 					tokenizer.read(Symbol.EQUALS);
-					Expression expression = tokenizer.readExpression(block);
-					System.out.println(expression.getTokens());
+					Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
 					block.addStatement(new VariableAssignment(block, variableName, expression));
 				}
 
@@ -183,7 +182,7 @@ public class Parser {
 					tokenizer.read(Symbol.OPEN_PAREN);
 					tokenizer.next();
 					loop.setInitialization(parseVariableDeclaration(loop));
-					loop.setTermination(tokenizer.readExpression(loop));
+					loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
 
 					AnonymousBlock increment = new AnonymousBlock(loop);
 					parseStatements(increment);
@@ -193,7 +192,6 @@ public class Parser {
 					//						parseStatements(loop);
 					//					}
 					parseStatements(loop);
-					System.out.println(loop.toJavaCode());
 					//					parseVariableDeclaration(block);
 
 					//					Expression termination = tokenizer.readExpression(block);
@@ -220,7 +218,6 @@ public class Parser {
 			//						}
 
 			else {
-				System.err.println("SHIT: " + token);
 				return;
 				//				error("Invalid start of statement: '" + token + "'");
 			}
@@ -236,23 +233,24 @@ public class Parser {
 		tokenizer.read(Symbol.OPEN_PAREN);
 
 		ArrayList<Expression> params = new ArrayList<>();
-		while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
-			ArrayList<Token> expression = new ArrayList<>();
-			while (true) {
-				expression.add(tokenizer.next());
-
-				if (tokenizer.peekNext().is(Symbol.COMMMA)) {
-					tokenizer.read(Symbol.COMMMA);
-				} else {
-					break;
-				}
-
-			}
-			params.add(new Expression(block, expression));
+		while (!tokenizer.getCurrentToken().is(Symbol.CLOSE_PAREN)) {
+			params.add(tokenizer.readExpression(block, Symbol.COMMMA));
+			//			ArrayList<Token> expression = new ArrayList<>();
+			//			while (true) {
+			//				expression.add(tokenizer.next());
+			//
+			//				if (tokenizer.peekNext().is(Symbol.COMMMA)) {
+			//					tokenizer.read(Symbol.COMMMA);
+			//				} else {
+			//					break;
+			//				}
+			//
+			//			}
+			//			params.add(new Expression(block, expression));
 		}
-		tokenizer.read(Symbol.CLOSE_PAREN);
+		//		tokenizer.read(Symbol.CLOSE_PAREN);
 		tokenizer.read(Symbol.SEMICOLON);
-		System.out.println(new MethodInvocation(block, target, method, params));
+		//		System.out.println(new MethodInvocation(block, target, method, params));
 
 		return new MethodInvocation(block, target, method, params);
 	}
@@ -279,7 +277,7 @@ public class Parser {
 		String name = tokenizer.readName();
 		if (tokenizer.peekNext().is(Symbol.EQUALS)) {
 			tokenizer.next();
-			Expression expression = tokenizer.readExpression(block);
+			Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
 			//			block.addStatement(new VariableDeclaration(block, type, name, expression));
 			return new VariableDeclaration(block, type, name, expression);
 		} else {

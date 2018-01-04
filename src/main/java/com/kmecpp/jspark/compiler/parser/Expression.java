@@ -53,7 +53,7 @@ public class Expression {
 		//		long start = System.nanoTime();
 		Stack<Token> operators = new Stack<>();
 		Stack<Token> operands = new Stack<>();
-		System.out.println(tokens);
+		//		System.out.println(tokens);
 
 		for (Token token : tokens) {
 			//			System.out.println(operators + ", " + operands);
@@ -112,8 +112,8 @@ public class Expression {
 	private Token process(Stack<Token> operands, Stack<Token> operators) {
 		//		System.out.println(operators + ", " + operands + "     <----");
 		Operator operator = operators.pop().asOperator();
-		if(operator.isUnary()) {
-			
+		if (operator.isUnary()) {
+
 		}
 
 		Object value2 = evaluateToken(operands.pop());
@@ -151,7 +151,9 @@ public class Expression {
 
 	@Override
 	public String toString() {
-		return tokens.stream().map(String::valueOf).collect(Collectors.joining(" "));
+		return tokens.stream()
+				.map((token) -> token.isString() ? "\"" + token.getText() + "\"" : String.valueOf(token))
+				.collect(Collectors.joining(" "));
 	}
 
 }

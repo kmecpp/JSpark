@@ -209,6 +209,7 @@ public class Parser {
 					//
 					//						}
 					//					}
+					block.addStatement(loop);
 					tokenizer.read(Symbol.CLOSE_BRACE);
 				}
 			}

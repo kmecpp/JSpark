@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.tokenizer.LiteralToken;
@@ -17,9 +18,11 @@ public class Expression {
 
 	private AbstractBlock block;
 	private ArrayList<Token> tokens;
+	private Type type;
 
 	public Expression(AbstractBlock block, String expression) {
 		this(block, Tokenizer.parseTokens(expression));
+		type = Type.
 	}
 
 	public Expression(AbstractBlock block, ArrayList<Token> tokens) {
@@ -54,6 +57,7 @@ public class Expression {
 		Stack<Token> operators = new Stack<>();
 		Stack<Token> operands = new Stack<>();
 		//		System.out.println(tokens);
+		System.out.println(tokens);
 
 		for (Token token : tokens) {
 			//			System.out.println(operators + ", " + operands);
@@ -113,24 +117,51 @@ public class Expression {
 		//		System.out.println(operators + ", " + operands + "     <----");
 		Operator operator = operators.pop().asOperator();
 		if (operator.isUnary()) {
+			return null;
+		} else {
+			Object value2 = evaluateToken(operands.pop());
+			Object value1 = evaluateToken(operands.pop());
 
+			boolean string = value1 instanceof String || value2 instanceof String;
+			boolean integer = value1 instanceof Integer && value2 instanceof Integer;
+			//			boolean decimal = !string && !integer;
+
+			System.out.println(string || integer);
+			Token result;
+
+			switch (operator) {
+			case PLUS:
+				return string ? new LiteralToken("" + value1 + value2)
+						: integer ? new LiteralToken((int) value1 + (int) value2)
+								: new LiteralToken((double) value1 + (double) value2);
+			default:
+				break;
+			}
+
+			if (value1 instanceof String && operator == Operator.PLUS) {
+				result = new LiteralToken(((String) value1) + value2);
+			} else if (value1 instanceof Integer && value2 instanceof Integer) {
+				result = new LiteralToken(operator.apply((int) value1, (int) value2));
+			} else {
+				result = new LiteralToken(operator.apply(((Number) value1).doubleValue(), ((Number) value2).doubleValue()));
+			}
+
+			return operands.push(result);
 		}
 
-		Object value2 = evaluateToken(operands.pop());
-		Object value1 = evaluateToken(operands.pop());
+		//		Token result;
+		//
+		//		if (value1 instanceof String && operator == Operator.PLUS) {
+		//			result = new LiteralToken(((String) value1) + value2);
+		//		} else if (value1 instanceof Integer && value2 instanceof Integer) {
+		//			result = new LiteralToken(operator.apply((int) value1, (int) value2));
+		//		} else {
+		//			result = new LiteralToken(operator.apply(((Number) value1).doubleValue(), ((Number) value2).doubleValue()));
+		//		}
+		//		return operands.push(result);
 
 		//		Token post = operands.pop();
 		//		Token first = operands.pop();
-		Token result;
-
-		if (value1 instanceof String && operator == Operator.PLUS) {
-			result = new LiteralToken(((String) value1) + value2);
-		} else if (value1 instanceof Integer && value2 instanceof Integer) {
-			result = new LiteralToken(operator.apply((int) value1, (int) value2));
-		} else {
-			result = new LiteralToken(operator.apply(((Number) value1).doubleValue(), ((Number) value2).doubleValue()));
-		}
-		return operands.push(result);
 
 		//		if (value1 instanceof String) {
 		//			return operands.push(new LiteralToken(operator.apply((String) value1, String.valueOf(value2))));

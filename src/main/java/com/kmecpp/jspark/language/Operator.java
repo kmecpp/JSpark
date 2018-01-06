@@ -4,29 +4,46 @@ import javax.naming.OperationNotSupportedException;
 
 public enum Operator implements AbstractToken {
 
-	PLUS("+", 1),
-	MINUS("-", 1),
-	MULTIPLY("*", 2),
-	DIVIDE("/", 2),
-	MODULUS("%", 3),
-	EXPONENT("^", 3),
+	//ARITHMETIC (TYPE 1)
+	PLUS("+", 1, 1),
+	MINUS("-", 1, 1),
+	MULTIPLY("*", 1, 2),
+	DIVIDE("/", 1, 2),
+	MODULUS("%", 1, 3),
+	EXPONENT("^", 1, 3),
 
-	//Unary
-	INCREMENT("++", 4),
-	DECREMENT("--", 4);
+	INCREMENT("++", 1, 4, true),
+	DECREMENT("--", 1, 4, true),
+
+	//RELATIONAL (TYPE 2)
+	EQUALS("==", 2, 1),
+	NOT_EQUALS("==", 2, 1),
+	LESS("<", 2, 1),
+	LESS_EQUALS("<=", 2, 1),
+	GREATER(">", 2, 1),
+	GREATER_EQUALS(">=", 2, 1),
+
+	//BITWISE (TYPE 2)
+	BIT_AND("&", 3, 1),
+	BIT_OR("|", 3, 1),
+	BIT_XOR("", 3, 1),
+
+	BIT_COMPLIMENT("~", 3, 1, true),
 
 	;
 
 	private String string;
+	private int type;
 	private int precedence;
 	private boolean unary;
 
-	private Operator(String string, int precedence) {
-		this(string, precedence, false);
+	private Operator(String string, int type, int precedence) {
+		this(string, type, precedence, false);
 	}
 
-	private Operator(String string, int precedence, boolean unary) {
+	private Operator(String string, int type, int precedence, boolean unary) {
 		this.string = string;
+		this.type = type;
 		this.precedence = precedence;
 		this.unary = unary;
 	}
@@ -70,6 +87,19 @@ public enum Operator implements AbstractToken {
 
 	public boolean isUnary() {
 		return unary;
+	}
+
+	public boolean isArithmetic() {
+		return type == 1;
+	}
+
+	public boolean isRelational() {
+		return type == 2;
+
+	}
+
+	public boolean isBitwise() {
+		return type == 3;
 	}
 
 	public static Operator fromString(String operator) {

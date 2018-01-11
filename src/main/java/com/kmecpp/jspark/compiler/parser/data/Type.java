@@ -36,8 +36,28 @@ public class Type {
 		return fullName.substring(index == -1 ? 0 : index); //Its okay not to cache this data as a field because it will only be used in print outs
 	}
 
+	public boolean isClass() {
+		return primitive == null;
+	}
+
 	public boolean isPrimitive() {
 		return primitive != null;
+	}
+
+	public boolean isString() {
+		return primitive == PrimitiveType.STRING;
+	}
+
+	public boolean isInteger() {
+		return primitive == PrimitiveType.INTEGER;
+	}
+
+	public boolean isDecimal() {
+		return primitive == PrimitiveType.DECIMAL;
+	}
+
+	public boolean isBoolean() {
+		return primitive == PrimitiveType.BOOLEAN;
 	}
 
 	public PrimitiveType getPrimitiveType() {

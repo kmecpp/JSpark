@@ -17,7 +17,7 @@ public enum Operator implements AbstractToken {
 
 	//RELATIONAL (TYPE 2)
 	EQUALS("==", 2, 1),
-	NOT_EQUALS("==", 2, 1),
+	NOT_EQUALS("!=", 2, 1),
 	LESS("<", 2, 1),
 	LESS_EQUALS("<=", 2, 1),
 	GREATER(">", 2, 1),
@@ -46,6 +46,41 @@ public enum Operator implements AbstractToken {
 		this.type = type;
 		this.precedence = precedence;
 		this.unary = unary;
+	}
+
+	public Object apply(int a, int b) {
+		switch (this) {
+		case PLUS:
+			return a + b;
+		case MINUS:
+			return a - b;
+		case MULTIPLY:
+			return a * b;
+		case DIVIDE:
+			return a / b;
+		case MODULUS:
+			return a % b;
+		case EXPONENT:
+			return (int) Math.pow(a, b);
+
+		case EQUALS:
+			return a == b;
+		case NOT_EQUALS:
+			return a != b;
+		case LESS:
+			return a < b;
+		case LESS_EQUALS:
+			return a <= b;
+		case GREATER:
+			return a > b;
+		case GREATER_EQUALS:
+			return a >= b;
+
+		//		case DIVIDES:
+		//			return a % b == 0;
+		default:
+			throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator to numbers: " + a + " " + this.string + " " + b));
+		}
 	}
 
 	public double apply(double a, double b) {

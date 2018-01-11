@@ -45,11 +45,15 @@ public class Loop extends AbstractBlock {
 
 	@Override
 	public void execute() {
-		initialization.execute();
+		if (initialization != null) {
+			initialization.execute();
+		}
 		while ((boolean) termination.evaluate()) {
 			super.execute();
-			for (Statement assignment : increment.getStatements()) {
-				assignment.execute();
+			if (increment != null) {
+				for (Statement assignment : increment.getStatements()) {
+					assignment.execute();
+				}
 			}
 		}
 	}

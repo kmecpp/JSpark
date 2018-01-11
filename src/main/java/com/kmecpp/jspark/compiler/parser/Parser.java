@@ -174,40 +174,39 @@ public class Parser {
 			}
 
 			else if (token.isKeyword()) {
-				if (token.is(Keyword.FOR)) {
-					//For loops
-					//					ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.OPEN_BRACE);
-					//					Expression expression = new Expression(block, expressionTokens);
+
+				//LOOPS
+				if (token.is(Keyword.FOR) || token.is(Keyword.WHILE)) {
 					Loop loop = new Loop(block);
 
-					if (tokenizer.peekNext().isInt()) {
-						loop.setInitialization(new VariableDeclaration(loop, Type.INT, "i", new Expression(loop, "0")));
-						loop.setTermination(new Expression(loop, "i < " + tokenizer.next().asInt()));
-						AnonymousBlock increment = new AnonymousBlock(loop);
-						increment.addStatement(new VariableAssignment(loop, "i", new Expression(loop, "i + 1")));
-						loop.setIncrement(increment);
-						tokenizer.read(Symbol.OPEN_BRACE);
+					if (token.is(Keyword.FOR)) {
+						if (tokenizer.peekNext().isInt()) {
+							loop.setInitialization(new VariableDeclaration(loop, Type.INT, "i", new Expression(loop, "0")));
+							loop.setTermination(new Expression(loop, "i < " + tokenizer.next().asInt()));
+							AnonymousBlock increment = new AnonymousBlock(loop);
+							increment.addStatement(new VariableAssignment(loop, "i", new Expression(loop, "i + 1")));
+							loop.setIncrement(increment);
+							tokenizer.read(Symbol.OPEN_BRACE);
+						} else {
+							tokenizer.read(Symbol.OPEN_PAREN);
+							tokenizer.next();
+
+							loop.setInitialization(parseVariableDeclaration(loop));
+							loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
+							AnonymousBlock increment = new AnonymousBlock(loop);
+							parseStatements(increment);
+							loop.setIncrement(increment);
+						}
 					} else {
-						tokenizer.read(Symbol.OPEN_PAREN);
-						tokenizer.next();
-
-						loop.setInitialization(parseVariableDeclaration(loop));
-						loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
-						AnonymousBlock increment = new AnonymousBlock(loop);
-						parseStatements(increment);
-						loop.setIncrement(increment);
-
+						loop.setTermination(tokenizer.readExpression(loop, Symbol.OPEN_BRACE));
 					}
-
 					parseStatements(loop);
 					block.addStatement(loop);
 					tokenizer.read(Symbol.CLOSE_BRACE);
+				} else {
+					System.err.println("Unknown keyword: " + token.getText());
 				}
 			}
-
-			//						else {
-			//							return statements;
-			//						}
 
 			else {
 				return;

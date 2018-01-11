@@ -10,10 +10,12 @@ static Main {
 		
 //		Console.println("Start: " + (i > 5));
 		
-		for 10 {
+
+		int i = 0;
+		while(i < 10) {
 			Console.println(i);
+			i = i + 1;
 		}
-		
 		
 		//string message = "hi";
 		//Console.println(message);

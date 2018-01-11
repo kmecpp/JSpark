@@ -8,6 +8,11 @@ public class Type {
 	private final String fullName;
 	private final PrimitiveType primitive;
 
+	public static final Type INT = new Type(PrimitiveType.INTEGER);
+	public static final Type DEC = new Type(PrimitiveType.DECIMAL);
+	public static final Type BOOLEAN = new Type(PrimitiveType.BOOLEAN);
+	public static final Type STRING = new Type(PrimitiveType.STRING);
+
 	public Type(String fullName) {
 		this.fullName = fullName;
 		this.primitive = null;

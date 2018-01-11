@@ -179,36 +179,27 @@ public class Parser {
 					//					ArrayList<Token> expressionTokens = tokenizer.readThrough(Symbol.OPEN_BRACE);
 					//					Expression expression = new Expression(block, expressionTokens);
 					Loop loop = new Loop(block);
-					tokenizer.read(Symbol.OPEN_PAREN);
-					tokenizer.next();
-					loop.setInitialization(parseVariableDeclaration(loop));
-					loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
 
-					AnonymousBlock increment = new AnonymousBlock(loop);
-					parseStatements(increment);
-					loop.setIncrement(increment);
+					if (tokenizer.peekNext().isInt()) {
+						loop.setInitialization(new VariableDeclaration(loop, Type.INT, "i", new Expression(loop, "0")));
+						loop.setTermination(new Expression(loop, "i < " + tokenizer.next().asInt()));
+						AnonymousBlock increment = new AnonymousBlock(loop);
+						increment.addStatement(new VariableAssignment(loop, "i", new Expression(loop, "i + 1")));
+						loop.setIncrement(increment);
+						tokenizer.read(Symbol.OPEN_BRACE);
+					} else {
+						tokenizer.read(Symbol.OPEN_PAREN);
+						tokenizer.next();
 
-					//					while (!tokenizer.peekNext().is(Symbol.CLOSE_PAREN)) {
-					//						parseStatements(loop);
-					//					}
+						loop.setInitialization(parseVariableDeclaration(loop));
+						loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
+						AnonymousBlock increment = new AnonymousBlock(loop);
+						parseStatements(increment);
+						loop.setIncrement(increment);
+
+					}
+
 					parseStatements(loop);
-					//					parseVariableDeclaration(block);
-
-					//					Expression termination = tokenizer.readExpression(block);
-					//					ArrayList<VariableAssignment> increment = new ArrayList<>();
-					//					parseVariableDeclaration(loop);
-					//					parseBlock(block);
-
-					//					if (expression.isLiteral()) {
-					//						//						statements.add(new Loop(block,
-					//						//								new Variable(Type.INTEGER, "", new Expression(block, tokens)),
-					//						//								new Ex,
-					//						//								iterate))
-					//					} else {
-					//						for (int i = 1; i < expressionTokens.size() - 1; i++) {
-					//
-					//						}
-					//					}
 					block.addStatement(loop);
 					tokenizer.read(Symbol.CLOSE_BRACE);
 				}

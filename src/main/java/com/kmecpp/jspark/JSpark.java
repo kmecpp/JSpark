@@ -20,6 +20,12 @@ public class JSpark {
 	private static Path projectPath;
 
 	/*
+	 * 
+	 * TODO:
+	 * Unary operators
+	 * Boolean expressions
+	 * Conditionals
+	 * 
 	 * @formatter:off
 	 * Main.jsk
 	 * 

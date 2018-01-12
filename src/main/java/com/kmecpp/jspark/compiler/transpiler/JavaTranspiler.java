@@ -18,8 +18,8 @@ public class JavaTranspiler {
 		sb.append("package " + module.getPackage());
 
 		sb.append("public class " + module.getName() + "{");
-		for (Variable field : module.getFields()) {
-			sb.append("private " + getJavaType(field.getType()));
+		for (Variable field : module.getFields().values()) {
+			sb.append("private " + getJavaType(field.getType()) + " " + field.getName() + ";");
 		}
 		sb.append("}");
 

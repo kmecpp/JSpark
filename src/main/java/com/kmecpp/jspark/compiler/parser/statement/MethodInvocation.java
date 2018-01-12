@@ -10,12 +10,11 @@ import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.language.Keyword;
-import com.kmecpp.jspark.runtime.Value;
 
 public class MethodInvocation extends Statement {
 
 	//	private AbstractBlock block;
-	private Value capture;
+	private Variable capture;
 
 	private String target;
 	private String method;
@@ -25,7 +24,7 @@ public class MethodInvocation extends Statement {
 		this(block, null, target, method, params);
 	}
 
-	public MethodInvocation(AbstractBlock block, Value capture, String target, String method, ArrayList<Expression> params) {
+	public MethodInvocation(AbstractBlock block, Variable capture, String target, String method, ArrayList<Expression> params) {
 		super(block);
 		//		this.block = block;
 		this.capture = capture;
@@ -38,7 +37,7 @@ public class MethodInvocation extends Statement {
 		return block;
 	}
 
-	public Value getCapture() {
+	public Variable getCapture() {
 		return capture;
 	}
 
@@ -61,9 +60,9 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public void execute() {
-		Object target = Keyword.THIS.is(this.target) ? block.getModule() : block.getVarData(this.target);
+		Object target = Keyword.THIS.is(this.target) ? block.getModule() : block.getVariable(this.target);
 
-		Variable var = block.getVarData(this.target);
+		Variable var = block.getVariable(this.target);
 		if (var != null) {
 			Object obj = var.getValue();
 			try {
@@ -120,6 +119,7 @@ public class MethodInvocation extends Statement {
 
 			Object result = method.invoke(target, values);
 			if (capture != null) {
+				
 				capture.setValue(result);
 			}
 			return;

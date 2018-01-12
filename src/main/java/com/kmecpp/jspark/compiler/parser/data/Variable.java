@@ -2,20 +2,18 @@ package com.kmecpp.jspark.compiler.parser.data;
 
 public class Variable {
 
-	private Type type;
-	private String name;
+	protected Type type;
+	protected String name;
 	private Object value;
-	//	private Expression expression;
 
-	//	public Variable(Type type, String name) {
-	//		this(type, name, null);
-	//	}
+	public Variable(Type type, Object value) {
+		this(type, null, value);
+	}
 
-	public Variable(Type type, String name, Object value) {//, Expression expression) {
+	public Variable(Type type, String name, Object value) {
 		this.type = type;
 		this.name = name;
 		this.value = value;
-		//		this.expression = expression;
 	}
 
 	public String getName() {
@@ -24,6 +22,30 @@ public class Variable {
 
 	public Type getType() {
 		return type;
+	}
+
+	public boolean isInteger() {
+		return type.isInteger();
+	}
+
+	public boolean isDecimal() {
+		return type.isDecimal();
+	}
+
+	public boolean isBoolean() {
+		return type.isBoolean();
+	}
+
+	public boolean isString() {
+		return type.isString();
+	}
+
+	public boolean isObject() {
+		return type.isClass();
+	}
+
+	public boolean isPrimitiveType() {
+		return type.isPrimitive();
 	}
 
 	public Object getValue() {

@@ -29,6 +29,14 @@ public class Token {
 	//		return index;
 	//	}
 
+	public boolean isValue() {
+		return isLiteral() || type == TokenType.IDENTIFIER;
+	}
+
+	//	public Variable asValue(AbstractBlock context) {
+	//
+	//	}
+
 	public Operator asOperator() {
 		return Operator.fromString(string);
 	}
@@ -43,6 +51,10 @@ public class Token {
 
 	public boolean isIdentifier() {
 		return type == TokenType.IDENTIFIER;
+	}
+
+	public boolean isOperator() {
+		return type == TokenType.OPERATOR;
 	}
 
 	public boolean isKeyword() {

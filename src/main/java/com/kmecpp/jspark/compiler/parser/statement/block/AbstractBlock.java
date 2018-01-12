@@ -1,7 +1,6 @@
 package com.kmecpp.jspark.compiler.parser.statement.block;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 import com.kmecpp.jspark.compiler.parser.data.Variable;
@@ -33,25 +32,25 @@ public abstract class AbstractBlock extends Statement {
 		return block == null ? (Module) this : block.getModule();
 	}
 
-	public Collection<Variable> getVars() {
-		return variables.values();
+	public HashMap<String, Variable> getVariables() {
+		return variables;
 	}
 
 	//	public HashMap<String, Object> getVariables() {
 	//		return variables;
 	//	}
 
-	public Variable getVarData(String variableName) {
+	public Variable getVariable(String variableName) {
 		Variable var = variables.get(variableName);
 		if (var == null && block != null) {
-			return block.getVarData(variableName); //This handles variable scope
+			return block.getVariable(variableName); //This handles variable scope
 		}
 		return var;
 	}
 
-	public Object getVar(String variableName) {
-		return getVarData(variableName).getValue();
-	}
+	//	public Object getValue(String variableName) {
+	//		return getVariable(variableName).getExpression();
+	//	}
 
 	public Variable defineVariable(Variable variable) {
 		variables.put(variable.getName(), variable);

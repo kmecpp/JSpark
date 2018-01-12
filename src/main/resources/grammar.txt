@@ -2,6 +2,14 @@ TYPES: int, dec, boolean, string. Extended: int64
 
 IDEAS:
 
+
+#################################
+
+
+
+
+
+
 #################################
 
 - RETURN THEN:

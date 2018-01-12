@@ -2,6 +2,9 @@ package com.kmecpp.jspark.language;
 
 import javax.naming.OperationNotSupportedException;
 
+import com.kmecpp.jspark.compiler.parser.data.Type;
+import com.kmecpp.jspark.compiler.parser.data.Variable;
+
 public enum Operator implements AbstractToken {
 
 	//ARITHMETIC (TYPE 1)
@@ -46,6 +49,89 @@ public enum Operator implements AbstractToken {
 		this.type = type;
 		this.precedence = precedence;
 		this.unary = unary;
+	}
+
+	public Variable apply(Variable var1, Variable var2) {
+		switch (this) {
+		case PLUS:
+			if (var1.isString()) {
+				return new Variable(Type.STRING, ((String) var1.getValue()) + var2.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() + (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() + (double) var2.getValue());
+			}
+		case MINUS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() - (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() - (double) var2.getValue());
+			}
+		case MULTIPLY:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() * (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() * (double) var2.getValue());
+			}
+		case DIVIDE:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() / (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() / (double) var2.getValue());
+			}
+		case MODULUS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() % (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() % (double) var2.getValue());
+			}
+		case EXPONENT:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) Math.pow((int) var1.getValue(), (int) var2.getValue()));
+			} else {
+				return new Variable(Type.DEC, Math.pow((double) var1.getValue(), (double) var2.getValue()));
+			}
+
+			//RELATIONAL
+		case EQUALS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() == (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() == (double) var2.getValue());
+			}
+		case NOT_EQUALS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() != (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() % (double) var2.getValue());
+			}
+		case LESS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() < (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() < (double) var2.getValue());
+			}
+		case LESS_EQUALS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() <= (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() <= (double) var2.getValue());
+			}
+		case GREATER:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() > (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() > (double) var2.getValue());
+			}
+		case GREATER_EQUALS:
+			if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.INT, (int) var1.getValue() >= (int) var2.getValue());
+			} else {
+				return new Variable(Type.DEC, (double) var1.getValue() >= (double) var2.getValue());
+			}
+		default:
+			return null;
+		}
 	}
 
 	public Object apply(int a, int b) {
@@ -109,6 +195,50 @@ public enum Operator implements AbstractToken {
 			return a + b;
 		}
 		throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator to strings: " + a + " " + this.string + " " + b));
+	}
+
+	public int apply(int a) {
+		switch (this) {
+		case INCREMENT:
+			return a + 1;
+		case DECREMENT:
+			return a - 1;
+		default:
+			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
+		}
+	}
+
+	public int applyInt(Variable var) {
+		switch (this) {
+		case INCREMENT:
+			return (int) var.getValue() + 1;
+		case DECREMENT:
+			return (int) var.getValue() - 1;
+		default:
+			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
+		}
+	}
+
+	public double applyDouble(Variable var) {
+		switch (this) {
+		case INCREMENT:
+			return (double) var.getValue() + 1;
+		case DECREMENT:
+			return (double) var.getValue() - 1;
+		default:
+			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
+		}
+	}
+
+	public double apply(double a) {
+		switch (this) {
+		case INCREMENT:
+			return a + 1;
+		case DECREMENT:
+			return a - 1;
+		default:
+			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
+		}
 	}
 
 	@Override

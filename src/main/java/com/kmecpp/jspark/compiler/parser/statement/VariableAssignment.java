@@ -30,7 +30,7 @@ public class VariableAssignment extends Statement {
 
 	@Override
 	public void execute() {
-		block.getVarData(variableName).setValue(newValue.evaluate());
+		block.getVariable(variableName).setValue(newValue.evaluate());
 	}
 
 	@Override

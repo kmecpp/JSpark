@@ -18,7 +18,6 @@ import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Static;
 import com.kmecpp.jspark.compiler.tokenizer.InvalidTokenException;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
-import com.kmecpp.jspark.compiler.tokenizer.TokenType;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
@@ -150,7 +149,7 @@ public class Parser {
 				block.addStatement(parseVariableDeclaration(block));
 			}
 
-			else if (token.getType() == TokenType.IDENTIFIER) {
+			else if (token.isIdentifier()) {
 				//Method invocations
 				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
 					block.addStatement(parseMethodInvocation(block));
@@ -164,8 +163,12 @@ public class Parser {
 					block.addStatement(new VariableAssignment(block, variableName, expression));
 				}
 
-				else if (tokenizer.peekNext().getType() == TokenType.IDENTIFIER) {
+				else if (tokenizer.peekNext().isIdentifier()) {
 					block.addStatement(parseVariableDeclaration(block));
+				}
+
+				else if (tokenizer.peekNext().isOperator()) {
+					//TODO: Parse unary assignment
 				}
 
 				else {

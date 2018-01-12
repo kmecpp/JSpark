@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -14,7 +14,6 @@ import com.kmecpp.jspark.compiler.parser.statement.Import;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.NamedBlock;
 import com.kmecpp.jspark.language.PrimitiveType;
-import com.kmecpp.jspark.runtime.Value;
 
 public abstract class Module extends NamedBlock {
 
@@ -65,9 +64,9 @@ public abstract class Module extends NamedBlock {
 		return Optional.empty();
 	}
 
-	public Collection<Variable> getFields() {
+	public HashMap<String, Variable> getFields() {
 		//		return fields;
-		return getVars();
+		return getVariables();
 	}
 
 	//	public void addField(Field field) {
@@ -95,10 +94,10 @@ public abstract class Module extends NamedBlock {
 		return getMethod(name, params).isPresent();
 	}
 
-	public void executeStaticMethod(String name, ArrayList<Value> args) {
+	public void executeStaticMethod(String name, ArrayList<Variable> args) {
 		PrimitiveType[] types = new PrimitiveType[args.size()];
 		for (int i = 0; i < types.length; i++) {
-			types[i] = args.get(i).getType();
+			types[i] = args.get(i).getType().getPrimitiveType();
 		}
 		Optional<Method> method = getMethod(name, types);
 		if (method.isPresent()) {

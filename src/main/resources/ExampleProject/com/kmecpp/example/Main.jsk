@@ -12,6 +12,8 @@ static Main {
 		
 
 		int i = 0;
+		
+		Console.println("I: " + ++i);
 		while(i < 10) {
 			Console.println(i);
 			i = i + 1;

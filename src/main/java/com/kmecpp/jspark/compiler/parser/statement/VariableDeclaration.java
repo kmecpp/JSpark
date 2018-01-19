@@ -13,6 +13,10 @@ public class VariableDeclaration extends Statement {
 	private final String name;
 	private final Expression expression;
 
+	public VariableDeclaration(AbstractBlock block, Type type, String name, String expression) {
+		this(block, type, name, new Expression(block, expression));
+	}
+
 	public VariableDeclaration(AbstractBlock block, Type type, String name, Expression expression) {
 		super(block);
 		//		this.block = block;

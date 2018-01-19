@@ -111,13 +111,13 @@ public class Tokenizer {
 		//			peekedToken = getNext();
 		//		}
 		//		return peekedToken;
-		Token peekedToken = getNext();
+		Token peekedToken = getNextImpl();
 		preprocessedTokens.push(peekedToken);
 		return peekedToken;
 	}
 
 	public Token next() {
-		return currentToken = getNext();
+		return currentToken = getNextImpl();
 	}
 
 	public Token getCurrentToken() {
@@ -127,7 +127,7 @@ public class Tokenizer {
 	/*
 	 * Implementation
 	 */
-	private Token getNext() {
+	private Token getNextImpl() {
 		if (!preprocessedTokens.isEmpty()) {
 			return preprocessedTokens.pop();
 		}
@@ -158,7 +158,7 @@ public class Tokenizer {
 					if (chars[current - 1] == '\n') {
 						newLine();
 					}
-					return getNext();
+					return getNextImpl();
 				} else if (current < chars.length && chars[current] == '*') {
 					int start = line;
 					while (!(chars[current++] == '*' && chars[current] == '/')) {
@@ -167,7 +167,7 @@ public class Tokenizer {
 						}
 					}
 					current++;
-					return getNext();
+					return getNextImpl();
 				}
 			}
 
@@ -231,14 +231,10 @@ public class Tokenizer {
 			else {
 				Operator operator = Operator.fromString(String.valueOf(c));
 				if (operator != null) {
-
 					String fullOperator = operator.getString();
-					System.out.println(chars[current]);
-					while (hasNext() && Operator.isOperator(fullOperator + chars[current])) {
+					while (current < chars.length && Operator.isOperator(fullOperator + chars[current])) {
 						fullOperator += chars[current++];
 					}
-					System.out.println("OP: " + fullOperator);
-
 					return new OperatorToken(Operator.fromString(fullOperator));
 
 					//					Operator currentOperator = null;

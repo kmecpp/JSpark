@@ -218,8 +218,10 @@ public enum Operator implements AbstractToken {
 	public int applyInt(Variable var) {
 		switch (this) {
 		case INCREMENT:
+		case INCREMENT_DELAYED:
 			return (int) var.getValue() + 1;
 		case DECREMENT:
+		case DECREMENT_DELAYED:
 			return (int) var.getValue() - 1;
 		default:
 			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
@@ -229,8 +231,10 @@ public enum Operator implements AbstractToken {
 	public double applyDouble(Variable var) {
 		switch (this) {
 		case INCREMENT:
+		case INCREMENT_DELAYED:
 			return (double) var.getValue() + 1;
 		case DECREMENT:
+		case DECREMENT_DELAYED:
 			return (double) var.getValue() - 1;
 		default:
 			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));

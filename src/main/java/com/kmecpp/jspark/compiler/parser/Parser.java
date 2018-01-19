@@ -7,6 +7,7 @@ import com.kmecpp.jspark.compiler.parser.data.Parameter;
 import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.statement.Import;
 import com.kmecpp.jspark.compiler.parser.statement.MethodInvocation;
+import com.kmecpp.jspark.compiler.parser.statement.UnaryStatement;
 import com.kmecpp.jspark.compiler.parser.statement.VariableAssignment;
 import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
@@ -94,17 +95,6 @@ public class Parser {
 				else {
 					error("Unexpected keyword: " + token.getText());
 				}
-				//				if (token.is(Keyword.PUBLIC)) {
-				//					module.addStatement(new Method(tokenizer.readName(), new ArrayList<>()));
-				//				}
-
-				//				if (token.is(Keyword.CLASS)) {
-				//					module.addStatement(new Class(tokenizer.readName()));
-				//					parseModule();
-				//				} else if (token.is(Keyword.STATIC)) {
-				//					module.addStatement(new Static(tokenizer.readName()));
-				//					parseModule();
-				//				}
 			}
 
 			else if (token.is(Symbol.CLOSE_BRACE)) {
@@ -122,29 +112,8 @@ public class Parser {
 	}
 
 	private void parseStatements(AbstractBlock block) {
-		//		int open = 0;
-		//		ArrayList<Statement> statements = new ArrayList<>();
-		//		int lastSize = -1;
 		while (true) {
-			//			if(statements.size() > lastSize) {
-			//				lastSize = statements.size();
-			//			}else {
-			//				System.out.println(statements);
-			//				return statements;
-			//			}
-
 			Token token = tokenizer.next();
-
-			//new stream().invoke(a -> new stream().)
-			//TODO: Does this even work?
-			//			if (token.is(Symbol.OPEN_PAREN) || token.is(Symbol.OPEN_BRACE)) {
-			//				open++;
-			//			} else if (token.is(Symbol.CLOSE_PAREN) || token.is(Symbol.CLOSE_BRACE)) {
-			//				if (--open < 0) {
-			//					System.out.println("BREAKKK!!");
-			//					break;
-			//				}
-			//			}
 
 			if (token.isPrimitiveType()) {
 				block.addStatement(parseVariableDeclaration(block));
@@ -162,9 +131,11 @@ public class Parser {
 
 					//Unary operators
 					if (operator.isUnary()) {
-						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, token.getText() + operator.getString())));
+						block.addStatement(new UnaryStatement(block, token.getText(), operator));
+						//						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, operator.getString() + token.getText())));
 						tokenizer.next();
 						tokenizer.read(Symbol.SEMICOLON);
+						System.out.println("BLOCK: " + block.getStatements().get(block.getStatements().size() - 1));
 						//						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, token.getText() + (operator == Operator.INCREMENT ? "+1" : "-1"))));
 					}
 
@@ -197,11 +168,9 @@ public class Parser {
 
 					if (token.is(Keyword.FOR)) {
 						if (tokenizer.peekNext().isInt()) {
-							loop.setInitialization(new VariableDeclaration(loop, Type.INT, "i", new Expression(loop, "0")));
+							loop.setInitialization(new VariableDeclaration(loop, Type.INT, "i", "0"));
 							loop.setTermination(new Expression(loop, "i < " + tokenizer.next().asInt()));
-							AnonymousBlock increment = new AnonymousBlock(loop);
-							increment.addStatement(new VariableAssignment(loop, "i", new Expression(loop, "i + 1")));
-							loop.setIncrement(increment);
+							loop.setIncrement(new AnonymousBlock(loop, new VariableAssignment(loop, "i", "i + 1")));
 							tokenizer.read(Symbol.OPEN_BRACE);
 						} else {
 							tokenizer.read(Symbol.OPEN_PAREN);
@@ -242,18 +211,6 @@ public class Parser {
 		ArrayList<Expression> params = new ArrayList<>();
 		while (!tokenizer.getCurrentToken().is(Symbol.CLOSE_PAREN)) {
 			params.add(tokenizer.readExpression(block, Symbol.COMMMA));
-			//			ArrayList<Token> expression = new ArrayList<>();
-			//			while (true) {
-			//				expression.add(tokenizer.next());
-			//
-			//				if (tokenizer.peekNext().is(Symbol.COMMMA)) {
-			//					tokenizer.read(Symbol.COMMMA);
-			//				} else {
-			//					break;
-			//				}
-			//
-			//			}
-			//			params.add(new Expression(block, expression));
 		}
 		//		tokenizer.read(Symbol.CLOSE_PAREN);
 		tokenizer.read(Symbol.SEMICOLON);
@@ -290,7 +247,7 @@ public class Parser {
 		} else {
 			tokenizer.read(Symbol.SEMICOLON);
 			//			block.addStatement(new VariableDeclaration(block, type, name, null));
-			return new VariableDeclaration(block, type, name, null);
+			return new VariableDeclaration(block, type, name, "");
 
 		}
 	}

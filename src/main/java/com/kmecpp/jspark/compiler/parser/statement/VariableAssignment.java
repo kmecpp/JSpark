@@ -9,6 +9,10 @@ public class VariableAssignment extends Statement {
 	private final String variableName;
 	private final Expression newValue;
 
+	public VariableAssignment(AbstractBlock block, String name, String expression) {
+		this(block, name, new Expression(block, expression));
+	}
+
 	public VariableAssignment(AbstractBlock block, String variableName, Expression newValue) {
 		super(block);
 		//		this.block = block;

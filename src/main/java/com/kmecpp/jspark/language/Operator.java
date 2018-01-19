@@ -18,6 +18,8 @@ public enum Operator implements AbstractToken {
 	EXPONENT("^", 1, 3),
 	INCREMENT("++", 1, 4, true),
 	DECREMENT("--", 1, 4, true),
+	INCREMENT_DELAYED("++", 1, 4, true),
+	DECREMENT_DELAYED("--", 1, 4, true),
 
 	//RELATIONAL (TYPE 2)
 	EQUALS("==", 2, 1),
@@ -213,17 +215,6 @@ public enum Operator implements AbstractToken {
 		throw new RuntimeException(new OperationNotSupportedException("Cannot apply operator to strings: " + a + " " + this.string + " " + b));
 	}
 
-	public int apply(int a) {
-		switch (this) {
-		case INCREMENT:
-			return a + 1;
-		case DECREMENT:
-			return a - 1;
-		default:
-			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
-		}
-	}
-
 	public int applyInt(Variable var) {
 		switch (this) {
 		case INCREMENT:
@@ -246,17 +237,6 @@ public enum Operator implements AbstractToken {
 		}
 	}
 
-	public double apply(double a) {
-		switch (this) {
-		case INCREMENT:
-			return a + 1;
-		case DECREMENT:
-			return a - 1;
-		default:
-			throw new RuntimeException(new OperationNotSupportedException("Operator: " + this + " is not unary!"));
-		}
-	}
-
 	@Override
 	public String getString() {
 		return string;
@@ -264,6 +244,10 @@ public enum Operator implements AbstractToken {
 
 	public int getPrecedence() {
 		return precedence;
+	}
+
+	public boolean isDelayed() {
+		return this == INCREMENT_DELAYED || this == Operator.DECREMENT_DELAYED;
 	}
 
 	public boolean isUnary() {

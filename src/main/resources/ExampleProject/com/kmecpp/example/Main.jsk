@@ -5,7 +5,7 @@ static Main {
 		
 	def main() {
 //		Person person = new Person();
-		int i = ((3 +  30) / 10);
+		int i = ((3 + 30) / 10);
 //		i = i / 6;
 		
 //		Console.println("Start: " + (i > 5));

@@ -59,9 +59,6 @@ public class JSpark {
 		projectPath = Paths.get(JSpark.class.getResource("/ExampleProject").toURI());
 
 		runProject(projectPath);
-
-		int i = - - 3;
-
 	}
 
 	public static Interpreter getRuntime() {

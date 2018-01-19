@@ -24,6 +24,10 @@ public class Variable {
 		return type;
 	}
 
+	public boolean isDeclared() {
+		return name != null;
+	}
+
 	public boolean isInteger() {
 		return type.isInteger();
 	}
@@ -54,6 +58,10 @@ public class Variable {
 
 	public void setValue(Object value) {
 		this.value = value;
+	}
+
+	public Variable clone() {
+		return new Variable(type, name, value);
 	}
 
 	@Override

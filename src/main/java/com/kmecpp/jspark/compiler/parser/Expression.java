@@ -72,13 +72,13 @@ public class Expression {
 				if (token.getType() == TokenType.IDENTIFIER) {
 					operands.push(block.getVariable(token.getText()));
 				} else if (token.isInt()) {
-					operands.push(new Variable(Type.INT, null, token.asInt()));
+					operands.push(new Variable(Type.INT, token.asInt()));
 				} else if (token.isDecimal()) {
-					operands.push(new Variable(Type.DEC, null, token.asDouble()));
+					operands.push(new Variable(Type.DEC, token.asDouble()));
 				} else if (token.isBoolean()) {
-					operands.push(new Variable(Type.BOOLEAN, null, token.asBoolean()));
+					operands.push(new Variable(Type.BOOLEAN, token.asBoolean()));
 				} else {
-					operands.push(new Variable(Type.STRING, null, token.asString()));
+					operands.push(new Variable(Type.STRING, token.asString()));
 				}
 
 				//				operands.push(token);
@@ -152,15 +152,17 @@ public class Expression {
 
 			Variable var = operands.pop();
 
+			if (!var.isDeclared()) {
+				System.err.println("Cannot apply unary operator to literal: \"" + var.getValue() + "\"");
+			}
+
 			if (var.getType().isInteger()) {
-				
 				int newValue = operator.applyInt(var);
-				System.out.println("NEW: "+ newValue);
-				operands.push(var);
+				operands.push(operator.isDelayed() ? var.clone() : var);
 				var.setValue(newValue);
 			} else {
 				double newValue = operator.applyDouble(var);
-				operands.push(var);
+				operands.push(operator.isDelayed() ? var.clone() : var);
 				var.setValue(newValue);
 			}
 

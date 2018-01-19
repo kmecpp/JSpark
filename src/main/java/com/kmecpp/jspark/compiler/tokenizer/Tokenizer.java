@@ -231,16 +231,26 @@ public class Tokenizer {
 			else {
 				Operator operator = Operator.fromString(String.valueOf(c));
 				if (operator != null) {
-					Operator currentOperator = null;
-					while ((currentOperator = Operator.fromString(String.valueOf(chars[current]))) != null) {
-						Operator doubleOperator;
-						if (hasNext() && (doubleOperator = Operator.fromString(String.valueOf(c) + peekNext().getText())) != null) {
-							next();
-							return new OperatorToken(doubleOperator);
-						} else {
-							return new OperatorToken(operator);
-						}
+
+					String fullOperator = operator.getString();
+					System.out.println(chars[current]);
+					while (hasNext() && Operator.isOperator(fullOperator + chars[current])) {
+						fullOperator += chars[current++];
 					}
+					System.out.println("OP: " + fullOperator);
+
+					return new OperatorToken(Operator.fromString(fullOperator));
+
+					//					Operator currentOperator = null;
+					//					while ((currentOperator = Operator.fromString(String.valueOf(chars[current]))) != null) {
+					//						Operator doubleOperator;
+					//						if (hasNext() && (doubleOperator = Operator.fromString(String.valueOf(c) + peekNext().getText())) != null) {
+					//							next();
+					//							return new OperatorToken(doubleOperator);
+					//						} else {
+					//							return new OperatorToken(operator);
+					//						}
+					//					}
 				}
 
 				else {

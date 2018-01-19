@@ -1,5 +1,7 @@
 package com.kmecpp.jspark.language;
 
+import java.util.HashMap;
+
 import javax.naming.OperationNotSupportedException;
 
 import com.kmecpp.jspark.compiler.parser.data.Type;
@@ -14,7 +16,6 @@ public enum Operator implements AbstractToken {
 	DIVIDE("/", 1, 2),
 	MODULUS("%", 1, 3),
 	EXPONENT("^", 1, 3),
-
 	INCREMENT("++", 1, 4, true),
 	DECREMENT("--", 1, 4, true),
 
@@ -26,12 +27,19 @@ public enum Operator implements AbstractToken {
 	GREATER(">", 2, 1),
 	GREATER_EQUALS(">=", 2, 1),
 
-	//BITWISE (TYPE 2)
+	//BITWISE (TYPE 3)
 	BIT_AND("&", 3, 1),
 	BIT_OR("|", 3, 1),
 	BIT_XOR("", 3, 1),
-
 	BIT_COMPLIMENT("~", 3, 1, true),
+
+	//ASSIGNMENT (TYPE 4)
+	ASSIGN("=", 4, 4),
+	ASSIGN_PLUS("+=", 4, 4),
+	ASSIGN_MINUS("-=", 4, 4),
+	ASSIGN_MULTIPLY("*=", 4, 4),
+	ASSIGN_DIVIDE("/=", 4, 4),
+	ASSIGN_MOD("%=", 4, 4),
 
 	;
 
@@ -39,6 +47,14 @@ public enum Operator implements AbstractToken {
 	private int type;
 	private int precedence;
 	private boolean unary;
+
+	private static final HashMap<String, Operator> operators = new HashMap<>();
+
+	static {
+		for (Operator operator : values()) {
+			operators.put(operator.string, operator);
+		}
+	}
 
 	private Operator(String string, int type, int precedence) {
 		this(string, type, precedence, false);
@@ -260,20 +276,18 @@ public enum Operator implements AbstractToken {
 
 	public boolean isRelational() {
 		return type == 2;
-
 	}
 
 	public boolean isBitwise() {
 		return type == 3;
 	}
 
+	public boolean isAssignment() {
+		return type == 4;
+	}
+
 	public static Operator fromString(String operator) {
-		for (Operator op : values()) {
-			if (op.string.equalsIgnoreCase(operator)) {
-				return op;
-			}
-		}
-		return null;
+		return operators.get(operator);
 	}
 
 	public static boolean isOperator(String str) {

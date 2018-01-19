@@ -221,24 +221,31 @@ public class Tokenizer {
 				return new LiteralToken(false);
 			}
 
-			//OPERATORS
-			else if (Operator.isOperator(String.valueOf(c))) {
-				String unary = c + peekNext().getText();
-				if (Operator.isOperator(unary)) {
-					next();
-					return new Token(TokenType.OPERATOR, unary);
-				} else {
-					return new Token(TokenType.OPERATOR, String.valueOf(c));
-				}
-			}
-
 			//SYMBOLS
 			else if (Symbol.isSymbol(c)) {
 				return new Token(TokenType.SYMBOL, String.valueOf(c));
 			}
 
+			//OPERATORS
+
 			else {
-				throw new InvalidTokenException("Unknown token: '" + getCharDisplay(c) + "'");
+				Operator operator = Operator.fromString(String.valueOf(c));
+				if (operator != null) {
+					Operator currentOperator = null;
+					while ((currentOperator = Operator.fromString(String.valueOf(chars[current]))) != null) {
+						Operator doubleOperator;
+						if (hasNext() && (doubleOperator = Operator.fromString(String.valueOf(c) + peekNext().getText())) != null) {
+							next();
+							return new OperatorToken(doubleOperator);
+						} else {
+							return new OperatorToken(operator);
+						}
+					}
+				}
+
+				else {
+					throw new InvalidTokenException("Unknown token: '" + getCharDisplay(c) + "'");
+				}
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			throw new RuntimeException("Unexpected end of file: '" + getCharDisplay(chars[chars.length - 1]) + "'", e);

@@ -53,19 +53,15 @@ public class JSpark {
 	 */
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
-
-		// Tokenizer tokenizer = Tokenizer.tokenize("HelloWorld = \"shit\" 304 and
-		// 3.40");
-		// for (String line : IOUtil.readLines(new
-		// File(JSpark.class.getResource("/example.jsk").getFile()))) {
-		// System.out.println(line);
-		// }
-
 		System.out.println("Loading source files");
+
 		//		runProgram(IOUtil.readString(JSpark.class.getResource("/example.jsk")));
 		projectPath = Paths.get(JSpark.class.getResource("/ExampleProject").toURI());
 
 		runProject(projectPath);
+
+		int i = - - 3;
+
 	}
 
 	public static Interpreter getRuntime() {

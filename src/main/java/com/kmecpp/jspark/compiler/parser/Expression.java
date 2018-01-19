@@ -2,7 +2,6 @@ package com.kmecpp.jspark.compiler.parser;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
@@ -154,11 +153,13 @@ public class Expression {
 			Variable var = operands.pop();
 
 			if (var.getType().isInteger()) {
+				
 				int newValue = operator.applyInt(var);
+				System.out.println("NEW: "+ newValue);
 				operands.push(var);
 				var.setValue(newValue);
 			} else {
-				int newValue = operator.applyInt(var);
+				double newValue = operator.applyDouble(var);
 				operands.push(var);
 				var.setValue(newValue);
 			}
@@ -222,9 +223,32 @@ public class Expression {
 
 	@Override
 	public String toString() {
-		return tokens.stream()
-				.map((token) -> token.isString() ? "\"" + token.getText() + "\"" : String.valueOf(token))
-				.collect(Collectors.joining(" "));
+		StringBuilder sb = new StringBuilder();
+		Token lastToken = null;
+		for (Token token : tokens) {
+			if (token.isString()) {
+				sb.append(token.asString());
+			}
+
+			else if (token.isOperator() && token.asOperator().isUnary()) {
+				if (lastToken != null && lastToken.isIdentifier()) {
+					sb.deleteCharAt(sb.length() - 1);
+					sb.append(token.getText());
+				} else {
+					sb.append(token.getText());
+				}
+			} else {
+				sb.append(token.getText());
+				sb.append(" ");
+			}
+
+			lastToken = token;
+		}
+		return sb.toString().trim();
+
+		//		return tokens.stream()
+		//				.map((token) -> token.isString() ? "\"" + token.getText() + "\"" : String.valueOf(token))
+		//				.collect(Collectors.joining(" "));
 	}
 
 }

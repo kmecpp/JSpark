@@ -12,11 +12,16 @@ static Main {
 		
 
 		int i = 0;
+		i = ++i + ++i;
 		
-		Console.println("I: " + ++i);
+//		for 10 {
+//			Console.println(i); 
+//		}
+		
+//		Console.println("I: " + ++i);
 		while(i < 10) {
 			Console.println(i);
-			i = i + 1;
+			i++;
 		}
 		
 		//string message = "hi";

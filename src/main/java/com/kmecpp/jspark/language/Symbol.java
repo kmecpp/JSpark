@@ -3,12 +3,9 @@ package com.kmecpp.jspark.language;
 public enum Symbol implements AbstractToken {
 
 	COLON(':'),
-	EQUALS('='),
 	PERIOD('.'),
 	COMMMA(','),
 	SEMICOLON(';'),
-	LESS_THAN('<'),
-	GREATER_THAN('>'),
 	OPEN_PAREN('('),
 	CLOSE_PAREN(')'),
 	OPEN_BRACE('{'),

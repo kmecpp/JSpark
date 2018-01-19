@@ -21,6 +21,7 @@ import com.kmecpp.jspark.compiler.tokenizer.Token;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
+import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
 import com.kmecpp.jspark.util.FileUtil;
 
@@ -150,25 +151,38 @@ public class Parser {
 			}
 
 			else if (token.isIdentifier()) {
+				Token nextToken = tokenizer.peekNext();
 				//Method invocations
-				if (tokenizer.peekNext().is(Symbol.PERIOD)) {
+				if (nextToken.is(Symbol.PERIOD)) {
 					block.addStatement(parseMethodInvocation(block));
 				}
 
-				//Variable assignment
-				else if (tokenizer.peekNext().is(Symbol.EQUALS)) {
-					String variableName = token.getText();
-					tokenizer.read(Symbol.EQUALS);
-					Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
-					block.addStatement(new VariableAssignment(block, variableName, expression));
+				else if (nextToken.isOperator()) {
+					Operator operator = nextToken.asOperator();
+
+					//Unary operators
+					if (operator.isUnary()) {
+						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, token.getText() + operator.getString())));
+						tokenizer.next();
+						tokenizer.read(Symbol.SEMICOLON);
+						//						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, token.getText() + (operator == Operator.INCREMENT ? "+1" : "-1"))));
+					}
+
+					//Variable assignment
+					else if (operator.isAssignment()) {
+						tokenizer.next();
+						block.addStatement(new VariableAssignment(block, token.getText(), tokenizer.readExpression(block, Symbol.SEMICOLON)));
+						System.out.println(block.getStatements().get(block.getStatements().size() - 1));
+						System.out.println("Assign!");
+					}
+
+					else {
+						System.err.println("Unexpected operator: " + operator);
+					}
 				}
 
 				else if (tokenizer.peekNext().isIdentifier()) {
 					block.addStatement(parseVariableDeclaration(block));
-				}
-
-				else if (tokenizer.peekNext().isOperator()) {
-					//TODO: Parse unary assignment
 				}
 
 				else {
@@ -177,7 +191,6 @@ public class Parser {
 			}
 
 			else if (token.isKeyword()) {
-
 				//LOOPS
 				if (token.is(Keyword.FOR) || token.is(Keyword.WHILE)) {
 					Loop loop = new Loop(block);
@@ -269,7 +282,7 @@ public class Parser {
 	public VariableDeclaration parseVariableDeclaration(AbstractBlock block) {
 		Type type = Type.getType(tokenizer.getCurrentToken());
 		String name = tokenizer.readName();
-		if (tokenizer.peekNext().is(Symbol.EQUALS)) {
+		if (tokenizer.peekNext().is(Operator.ASSIGN)) {
 			tokenizer.next();
 			Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
 			//			block.addStatement(new VariableDeclaration(block, type, name, expression));

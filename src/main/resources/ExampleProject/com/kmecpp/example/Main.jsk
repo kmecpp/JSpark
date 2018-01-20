@@ -5,24 +5,24 @@ static Main {
 		
 	def main() {
 //		Person person = new Person();
-		int i = ((3 + 30) / 10);
+//		int i = ((3 + 30) / 10);
 //		i = i / 6;
 		
 //		Console.println("Start: " + (i > 5));
 		
 
 		int i = 0;
-		i = ++i + ++i;
+		Console.println(++i+i+++i+++i++);
 		
 //		for 10 {
 //			Console.println(i); 
 //		}
 		
 //		Console.println("I: " + ++i);
-		while(i < 10) {
-			Console.println(i);
-			i++;
-		}
+//		while(i < 10) {
+//			Console.println(i);
+//			i++;
+//		}
 		
 		//string message = "hi";
 		//Console.println(message);

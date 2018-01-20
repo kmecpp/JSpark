@@ -6,6 +6,31 @@ IDEAS:
 #################################
 
 
+LISTS
+
+int[] arr = {3}  
+int[] arr = {[3, 4, 5]}
+
+int[] list;
+int[] list = [1, 3, 4];
+
+#################################
+
+
+DEFAULT LOOP ITERATORS
+
+for 10 {
+	if(iterator.isFirst()){
+		println("We are at 0!");
+	}
+	if(iterator.isLast()){
+		println("We are at 9!");
+	}
+}
+
+for e : list {
+	
+}
 
 #################################
 
@@ -14,7 +39,8 @@ IDEAS:
 	private Object obj;
 
 	def main(){
-		return obj then obj = null;
+		return obj
+		then obj = null;
 	}
 	
 	VS.
@@ -87,6 +113,13 @@ IDEAS:
 - Null Values?
 
 Have null but impossible to throw NPE?
+
+
+#################################
+
+- Easy array swap
+
+arr[i] <=> arr[j];
 
 
 #################################

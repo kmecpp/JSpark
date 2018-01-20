@@ -6,8 +6,8 @@ import java.util.Stack;
 import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
+import com.kmecpp.jspark.compiler.tokenizer.OperatorToken;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
-import com.kmecpp.jspark.compiler.tokenizer.TokenType;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
@@ -54,22 +54,34 @@ public class Expression {
 		Stack<Variable> operands = new Stack<>();
 		//		System.out.println(tokens);
 
-		for (Token token : tokens) {
+		for (int i = 0; i < tokens.size(); i++) {
+			Token token = tokens.get(i);
 			//			System.out.println(operators + ", " + operands);
 			if (token.is(Symbol.OPEN_PAREN)) {
 				operators.push(token);
 			} else if (token.isOperator()) {
-				while (!operators.isEmpty() && !operators.peek().is(Symbol.OPEN_PAREN) && operators.peek().asOperator().getPrecedence() >= token.asOperator().getPrecedence()) {
+				Operator operator = token.asOperator();
+				while (!operators.isEmpty() && !operators.peek().is(Symbol.OPEN_PAREN) && operators.peek().asOperator().getPrecedence() >= operator.getPrecedence()) {
 					process(operands, operators);
 				}
-				operators.push(token);
+
+				if (operator.isUnary() && i > 0) {
+					Token previous = tokens.get(i - 1);
+					if (operator == Operator.INCREMENT) {
+						operators.push(new OperatorToken(previous.isIdentifier() ? Operator.INCREMENT_DELAYED : Operator.INCREMENT));
+					} else {
+						operators.push(new OperatorToken(previous.isIdentifier() ? Operator.DECREMENT_DELAYED : Operator.DECREMENT));
+					}
+				} else {
+					operators.push(token);
+				}
 			} else if (token.is(Symbol.CLOSE_PAREN)) {
 				while (!operators.peek().is(Symbol.OPEN_PAREN)) {
 					process(operands, operators);
 				}
 				operators.pop();
 			} else {
-				if (token.getType() == TokenType.IDENTIFIER) {
+				if (token.isIdentifier()) {
 					operands.push(block.getVariable(token.getText()));
 				} else if (token.isInt()) {
 					operands.push(new Variable(Type.INT, token.asInt()));
@@ -156,14 +168,22 @@ public class Expression {
 				System.err.println("Cannot apply unary operator to literal: \"" + var.getValue() + "\"");
 			}
 
-			if (var.getType().isInteger()) {
-				int newValue = operator.applyInt(var);
-				operands.push(operator.isDelayed() ? var.clone() : var);
-				var.setValue(newValue);
+			if (operator.isDelayed()) {
+				if (var.getType().isInteger()) {
+					operands.push(var.clone());
+					var.setValue(operator.applyInt(var));
+				} else {
+					operands.push(var.clone());
+					var.setValue(operator.applyDouble(var));
+				}
 			} else {
-				double newValue = operator.applyDouble(var);
-				operands.push(operator.isDelayed() ? var.clone() : var);
-				var.setValue(newValue);
+				if (var.getType().isInteger()) {
+					var.setValue(operator.applyInt(var));
+					operands.push(var.clone());
+				} else {
+					var.setValue(operator.applyDouble(var));
+					operands.push(var.clone());
+				}
 			}
 
 			//			Object value = evaluateToken(token);

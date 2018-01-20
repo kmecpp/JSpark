@@ -19,6 +19,7 @@ import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Static;
 import com.kmecpp.jspark.compiler.tokenizer.InvalidTokenException;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
+import com.kmecpp.jspark.compiler.tokenizer.TokenType;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
@@ -37,6 +38,9 @@ public class Parser {
 		this.path = path;
 	}
 
+	/*
+	 * PARSE TOP LEVEL MODULE CODE
+	 */
 	public Module parseModule() {
 		this.tokenizer = new Tokenizer(FileUtil.readFile(path));
 		Token moduleType = tokenizer.next();
@@ -111,6 +115,11 @@ public class Parser {
 		return module;
 	}
 
+	/*
+	 * 
+	 * GENERIC BLOCK PARSING
+	 * 
+	 */
 	private void parseStatements(AbstractBlock block) {
 		while (true) {
 			Token token = tokenizer.next();
@@ -131,12 +140,7 @@ public class Parser {
 
 					//Unary operators
 					if (operator.isUnary()) {
-						block.addStatement(new UnaryStatement(block, token.getText(), operator));
-						//						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, operator.getString() + token.getText())));
-						tokenizer.next();
-						tokenizer.read(Symbol.SEMICOLON);
-						System.out.println("BLOCK: " + block.getStatements().get(block.getStatements().size() - 1));
-						//						block.addStatement(new VariableAssignment(block, token.getText(), new Expression(block, token.getText() + (operator == Operator.INCREMENT ? "+1" : "-1"))));
+						block.addStatement(parseUnaryStatement(block));
 					}
 
 					//Variable assignment
@@ -191,6 +195,10 @@ public class Parser {
 				} else {
 					System.err.println("Unknown keyword: " + token.getText());
 				}
+			}
+
+			else if (token.isOperator()) {
+				block.addStatement(parseUnaryStatement(block));
 			}
 
 			else {
@@ -250,6 +258,22 @@ public class Parser {
 			return new VariableDeclaration(block, type, name, "");
 
 		}
+	}
+
+	public UnaryStatement parseUnaryStatement(AbstractBlock block) {
+		Token token = tokenizer.getCurrentToken();
+		UnaryStatement statement;
+		if (token.isIdentifier()) {
+			statement = new UnaryStatement(block, tokenizer.getCurrentToken().getText(), tokenizer.read(TokenType.OPERATOR).asOperator());
+		} else if (token.isOperator() && token.asOperator().isUnary()) {
+			statement = new UnaryStatement(block, tokenizer.read(TokenType.IDENTIFIER).getText(), token.asOperator());
+		} else {
+			error("Expected unary statement!");
+			return null;
+		}
+		tokenizer.read(Symbol.SEMICOLON);
+		return statement;
+
 	}
 
 	public Tokenizer getTokenizer() {

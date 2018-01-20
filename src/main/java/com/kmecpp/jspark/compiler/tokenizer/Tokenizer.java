@@ -29,7 +29,6 @@ public class Tokenizer {
 
 	public Tokenizer(String program) {
 		this.chars = program.toCharArray();
-
 	}
 
 	public static Tokenizer tokenize(String str) {
@@ -227,7 +226,6 @@ public class Tokenizer {
 			}
 
 			//OPERATORS
-
 			else {
 				Operator operator = Operator.fromString(String.valueOf(c));
 				if (operator != null) {
@@ -236,17 +234,6 @@ public class Tokenizer {
 						fullOperator += chars[current++];
 					}
 					return new OperatorToken(Operator.fromString(fullOperator));
-
-					//					Operator currentOperator = null;
-					//					while ((currentOperator = Operator.fromString(String.valueOf(chars[current]))) != null) {
-					//						Operator doubleOperator;
-					//						if (hasNext() && (doubleOperator = Operator.fromString(String.valueOf(c) + peekNext().getText())) != null) {
-					//							next();
-					//							return new OperatorToken(doubleOperator);
-					//						} else {
-					//							return new OperatorToken(operator);
-					//						}
-					//					}
 				}
 
 				else {

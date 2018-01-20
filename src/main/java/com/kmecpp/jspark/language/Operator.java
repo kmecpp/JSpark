@@ -41,7 +41,8 @@ public enum Operator implements AbstractToken {
 	ASSIGN_MINUS("-=", 4, 4),
 	ASSIGN_MULTIPLY("*=", 4, 4),
 	ASSIGN_DIVIDE("/=", 4, 4),
-	ASSIGN_MOD("%=", 4, 4),
+	ASSIGN_MODULUS("%=", 4, 4),
+	SWAP("<=>", 4, 4),
 
 	;
 
@@ -54,6 +55,9 @@ public enum Operator implements AbstractToken {
 
 	static {
 		for (Operator operator : values()) {
+			if (operator == Operator.INCREMENT_DELAYED || operator == Operator.DECREMENT_DELAYED) {
+				continue;
+			}
 			operators.put(operator.string, operator);
 		}
 	}

@@ -90,7 +90,7 @@ public class Expression {
 				} else if (token.isBoolean()) {
 					operands.push(new Variable(Type.BOOLEAN, token.asBoolean()));
 				} else {
-					operands.push(new Variable(Type.STRING, token.asString()));
+					operands.push(new Variable(Type.STRING, token.getText()));
 				}
 
 				//				operands.push(token);
@@ -249,7 +249,7 @@ public class Expression {
 		Token lastToken = null;
 		for (Token token : tokens) {
 			if (token.isString()) {
-				sb.append(token.asString());
+				sb.append(token.toString());
 			}
 
 			else if (token.isOperator() && token.asOperator().isUnary()) {
@@ -260,8 +260,7 @@ public class Expression {
 					sb.append(token.getText());
 				}
 			} else {
-				sb.append(token.getText());
-				sb.append(" ");
+				sb.append(token.getText() + " ");
 			}
 
 			lastToken = token;

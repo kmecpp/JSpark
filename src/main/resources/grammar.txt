@@ -16,6 +16,23 @@ int[] list = [1, 3, 4];
 
 #################################
 
+Method call requirements???
+
+@Override(display(0));
+def display(int level) {
+
+}
+
+#################################
+
+DEFAULT METHOD PARAMETERS (recursive methods?)
+
+	def display(int level default 0) {
+		//Recursive display function
+	}
+	
+#################################
+		
 
 DEFAULT LOOP ITERATORS
 

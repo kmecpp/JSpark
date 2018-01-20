@@ -26,6 +26,7 @@ import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
 import com.kmecpp.jspark.util.FileUtil;
+import com.kmecpp.jspark.util.StringUtil;
 
 public class Parser {
 
@@ -49,6 +50,7 @@ public class Parser {
 		} else if (moduleType.is(Keyword.CLASS)) {
 			module = new Class(path, tokenizer.readName());
 		} else {
+			System.out.println("MODULE: " + module);
 			error("Invalid class definition!");
 		}
 		tokenizer.read(Symbol.OPEN_BRACE);
@@ -191,7 +193,7 @@ public class Parser {
 					}
 					parseStatements(loop);
 					block.addStatement(loop);
-					tokenizer.read(Symbol.CLOSE_BRACE);
+					//					tokenizer.read(Symbol.CLOSE_BRACE);
 				}
 
 				else if (token.is(Keyword.IF)) {
@@ -303,7 +305,20 @@ public class Parser {
 	}
 
 	private void error(String message) {
-		throw new ParseException(this, message);
+		System.err.println(getClass().getSimpleName() + " at (" + (module == null ? path.getFileName() : module.getFileName()) + ":" + tokenizer.getLine() + "): " + message
+				+ tokenizer.getContext(3, true, "\n\t")
+				+ "\n\t" + StringUtil.repeat('-', getErrorStart()) + "^"
+				+ "\n\t");
+		throw new RuntimeException(message);
+
+	}
+
+	private int getErrorStart() {
+		String line = tokenizer.getCurrentLine();
+		return 3
+				+ (line.startsWith("\t") ? -4 : 0)
+				+ line.substring(0, tokenizer.getColumn()).replace("\t", "        ").length()
+				- tokenizer.getCurrentToken().getText().length();
 	}
 
 }

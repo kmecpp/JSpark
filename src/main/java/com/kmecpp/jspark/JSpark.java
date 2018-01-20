@@ -24,6 +24,8 @@ public class JSpark {
 	 * TODO:
 	 * Boolean expressions
 	 * Conditionals
+	 * Objects
+	 * Multiple classes
 	 * 
 	 * @formatter:off
 	 * Main.jsk
@@ -52,12 +54,16 @@ public class JSpark {
 	 */
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
+		//		Profiler profiler = new Profiler();
+		//		profiler.start();
+
 		System.out.println("Loading source files");
 
 		//		runProgram(IOUtil.readString(JSpark.class.getResource("/example.jsk")));
 		projectPath = Paths.get(JSpark.class.getResource("/ExampleProject").toURI());
 
 		runProject(projectPath);
+		//		profiler.displayResults();
 	}
 
 	public static Interpreter getRuntime() {

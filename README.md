@@ -19,13 +19,13 @@ A basic Hello World program written in JSpark
 Here are two examples of a program which displays the prime numbers up to a given parameter n. One is written in JSpark, and the directly equivalent algorithm in shown in Java.
 
 
-### JSpark
+**JSpark**
 
 	def primes(int n) {
 		for n :: if i%% > 2 :: println(n);
 	}
 
-### Java:
+**Java:**
 
 	public void primes(int n){
 		for(int i = 0; i < n; i++){
@@ -44,7 +44,9 @@ Here are two examples of a program which displays the prime numbers up to a give
 	}
 	
 	
-## Coolest Features
+
+# Coolest Features
+________________________
 
 
 ### Trivial `for` loops
@@ -54,7 +56,7 @@ Here are two examples of a program which displays the prime numbers up to a give
 		Console.println(i); //Prints 0-9; i is the default variable
 	}
 	
-	for j : 10 {
+	for j : 10 { //It is also easy to choose a variable name, parentheses are optional
 		Console.println(j); //0-9
 	}
 	

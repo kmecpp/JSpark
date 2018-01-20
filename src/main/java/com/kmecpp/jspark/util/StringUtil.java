@@ -10,4 +10,8 @@ public class StringUtil {
 		return new String(chars);
 	}
 
+	public static String whitespace(int amount) {
+		return repeat(' ', amount);
+	}
+
 }

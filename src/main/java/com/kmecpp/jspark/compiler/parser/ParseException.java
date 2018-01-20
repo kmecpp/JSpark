@@ -20,10 +20,17 @@ public class ParseException extends RuntimeException {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " at (" + module.getFileName() + ":" + tokenizer.getLine() + "): " + message
-				+ tokenizer.getContext(3, true, "\n\t")
-				+ "\n\t" + StringUtil.repeat('-', getErrorStart()) + "^"
-				+ "\n\t";
+		try {
+			return getClass().getSimpleName() + " at (" + module.getFileName() + ":" + tokenizer.getLine() + "): " + message
+					+ tokenizer.getContext(3, true, "\n\t")
+					+ "\n\t" + StringUtil.repeat('-', getErrorStart()) + "^"
+					+ "\n\t";
+		} catch (Exception e) {
+			System.err.println("Error in exception handler!");
+			e.printStackTrace();
+			throw new Error(e);
+		}
+
 	}
 
 	private int getErrorStart() {

@@ -28,6 +28,7 @@ public enum Operator implements AbstractToken {
 	LESS_EQUALS("<=", 2, 1),
 	GREATER(">", 2, 1),
 	GREATER_EQUALS(">=", 2, 1),
+	DIVIDES("%%", 2, 1),
 
 	//BITWISE (TYPE 3)
 	BIT_AND("&", 3, 1),

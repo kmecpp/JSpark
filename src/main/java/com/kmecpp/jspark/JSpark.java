@@ -22,7 +22,6 @@ public class JSpark {
 	/*
 	 * 
 	 * TODO:
-	 * Unary operators
 	 * Boolean expressions
 	 * Conditionals
 	 * 

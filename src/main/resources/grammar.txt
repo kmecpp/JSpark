@@ -124,6 +124,15 @@ arr[i] <=> arr[j];
 
 #################################
 
+- Easy array swap
+
+arr[i] <=> arr[j];
+
+
+
+
+#################################
+
 
 
 case class Person (String name, int age);

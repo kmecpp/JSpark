@@ -7,6 +7,8 @@ public enum Keyword implements AbstractToken {
 	STRING,
 	BOOLEAN,
 
+	IF,
+	ELSE,
 	DEF,
 	NEW,
 	FOR,

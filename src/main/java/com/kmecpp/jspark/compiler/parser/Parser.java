@@ -192,7 +192,13 @@ public class Parser {
 					parseStatements(loop);
 					block.addStatement(loop);
 					tokenizer.read(Symbol.CLOSE_BRACE);
-				} else {
+				}
+
+				else if (token.is(Keyword.IF)) {
+					//TODO
+				}
+
+				else {
 					System.err.println("Unknown keyword: " + token.getText());
 				}
 			}

@@ -1,5 +1,5 @@
 # JSpark
-A simple programming language for the JVM
+A simple programming language for the JVM. JSpark was designed to be a better Java so there is a lot of syntactic and behavioral overlap.
 
 
 ## Hello World
@@ -42,3 +42,45 @@ Here are two examples of a program which displays the prime numbers up to a give
 			}
 		}
 	}
+	
+	
+## Coolest Features
+
+
+### Trivial `for` loops
+
+
+	for 10 {
+		Console.println(i); //Prints 0-9; i is the default variable
+	}
+	
+	for j : 10 {
+		Console.println(j); //0-9
+	}
+	
+	
+### Return-then statements
+
+Ever had to store some result as a local variable before you return it to perform some additional cleanup/logic?
+
+**Java code:**
+
+	void test(){
+		Object temp = obj;
+		obj = null;
+		return temp;
+	}
+
+
+**JSpark equivalent with return-then:**
+
+	def test(){
+		return obj then obj = null;
+	}
+	
+
+### Explicit single line blocks
+
+
+	for n :: Console.println(i); //Easily and explicitly define single line blocks as opposed to dropping parentheses in Java
+

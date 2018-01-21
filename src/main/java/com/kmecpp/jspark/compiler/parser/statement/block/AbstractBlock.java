@@ -2,26 +2,23 @@ package com.kmecpp.jspark.compiler.parser.statement.block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
+import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 
 public abstract class AbstractBlock extends Statement {
 
-	//	protected final AbstractBlock parent;
-	protected final ArrayList<Statement> statements;
-	protected final HashMap<String, Variable> variables;
+	protected final ArrayList<Statement> statements = new ArrayList<>();
+	protected final HashSet<String> variableNames = new HashSet<>();
 
-	//	public AbstractBlock() {
-	//		this(new ArrayList<>());
-	//	}
+	//Runtime
+	protected final HashMap<String, Variable> variables = new HashMap<>();
 
 	public AbstractBlock(AbstractBlock parent) {
 		super(parent);
-		//		this.parent = parent;
-		this.statements = new ArrayList<>();
-		this.variables = new HashMap<>();
 	}
 
 	public AbstractBlock getParentBlock() {
@@ -40,6 +37,10 @@ public abstract class AbstractBlock extends Statement {
 	//		return variables;
 	//	}
 
+	public boolean containsVariable(String variableName) {
+		return variables.containsKey(variableName);
+	}
+
 	public Variable getVariable(String variableName) {
 		Variable var = variables.get(variableName);
 		if (var == null && block != null) {
@@ -57,11 +58,10 @@ public abstract class AbstractBlock extends Statement {
 		return variable;
 	}
 
-	public void addStatements(ArrayList<Statement> statements) {
-		this.statements.addAll(statements);
-	}
-
 	public void addStatement(Statement statement) {
+		if (statement instanceof VariableDeclaration) {
+			variableNames.add(((VariableDeclaration) statement).getName());
+		}
 		this.statements.add(statement);
 	}
 

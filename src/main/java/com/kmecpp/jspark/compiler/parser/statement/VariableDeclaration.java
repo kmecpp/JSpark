@@ -23,6 +23,8 @@ public class VariableDeclaration extends Statement {
 		this.type = type;
 		this.name = name;
 		this.expression = expression;
+
+		//		block.defineVariable(type, name, expression)
 	}
 
 	public AbstractBlock getBlock() {
@@ -51,6 +53,7 @@ public class VariableDeclaration extends Statement {
 		} else {
 			value = null;
 		}
+
 		block.defineVariable(new Variable(type, name, value));
 	}
 

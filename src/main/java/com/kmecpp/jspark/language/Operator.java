@@ -24,11 +24,12 @@ public enum Operator implements AbstractToken {
 	//RELATIONAL (TYPE 2)
 	EQUALS("==", 2, 1),
 	NOT_EQUALS("!=", 2, 1),
+	EQUALS_ALL("==:", 2, 1),
 	LESS("<", 2, 1),
 	LESS_EQUALS("<=", 2, 1),
 	GREATER(">", 2, 1),
 	GREATER_EQUALS(">=", 2, 1),
-	DIVIDES("%%", 2, 1),
+	DIVISIBLE("%%", 2, 1),
 
 	//BITWISE (TYPE 3)
 	BIT_AND("&", 3, 1),
@@ -38,6 +39,7 @@ public enum Operator implements AbstractToken {
 
 	//ASSIGNMENT (TYPE 4)
 	ASSIGN("=", 4, 4),
+	ASSIGN_ALL("=:", 4, 4),
 	ASSIGN_PLUS("+=", 4, 4),
 	ASSIGN_MINUS("-=", 4, 4),
 	ASSIGN_MULTIPLY("*=", 4, 4),

@@ -12,7 +12,6 @@ import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.language.Symbol;
-import com.kmecpp.jspark.util.StringUtil;
 
 public class Tokenizer {
 
@@ -148,6 +147,7 @@ public class Tokenizer {
 				return null;
 			}
 
+			int tokenStart = current;
 			char c = chars[current++];
 
 			//Comments
@@ -180,7 +180,7 @@ public class Tokenizer {
 				}
 
 				String token = sb.toString();
-				return new Token(Keyword.isKeyword(token) ? TokenType.KEYWORD : TokenType.IDENTIFIER, token);
+				return new Token(tokenStart, Keyword.isKeyword(token) ? TokenType.KEYWORD : TokenType.IDENTIFIER, token);
 			}
 
 			//STRINGS
@@ -190,7 +190,7 @@ public class Tokenizer {
 					sb.append(chars[current++]);
 				}
 				current++;
-				return new LiteralToken(sb.toString());
+				return new LiteralToken(tokenStart, sb.toString());
 			}
 
 			//NUMBERS
@@ -207,22 +207,22 @@ public class Tokenizer {
 						sb.append(chars[current++]);
 					}
 					//TODO: E notation?					
-					return new LiteralToken(Double.parseDouble(sb.toString()));
+					return new LiteralToken(tokenStart, Double.parseDouble(sb.toString()));
 				} else {
-					return new LiteralToken(Integer.parseInt(sb.toString()));
+					return new LiteralToken(tokenStart, Integer.parseInt(sb.toString()));
 				}
 			}
 
 			//BOOLEANS
 			else if (c == 't' && chars[current] == 'r' && chars[current + 1] == 'u' && chars[current + 2] == 'e' && chars[current + 3] == ' ') {
-				return new LiteralToken(true);
+				return new LiteralToken(tokenStart, true);
 			} else if (c == 'f' && chars[current] == 'a' && chars[current + 1] == 'l' && chars[current + 2] == 's' && chars[current + 3] == 'e' && chars[current + 4] == ' ') {
-				return new LiteralToken(false);
+				return new LiteralToken(tokenStart, false);
 			}
 
 			//SYMBOLS
 			else if (Symbol.isSymbol(c)) {
-				return new Token(TokenType.SYMBOL, String.valueOf(c));
+				return new Token(tokenStart, TokenType.SYMBOL, String.valueOf(c));
 			}
 
 			//OPERATORS
@@ -233,7 +233,7 @@ public class Tokenizer {
 					while (current < chars.length && Operator.isOperator(fullOperator + chars[current])) {
 						fullOperator += chars[current++];
 					}
-					return new OperatorToken(Operator.fromString(fullOperator));
+					return new OperatorToken(tokenStart, Operator.fromString(fullOperator));
 				}
 
 				else {
@@ -270,6 +270,63 @@ public class Tokenizer {
 		return line;
 	}
 
+	public int getLineStartIndex() {
+		return lineStartIndex;
+	}
+
+	/**
+	 * Calculates the line number of the given index
+	 * 
+	 * @param index
+	 *            the index to find the line number of
+	 * @return the line number of the line which contains the given index.
+	 */
+	public int getLine(int index) {
+		int lineNumber = line;
+		for (int i = lineStartIndex; i > 0 && i > index; i--) {
+			if (chars[i] == '\n') {
+				lineNumber--;
+			}
+		}
+		return lineNumber;
+	}
+
+	public String getLineText(int index) {
+		StringBuilder sb = new StringBuilder();
+
+		int start = index;
+		while (true) {
+			if (chars[start] == '\n') {
+				break;
+			}
+			start--;
+		}
+
+		int end = index;
+		while (true) {
+			if (chars[end] == '\n') {
+				break;
+			}
+			end++;
+		}
+
+		for (int i = start + 1; i < end; i++) {
+			sb.append(chars[i]);
+		}
+		return sb.toString();
+	}
+
+	public int getColumn(int index) {
+		int lineStartIndex = 0;
+		for (int i = index; i > 0; i--) {
+			if (chars[i] == '\n') {
+				lineStartIndex = i;
+				break;
+			}
+		}
+		return index - lineStartIndex;
+	}
+
 	public int getColumn() {
 		return current - lineStartIndex;
 	}
@@ -282,14 +339,16 @@ public class Tokenizer {
 		return sb.toString();
 	}
 
-	public String getContext(int lines, boolean showLineNumbers) {
-		return getContext(lines, showLineNumbers, "");
-	}
+	//	public String getContext(int lines, boolean showLineNumbers) {
+	//		return getContext(lines, showLineNumbers, "");
+	//	}
 
-	public String getContext(int lines, boolean showLineNumbers, String linePrefix) {
+	public String getContext(Token token) {
+		final int tokenIndex = token.getIndex();
+
 		//Find the starting position
-		int start = current;
-		for (int i = current; i >= 0 && lines > 0; i--) {
+		int start = tokenIndex;
+		for (int i = tokenIndex, lines = 3; i >= 0 && lines > 0; i--) {
 			if (chars[i] == '\n') {
 				lines--;
 				if (lines == 0) {
@@ -304,34 +363,71 @@ public class Tokenizer {
 		}
 
 		//Find the ending position
-		int end = current;
-		for (int i = current; i < chars.length; i++) {
+		int end = tokenIndex;
+		for (int i = tokenIndex; i < chars.length; i++) {
 			if (chars[i] == '\n') {
 				end = i;
 				break;
 			}
 		}
 
-		//Calculate line numbers if necessary
-		if (showLineNumbers) {
-			StringBuilder result = new StringBuilder();
-			String[] linesArr = substring(start, end).split("\n");
-			int currentLine = this.line - linesArr.length + 1;
-			for (String line : linesArr) {
-				result.append(linePrefix + currentLine + ": " + line);
-				currentLine++;
-			}
-			return result.toString();
-		} else {
-			return substring(start, end);
+		//Add file line numbers to display
+		StringBuilder result = new StringBuilder();
+		String[] linesArr = substring(start, end).split("\n");
+		int currentLine = getLine(tokenIndex) - linesArr.length + 1;
+		for (String line : linesArr) {
+			result.append("\n\t" + currentLine + ": " + line);
+			currentLine++;
 		}
+		return result.toString();
 	}
 
-	public String getDisplay() {
-		String line = getCurrentLine();
-		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
-		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
-	}
+	//	public String getContext(int lines, boolean showLineNumbers, String linePrefix) {
+	//		//Find the starting position
+	//		int start = current;
+	//		for (int i = current; i >= 0 && lines > 0; i--) {
+	//			if (chars[i] == '\n') {
+	//				lines--;
+	//				if (lines == 0) {
+	//					start = i + 1; //Don't include this newline
+	//					break;
+	//				}
+	//			}
+	//			if (i == 0) {
+	//				start = i;
+	//				break;
+	//			}
+	//		}
+	//
+	//		//Find the ending position
+	//		int end = current;
+	//		for (int i = current; i < chars.length; i++) {
+	//			if (chars[i] == '\n') {
+	//				end = i;
+	//				break;
+	//			}
+	//		}
+	//
+	//		//Calculate line numbers if necessary
+	//		if (showLineNumbers) {
+	//			StringBuilder result = new StringBuilder();
+	//			String[] linesArr = substring(start, end).split("\n");
+	//			int currentLine = this.line - linesArr.length + 1;
+	//			for (String line : linesArr) {
+	//				result.append(linePrefix + currentLine + ": " + line);
+	//				currentLine++;
+	//			}
+	//			return result.toString();
+	//		} else {
+	//			return substring(start, end);
+	//		}
+	//	}
+	//
+	//	public String getDisplay() {
+	//		String line = getCurrentLine();
+	//		int start = 3 + (line.startsWith("\t") ? -4 : 0) + line.substring(0, getColumn()).replace("\t", "        ").length() - getCurrentToken().getText().length();
+	//		return getContext(3, true, "\n\t") + "\n\t" + StringUtil.repeat('-', start) + "^";
+	//	}
 
 	//	public String getDisplay(int index) {
 	//		StringBuilder sb = new StringBuilder();
@@ -367,7 +463,7 @@ public class Tokenizer {
 	}
 
 	private RuntimeException invalidToken(Token token, String expected) {
-		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected + getDisplay());
+		return new InvalidTokenException("Invalid token: '" + token.getText() + "' (" + token.getType() + ")! Expected " + expected + getContext(token));
 	}
 
 	public static ArrayList<Token> parseTokens(String expression) {

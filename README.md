@@ -22,7 +22,7 @@ Here are two examples of a program which displays the prime numbers up to a give
 **JSpark**
 
 	def primes(int n) {
-		for n :: if i%% > 2 :: println(n);
+		for n :: if([x : sqrt(i) if n %% x] > 2) :: println(n);
 	}
 
 **Java:**

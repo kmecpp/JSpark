@@ -50,7 +50,6 @@ public class Parser {
 		} else if (moduleType.is(Keyword.CLASS)) {
 			module = new Class(path, tokenizer.readName());
 		} else {
-			System.out.println("MODULE: " + module);
 			error("Invalid class definition!");
 		}
 		tokenizer.read(Symbol.OPEN_BRACE);
@@ -77,7 +76,7 @@ public class Parser {
 				}
 
 				else if (token.isPrimitiveType()) {
-					module.addStatement(parseVariableDeclaration(module)); //Parse Fields
+					parseVariableDeclaration(module); //Parse Fields
 				}
 
 				else if (token.is(Keyword.DEF)) {
@@ -99,18 +98,19 @@ public class Parser {
 				}
 
 				else {
-					error("Unexpected keyword: " + token.getText());
+					error("Unexpected keyword in class definition: " + token.getText());
 				}
 			}
 
 			else if (token.is(Symbol.CLOSE_BRACE)) {
 				if (tokenizer.hasNext()) {
-					error("Encounted extra closing brace: " + token);
+					error(token, "Encountered unexpected closing brace!");
 				}
 			}
 
 			else {
-				error("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
+				error("Unexpected " + token.getType().toString().toLowerCase() + " in class definition '" + token.getText() + "'");
+				//				error("Could not parse unknown " + (token == null ? "token: null" : token.getType() + " '" + token.getText() + "'"));
 			}
 		}
 		//		System.out.println(module.getFields());
@@ -122,12 +122,12 @@ public class Parser {
 	 * GENERIC BLOCK PARSING
 	 * 
 	 */
-	private void parseStatements(AbstractBlock block) {
+	private <T extends AbstractBlock> T parseStatements(T block) {
 		while (true) {
 			Token token = tokenizer.next();
 
 			if (token.isPrimitiveType()) {
-				block.addStatement(parseVariableDeclaration(block));
+				parseVariableDeclaration(block);
 			}
 
 			else if (token.isIdentifier()) {
@@ -139,6 +139,10 @@ public class Parser {
 
 				else if (nextToken.isOperator()) {
 					Operator operator = nextToken.asOperator();
+
+					if (!block.containsVariable(token.getText())) {
+						error(token, "Variable '" + token.getText() + "' is not defined!");
+					}
 
 					//Unary operators
 					if (operator.isUnary()) {
@@ -158,12 +162,12 @@ public class Parser {
 					}
 				}
 
-				else if (tokenizer.peekNext().isIdentifier()) {
-					block.addStatement(parseVariableDeclaration(block));
-				}
+				//				else if (tokenizer.peekNext().isIdentifier()) {
+				//					parseVariableDeclaration(block);
+				//				}
 
 				else {
-					System.err.println("Unknown identifier while parsing block: '" + token + "'");
+					error(token, "Unknown identifier while parsing block: '" + token + "'");
 				}
 			}
 
@@ -174,7 +178,11 @@ public class Parser {
 
 					if (token.is(Keyword.FOR)) {
 						if (tokenizer.peekNext().isInt()) {
-							loop.setInitialization(new VariableDeclaration(loop, Type.INT, "i", "0"));
+							if (loop.containsVariable("i")) {
+								error(token, "Default loop variable 'i' is already defined!");
+							}
+
+							loop.setInitialization(new AnonymousBlock(loop, new VariableDeclaration(loop, Type.INT, "i", "0")));
 							loop.setTermination(new Expression(loop, "i < " + tokenizer.next().asInt()));
 							loop.setIncrement(new AnonymousBlock(loop, new VariableAssignment(loop, "i", "i + 1")));
 							tokenizer.read(Symbol.OPEN_BRACE);
@@ -182,11 +190,12 @@ public class Parser {
 							tokenizer.read(Symbol.OPEN_PAREN);
 							tokenizer.next();
 
-							loop.setInitialization(parseVariableDeclaration(loop));
+							loop.setInitialization(parseVariableDeclaration(new AnonymousBlock(loop)));
+
+							//							loop.setInitialization(parseVariableDeclaration(loop));
 							loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
-							AnonymousBlock increment = new AnonymousBlock(loop);
-							parseStatements(increment);
-							loop.setIncrement(increment);
+							//							AnonymousBlock increment = ;
+							loop.setIncrement(parseStatements(new AnonymousBlock(loop)));
 						}
 					} else {
 						loop.setTermination(tokenizer.readExpression(loop, Symbol.OPEN_BRACE));
@@ -201,7 +210,7 @@ public class Parser {
 				}
 
 				else {
-					System.err.println("Unknown keyword: " + token.getText());
+					error("Unexpected keyword: '" + token.getText() + "'");
 				}
 			}
 
@@ -210,7 +219,7 @@ public class Parser {
 			}
 
 			else {
-				return;
+				return block;
 				//				error("Invalid start of statement: '" + token + "'");
 			}
 		}
@@ -252,36 +261,42 @@ public class Parser {
 	 * Runtime: var = var.getExpression().evaluate();
 	 * 
 	 */
-	public VariableDeclaration parseVariableDeclaration(AbstractBlock block) {
+	public <T extends AbstractBlock> T parseVariableDeclaration(T block) {
 		Type type = Type.getType(tokenizer.getCurrentToken());
 		String name = tokenizer.readName();
+
+		if (block.containsVariable(name)) {
+			error(tokenizer.getCurrentToken(), "Variable '" + name + "' already defined!");
+		}
+
 		if (tokenizer.peekNext().is(Operator.ASSIGN)) {
 			tokenizer.next();
 			Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
 			//			block.addStatement(new VariableDeclaration(block, type, name, expression));
-			return new VariableDeclaration(block, type, name, expression);
+
+			block.addStatement(new VariableDeclaration(block, type, name, expression));
 		} else {
 			tokenizer.read(Symbol.SEMICOLON);
 			//			block.addStatement(new VariableDeclaration(block, type, name, null));
-			return new VariableDeclaration(block, type, name, "");
-
+			block.addStatement(new VariableDeclaration(block, type, name, (Expression) null));
 		}
+		return block;
 	}
 
 	public UnaryStatement parseUnaryStatement(AbstractBlock block) {
 		Token token = tokenizer.getCurrentToken();
+
 		UnaryStatement statement;
 		if (token.isIdentifier()) {
 			statement = new UnaryStatement(block, tokenizer.getCurrentToken().getText(), tokenizer.read(TokenType.OPERATOR).asOperator());
 		} else if (token.isOperator() && token.asOperator().isUnary()) {
 			statement = new UnaryStatement(block, tokenizer.read(TokenType.IDENTIFIER).getText(), token.asOperator());
 		} else {
-			error("Expected unary statement!");
+			error(token, "Expected unary statement!");
 			return null;
 		}
 		tokenizer.read(Symbol.SEMICOLON);
 		return statement;
-
 	}
 
 	public Tokenizer getTokenizer() {
@@ -300,25 +315,41 @@ public class Parser {
 		try {
 			tokenizer.read(token);
 		} catch (InvalidTokenException e) {
-			error(e.getMessage());
+			error(tokenizer.getCurrentToken(), e.getMessage());
 		}
 	}
 
 	private void error(String message) {
-		System.err.println(getClass().getSimpleName() + " at (" + (module == null ? path.getFileName() : module.getFileName()) + ":" + tokenizer.getLine() + "): " + message
-				+ tokenizer.getContext(3, true, "\n\t")
-				+ "\n\t" + StringUtil.repeat('-', getErrorStart()) + "^"
-				+ "\n\t");
-		throw new RuntimeException(message);
-
+		error(tokenizer.getCurrentToken(), message);
 	}
 
-	private int getErrorStart() {
-		String line = tokenizer.getCurrentLine();
+	private void error(Token token, String message) {
+		System.err.println("Parsing exception" + " at (" + (module == null ? path.getFileName() : module.getFileName()) + ":" + tokenizer.getLine() + "): " + message
+				+ tokenizer.getContext(token)
+				//				+ tokenizer.getContext(3, true, "\n\t")
+				+ "\n\t" + StringUtil.repeat('-', getErrorStart(token)) + "^"
+				+ "\n\t");
+
+		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+		for (int i = 1; i < stack.length; i++) {
+			StackTraceElement element = stack[i];
+			//			System.out.println(element);
+			if (!element.getMethodName().equals("error")) {
+				System.err.println(element);
+				System.exit(1);
+			}
+		}
+		throw new RuntimeException();
+	}
+
+	private int getErrorStart(Token token) {
+		String line = token.getLineText(tokenizer);
+		System.out.println(line.length());
 		return 3
 				+ (line.startsWith("\t") ? -4 : 0)
-				+ line.substring(0, tokenizer.getColumn()).replace("\t", "        ").length()
-				- tokenizer.getCurrentToken().getText().length();
+				+ line.substring(0, token.getColumn(tokenizer) + (token.getText().length() / 2)).replace("\t", "        ").length();
+		//				+ line.substring(0, tokenizer.getColumn()).replace("\t", "        ").length()
+		//				- tokenizer.getCurrentToken().getText().length();
 	}
 
 }

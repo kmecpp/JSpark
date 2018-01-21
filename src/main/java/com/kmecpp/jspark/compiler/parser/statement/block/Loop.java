@@ -4,11 +4,10 @@ import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.compiler.parser.Expression;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
-import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 
 public class Loop extends AbstractBlock {
 
-	private VariableDeclaration initialization;
+	private AbstractBlock initialization;
 	private Expression termination;
 	private AnonymousBlock increment;
 
@@ -19,7 +18,7 @@ public class Loop extends AbstractBlock {
 		//		this.increment = increment;
 	}
 
-	public void setInitialization(VariableDeclaration initialization) {
+	public void setInitialization(AbstractBlock initialization) {
 		this.initialization = initialization;
 	}
 
@@ -31,7 +30,7 @@ public class Loop extends AbstractBlock {
 		this.increment = increment;
 	}
 
-	public VariableDeclaration getInitialization() {
+	public AbstractBlock getInitialization() {
 		return initialization;
 	}
 

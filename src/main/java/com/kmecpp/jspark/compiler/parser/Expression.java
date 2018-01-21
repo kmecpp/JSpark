@@ -68,9 +68,9 @@ public class Expression {
 				if (operator.isUnary() && i > 0) {
 					Token previous = tokens.get(i - 1);
 					if (operator == Operator.INCREMENT) {
-						operators.push(new OperatorToken(previous.isIdentifier() ? Operator.INCREMENT_DELAYED : Operator.INCREMENT));
+						operators.push(new OperatorToken(token.getIndex(), previous.isIdentifier() ? Operator.INCREMENT_DELAYED : Operator.INCREMENT));
 					} else {
-						operators.push(new OperatorToken(previous.isIdentifier() ? Operator.DECREMENT_DELAYED : Operator.DECREMENT));
+						operators.push(new OperatorToken(token.getIndex(), previous.isIdentifier() ? Operator.DECREMENT_DELAYED : Operator.DECREMENT));
 					}
 				} else {
 					operators.push(token);

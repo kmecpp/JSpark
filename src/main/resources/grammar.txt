@@ -2,6 +2,40 @@ TYPES: int, dec, boolean, string. Extended: int64
 
 IDEAS:
 
+#################################
+
+Class metadata
+
+
+class Person {
+
+	int id = Person.class.getInstances();
+
+}
+
+
+#################################
+
+
+
+Normal class definition
+
+class Person {
+
+	String name;
+	int age;
+	
+	private {
+		static int id;
+	}
+
+}
+
+
+Inline:
+
+class Person(String name, int age);
+
 
 #################################
 

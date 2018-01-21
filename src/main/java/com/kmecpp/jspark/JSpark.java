@@ -27,6 +27,12 @@ public class JSpark {
 	 * Objects
 	 * Multiple classes
 	 * 
+	 * Present Features:
+	 * 
+	 * - Trivial for loops
+	 * - Error message contexts
+	 * - Transpiler
+	 * 
 	 * @formatter:off
 	 * Main.jsk
 	 * 
@@ -56,7 +62,6 @@ public class JSpark {
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//		Profiler profiler = new Profiler();
 		//		profiler.start();
-
 		System.out.println("Loading source files");
 
 		//		runProgram(IOUtil.readString(JSpark.class.getResource("/example.jsk")));

@@ -7,14 +7,14 @@ import com.kmecpp.jspark.language.PrimitiveType;
 
 public class Token {
 
+	private final int index;
 	private final TokenType type;
 	private final String string;
-	//	private final int index;
 
-	public Token(TokenType type, String string) {
+	public Token(int index, TokenType type, String string) {
+		this.index = index;
 		this.type = type;
 		this.string = string;
-		//		this.index = index;
 	}
 
 	public TokenType getType() {
@@ -25,17 +25,25 @@ public class Token {
 		return string;
 	}
 
-	//	public int getIndex() {
-	//		return index;
-	//	}
+	public int getIndex() {
+		return index;
+	}
+
+	public int getLine(Tokenizer tokenizer) {
+		return tokenizer.getLine(index);
+	}
+
+	public String getLineText(Tokenizer tokenizer) {
+		return tokenizer.getLineText(index);
+	}
+
+	public int getColumn(Tokenizer tokenizer) {
+		return tokenizer.getColumn(index);
+	}
 
 	public boolean isValue() {
 		return isLiteral() || type == TokenType.IDENTIFIER;
 	}
-
-	//	public Variable asValue(AbstractBlock context) {
-	//
-	//	}
 
 	public Operator asOperator() {
 		return Operator.fromString(string);

@@ -2,8 +2,8 @@ package com.kmecpp.jspark.compiler.parser.data;
 
 public class Variable {
 
-	protected Type type;
-	protected String name;
+	private final Type type;
+	private final String name;
 	private Object value;
 
 	public Variable(Type type, Object value) {
@@ -53,6 +53,11 @@ public class Variable {
 	}
 
 	public Object getValue() {
+		//		if (expression != null) {
+		//			Object value = expression.evaluate();
+		//			expression = null;
+		//			return value;
+		//		}
 		return value;
 	}
 

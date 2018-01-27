@@ -194,7 +194,10 @@ public class Tokenizer {
 			}
 
 			//NUMBERS
-			else if ((c == '-' && Character.isDigit(c)) || Character.isDigit(c)) {
+			else if ((c == '-' && Character.isDigit(chars[current + 1])) || Character.isDigit(c)) {
+//				if(c == '-') {
+//					System.out.println("Yep!");
+//				}
 				StringBuilder sb = new StringBuilder(String.valueOf(c));
 				while (current < chars.length && Character.isDigit(chars[current])) {
 					sb.append(chars[current++]);
@@ -206,7 +209,7 @@ public class Tokenizer {
 					while (current < chars.length && Character.isDigit(chars[current])) {
 						sb.append(chars[current++]);
 					}
-					//TODO: E notation?					
+					//TODO: E notation?
 					return new LiteralToken(tokenStart, Double.parseDouble(sb.toString()));
 				} else {
 					return new LiteralToken(tokenStart, Integer.parseInt(sb.toString()));

@@ -12,6 +12,7 @@ import com.kmecpp.jspark.compiler.parser.statement.VariableAssignment;
 import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.AnonymousBlock;
+import com.kmecpp.jspark.compiler.parser.statement.block.Conditional;
 import com.kmecpp.jspark.compiler.parser.statement.block.Loop;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
@@ -206,7 +207,7 @@ public class Parser {
 				}
 
 				else if (token.is(Keyword.IF)) {
-					//TODO
+					block.addStatement(parseConditional(block));
 				}
 
 				else {
@@ -281,6 +282,69 @@ public class Parser {
 			block.addStatement(new VariableDeclaration(block, type, name, (Expression) null));
 		}
 		return block;
+	}
+
+	public Conditional parseConditional(AbstractBlock block) {
+		Conditional conditional = new Conditional(block);
+
+		tokenizer.read(Symbol.OPEN_PAREN);
+
+		conditional.setExpression(tokenizer.readExpression(conditional, Symbol.CLOSE_PAREN));
+		tokenizer.read(Symbol.OPEN_BRACE);
+		parseStatements(conditional);
+
+		if (tokenizer.peekNext().is(Keyword.ELSE)) {
+			tokenizer.read(Keyword.ELSE);
+
+			if (tokenizer.peekNext().is(Keyword.IF)) {
+				tokenizer.read(Keyword.IF);
+				conditional.setNegativeConditional(parseConditional(block));
+				return conditional;
+			} else {
+				tokenizer.read(Symbol.OPEN_BRACE);
+				Conditional elseConditional = new Conditional(block);
+				parseStatements(new AnonymousBlock(elseConditional));
+				conditional.setNegativeConditional(elseConditional);
+			}
+		}
+
+		return conditional;
+
+		//		do {
+		//			Token next = tokenizer.next();
+		//			
+		//			Conditional conditional = new Conditional(block);
+		//			
+		//			if(!next.is(Keyword.ELSE)) {
+		//			
+		//			}else {
+		//				if(tokenizer.peekNext().is(Keyword.IF)) {
+		//					conditional.set
+		//				}
+		//				tokenizer.read(Keyword.ELSE);
+		//
+		//			}
+		//			
+		//			
+		//
+		//			//Else if statement
+		//			if (tokenizer.peekNext().is(Keyword.IF)) {
+		//				tokenizer.read(Keyword.IF)
+		//			}
+		//
+		//			//Terminal else statement
+		//			else {
+		//				conditional.setCondition(condition);
+		//				//							tokenizer.read(text)
+		//			}
+		//
+		//		}while(tokenizer.peekNext().is(Keyword.ELSE));
+		//
+		//
+		//		System.out.println(tokenizer.peekNext());
+		//		//					tokenizer.read(Symbol.OPEN_PAREN);
+		//		//TODO
+		//		block.addStatement(conditional);
 	}
 
 	public UnaryStatement parseUnaryStatement(AbstractBlock block) {

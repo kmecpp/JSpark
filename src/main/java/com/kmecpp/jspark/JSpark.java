@@ -29,9 +29,10 @@ public class JSpark {
 	 * 
 	 * Present Features:
 	 * 
-	 * - Trivial for loops
+	 * - Trivial for loops, and normal ones. While too?
 	 * - Error message contexts
 	 * - Transpiler
+	 * - Variables and fields
 	 * 
 	 * @formatter:off
 	 * Main.jsk

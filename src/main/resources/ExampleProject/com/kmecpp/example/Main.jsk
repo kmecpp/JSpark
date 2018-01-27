@@ -12,13 +12,29 @@ static Main {
 //		if(a :== 3, 4) {
 //			
 //		}
-								
-//		Console.println("Start: " + (j > 5));
 		
+//		Console.println(-10);
 		
-		for 10 {
-			Console.println(i); 
+		int i = -7;
+		
+		if(i == 0) {
+			Console.println("TIS ZERO!");
+		} else if (i > 0) {
+			Console.println("POSITIVE!!!");
+		}else if(i < -10) {
+			Console.println("SUPER NEG");
+		}else if(i < 5) {
+			Console.println("NEG");
+		}else {
+			Console.println("Basically zero");
 		}
+								
+		Console.println("Start: " + i);
+		
+		
+//		for 10 {
+//			Console.println(i); 
+//		}
 //		Console.println("Result: " + j);
 
 		

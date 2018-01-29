@@ -271,7 +271,7 @@ public class Parser {
 		}
 
 		if (tokenizer.peekNext().is(Operator.ASSIGN)) {
-			tokenizer.next();
+			tokenizer.read(Operator.ASSIGN);
 			Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
 			//			block.addStatement(new VariableDeclaration(block, type, name, expression));
 
@@ -287,64 +287,26 @@ public class Parser {
 	public Conditional parseConditional(AbstractBlock block) {
 		Conditional conditional = new Conditional(block);
 
+		//Read if statement
 		tokenizer.read(Symbol.OPEN_PAREN);
-
 		conditional.setExpression(tokenizer.readExpression(conditional, Symbol.CLOSE_PAREN));
 		tokenizer.read(Symbol.OPEN_BRACE);
 		parseStatements(conditional);
 
+		//Check for elif/else
 		if (tokenizer.peekNext().is(Keyword.ELSE)) {
 			tokenizer.read(Keyword.ELSE);
 
 			if (tokenizer.peekNext().is(Keyword.IF)) {
 				tokenizer.read(Keyword.IF);
 				conditional.setNegativeConditional(parseConditional(block));
-				return conditional;
 			} else {
 				tokenizer.read(Symbol.OPEN_BRACE);
-				Conditional elseConditional = new Conditional(block);
-				parseStatements(new AnonymousBlock(elseConditional));
-				conditional.setNegativeConditional(elseConditional);
+				conditional.setNegativeConditional(parseStatements(new Conditional(block)));
 			}
 		}
 
 		return conditional;
-
-		//		do {
-		//			Token next = tokenizer.next();
-		//			
-		//			Conditional conditional = new Conditional(block);
-		//			
-		//			if(!next.is(Keyword.ELSE)) {
-		//			
-		//			}else {
-		//				if(tokenizer.peekNext().is(Keyword.IF)) {
-		//					conditional.set
-		//				}
-		//				tokenizer.read(Keyword.ELSE);
-		//
-		//			}
-		//			
-		//			
-		//
-		//			//Else if statement
-		//			if (tokenizer.peekNext().is(Keyword.IF)) {
-		//				tokenizer.read(Keyword.IF)
-		//			}
-		//
-		//			//Terminal else statement
-		//			else {
-		//				conditional.setCondition(condition);
-		//				//							tokenizer.read(text)
-		//			}
-		//
-		//		}while(tokenizer.peekNext().is(Keyword.ELSE));
-		//
-		//
-		//		System.out.println(tokenizer.peekNext());
-		//		//					tokenizer.read(Symbol.OPEN_PAREN);
-		//		//TODO
-		//		block.addStatement(conditional);
 	}
 
 	public UnaryStatement parseUnaryStatement(AbstractBlock block) {

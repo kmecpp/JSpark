@@ -194,10 +194,10 @@ public class Tokenizer {
 			}
 
 			//NUMBERS
-			else if ((c == '-' && Character.isDigit(chars[current + 1])) || Character.isDigit(c)) {
-//				if(c == '-') {
-//					System.out.println("Yep!");
-//				}
+			else if ((c == '-' && Character.isDigit(chars[current])) || Character.isDigit(c)) {
+				//				if(c == '-') {
+				//					System.out.println("Yep!");
+				//				}
 				StringBuilder sb = new StringBuilder(String.valueOf(c));
 				while (current < chars.length && Character.isDigit(chars[current])) {
 					sb.append(chars[current++]);

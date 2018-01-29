@@ -15,7 +15,7 @@ static Main {
 		
 //		Console.println(-10);
 		
-		int i = -7;
+		int i = -1;
 		
 		if(i == 0) {
 			Console.println("TIS ZERO!");
@@ -23,7 +23,7 @@ static Main {
 			Console.println("POSITIVE!!!");
 		}else if(i < -10) {
 			Console.println("SUPER NEG");
-		}else if(i < 5) {
+		}else if(i < -5) {
 			Console.println("NEG");
 		}else {
 			Console.println("Basically zero");

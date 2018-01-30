@@ -31,7 +31,7 @@ public class Conditional extends AbstractBlock {
 	public void execute() {
 		if (expression == null || (boolean) expression.evaluate()) {
 			super.execute();
-		} else {
+		} else if (negativeConditional != null) {
 			negativeConditional.execute();
 		}
 	}
@@ -39,11 +39,11 @@ public class Conditional extends AbstractBlock {
 	@Override
 	public String toJavaCode() {
 		if (expression == null) {
-			return "{" + super.toJavaCode() + "}";
+			return super.toJavaCode();
 		}
-		return "if (" + expression + "){"
+		return "if (" + expression + ")"
 				+ super.toJavaCode()
-				+ "}" + (negativeConditional != null ? "else " + negativeConditional.toJavaCode() : "");
+				+ (negativeConditional != null ? "else" + (negativeConditional.expression != null ? " " : "") + negativeConditional.toJavaCode() : "");
 	}
 
 }

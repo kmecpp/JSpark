@@ -27,6 +27,10 @@ public class Variable {
 	public boolean isDeclared() {
 		return name != null;
 	}
+	
+	public boolean isList() {
+		return type.isList();
+	}
 
 	public boolean isInteger() {
 		return type.isInteger();
@@ -71,7 +75,7 @@ public class Variable {
 
 	@Override
 	public String toString() {
-		return type.getFullName() + " " + name + " = " + value;
+		return type.getFullName() + (name != null ? " " + name : "") + (value != null ? " = " + value : "");
 	}
 
 }

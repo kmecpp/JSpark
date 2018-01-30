@@ -1,4 +1,4 @@
-package com.kmecpp.jspark.compiler.parser.statement;
+package com.kmecpp.jspark.compiler.parser.statement.statements;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.JSpark;
 import com.kmecpp.jspark.compiler.parser.Expression;
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
+import com.kmecpp.jspark.compiler.parser.statement.Import;
+import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.language.Keyword;
@@ -96,6 +99,12 @@ public class MethodInvocation extends Statement {
 			//
 			//			}
 
+		} else if (target instanceof Module) {
+			Type[] paramTypes = new Type[params.size()];
+			for (int i = 0; i < paramTypes.length; i++) {
+				paramTypes[i] = params.get(i).getReturnType();
+			}
+			((Module) target).getMethod(method, paramTypes).get().invoke(params);
 		}
 	}
 
@@ -119,7 +128,7 @@ public class MethodInvocation extends Statement {
 
 			Object result = method.invoke(target, values);
 			if (capture != null) {
-				
+
 				capture.setValue(result);
 			}
 			return;
@@ -134,7 +143,7 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public String toJavaCode() {
-		return target + "." + method + "(" + params.stream().map(String::valueOf).collect(Collectors.joining(" ")) + ")";
+		return target + "." + method + "(" + params.stream().map(String::valueOf).collect(Collectors.joining(" ")) + ");";
 	}
 
 }

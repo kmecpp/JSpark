@@ -11,11 +11,13 @@ import com.kmecpp.jspark.compiler.parser.Parser;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
+import com.kmecpp.jspark.compiler.transpiler.Transpiler;
 import com.kmecpp.jspark.runtime.Interpreter;
 import com.kmecpp.jspark.util.FileUtil;
 
 public class JSpark {
 
+	private static Compiler compiler;
 	private static Interpreter runtime;
 	private static Path projectPath;
 
@@ -30,6 +32,7 @@ public class JSpark {
 	 * Present Features:
 	 * 
 	 * - Trivial for loops, and normal ones. While too?
+	 * - Conditionals
 	 * - Error message contexts
 	 * - Transpiler
 	 * - Variables and fields
@@ -70,14 +73,18 @@ public class JSpark {
 
 		runProject(projectPath);
 		//		profiler.displayResults();
+
+		//		displayJavaCode();
 	}
 
-	public static Interpreter getRuntime() {
-		return runtime;
-	}
+	public static void displayJavaCode() {
+		for (Module module : runtime.getModules()) {
+			Transpiler transpiler = new Transpiler(module);
+			String javaCode = transpiler.getFormattedJava();
 
-	public static Path getProjectPath() {
-		return projectPath;
+			System.out.println("Compiling module " + module.getFullName() + " to Java code.");
+			System.out.println(javaCode);
+		}
 	}
 
 	public static void runProject(Path path) throws IOException {
@@ -97,7 +104,7 @@ public class JSpark {
 		//			modules.add(module);
 		//		}
 
-		Compiler compiler = new Compiler();
+		compiler = new Compiler();
 		Files.walk(path).filter(Files::isRegularFile).forEach(compiler::parseModule);
 
 		//		ArrayList<Module> modules = Files.walk(path)
@@ -136,6 +143,18 @@ public class JSpark {
 
 		System.out.println("Executing...");
 		module.execute();
+	}
+
+	public static Interpreter getRuntime() {
+		return runtime;
+	}
+
+	public static Compiler getCompiler() {
+		return compiler;
+	}
+
+	public static Path getProjectPath() {
+		return projectPath;
 	}
 
 }

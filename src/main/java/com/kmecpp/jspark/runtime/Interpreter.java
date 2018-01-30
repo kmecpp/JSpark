@@ -1,5 +1,6 @@
 package com.kmecpp.jspark.runtime;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.kmecpp.jspark.compiler.Compiler;
@@ -17,6 +18,10 @@ public class Interpreter {
 
 	public Module getModule(String fullName) {
 		return modules.get(fullName);
+	}
+
+	public Collection<Module> getModules() {
+		return modules.values();
 	}
 
 	public void startProgram() {

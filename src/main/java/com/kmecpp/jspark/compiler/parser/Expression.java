@@ -1,6 +1,7 @@
 package com.kmecpp.jspark.compiler.parser;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Stack;
 
 import com.kmecpp.jspark.compiler.parser.data.Type;
@@ -9,6 +10,7 @@ import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.tokenizer.OperatorToken;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
 import com.kmecpp.jspark.compiler.tokenizer.Tokenizer;
+import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
 import com.kmecpp.jspark.language.Symbol;
 
@@ -16,6 +18,7 @@ public class Expression {
 
 	private AbstractBlock block;
 	private ArrayList<Token> tokens;
+	private Type returnType;
 
 	public Expression(AbstractBlock block, String expression) {
 		this(block, Tokenizer.parseTokens(expression));
@@ -24,6 +27,20 @@ public class Expression {
 	public Expression(AbstractBlock block, ArrayList<Token> tokens) {
 		this.block = block;
 		this.tokens = tokens;
+
+		for (Token token : tokens) {
+			if (token.isString()) {
+				returnType = Type.STRING;
+				break;
+			} else if (token.isDecimal()) {
+				returnType = Type.DEC;
+				break;
+			} else if (token.isBoolean()) {
+				returnType = Type.BOOLEAN;
+				break;
+			}
+		}
+		returnType = Type.INT;
 		//		this.variables = block.getVariables();
 	}
 
@@ -33,6 +50,10 @@ public class Expression {
 
 	public AbstractBlock getBlock() {
 		return block;
+	}
+
+	public Type getReturnType() {
+		return returnType;
 	}
 
 	//	public Value evaluate() {
@@ -52,10 +73,10 @@ public class Expression {
 		//		long start = System.nanoTime();
 		Stack<Token> operators = new Stack<>();
 		Stack<Variable> operands = new Stack<>();
-		//		System.out.println(tokens);
 
 		for (int i = 0; i < tokens.size(); i++) {
 			Token token = tokens.get(i);
+
 			//			System.out.println(operators + ", " + operands);
 			if (token.is(Symbol.OPEN_PAREN)) {
 				operators.push(token);
@@ -80,20 +101,33 @@ public class Expression {
 					process(operands, operators);
 				}
 				operators.pop();
-			} else {
-				if (token.isIdentifier()) {
-					operands.push(block.getVariable(token.getText()));
-				} else if (token.isInt()) {
-					operands.push(new Variable(Type.INT, token.asInt()));
-				} else if (token.isDecimal()) {
-					operands.push(new Variable(Type.DEC, token.asDouble()));
-				} else if (token.isBoolean()) {
-					operands.push(new Variable(Type.BOOLEAN, token.asBoolean()));
-				} else {
-					operands.push(new Variable(Type.STRING, token.getText()));
+			} else if (token.isIdentifier()) {
+				operands.push(block.getVariable(token.getText()));
+			} else if (token.is(Symbol.OPEN_BRACKET)) {
+				LinkedList<Token> listTokens = new LinkedList<>();
+				boolean comprehension = false;
+				for (int j = i + 1;; j++) {
+					Token listToken = tokens.get(j);
+					if (listToken.is(Symbol.CLOSE_BRACKET)) {
+						i = j;
+						break;
+					} else if (listToken.is(Keyword.FOR)) {
+						comprehension = true;
+					}
+					listTokens.add(listToken);
 				}
 
-				//				operands.push(token);
+				operands.push(new ListParser(block, listTokens, comprehension).parse());
+			} else if (token.isInt()) {
+				operands.push(new Variable(Type.INT, token.asInt()));
+			} else if (token.isDecimal()) {
+				operands.push(new Variable(Type.DEC, token.asDouble()));
+			} else if (token.isBoolean()) {
+				operands.push(new Variable(Type.BOOLEAN, token.asBoolean()));
+			} else if (token.isString()) {
+				operands.push(new Variable(Type.STRING, token.getText()));
+			} else {
+				System.err.println("Unknown token in expression: '" + token + "'");
 			}
 		}
 		while (!operators.isEmpty()) {
@@ -136,7 +170,7 @@ public class Expression {
 			//				}
 			//			}
 		} else {
-			throw new RuntimeException("Expression could not be evaluated! Stack: " + operands + ", " + operators);
+			throw new RuntimeException("Expression could not be evaluated! Operands: " + operands + ", Operators: " + operators);
 		}
 	}
 

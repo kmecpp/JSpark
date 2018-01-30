@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.compiler.parser.Expression;
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
-import com.kmecpp.jspark.language.PrimitiveType;
 import com.kmecpp.jspark.language.Symbol;
 
 public class Tokenizer {
@@ -41,19 +41,24 @@ public class Tokenizer {
 	public ArrayList<Token> readThrough(AbstractToken token) {
 		ArrayList<Token> tokens = new ArrayList<>();
 		int param = 0;
-		while (!peekNext().is(token)) {
+		while (param > 0 || !peekNext().is(token)) {
 			Token t = next();
+			//			System.out.println(param + ", " + t);
+
 			if (t.is(Symbol.OPEN_PAREN)) {
 				param++;
 			} else if (t.is(Symbol.CLOSE_PAREN)) {
-				if (--param < 0) {
+				if (--param < 0 || peekNext().is(token)) {
 					return tokens;
 				}
+			} else if (t.is(Symbol.CLOSE_BRACE) || t.is(Symbol.SEMICOLON)) {
+				throw new RuntimeException("Mismatched parentheses in expression: '" + new Expression(null, tokens) + "'");
 			}
 
 			tokens.add(t);
 		}
 		read(token);
+		//		System.out.println("TOKENS: " + tokens);
 		return tokens;
 	}
 
@@ -69,8 +74,9 @@ public class Tokenizer {
 		return new Tokenizer(new String(chars)).readAll().stream().map(Token::getText).collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	public PrimitiveType readType() {
-		return PrimitiveType.getPrimitiveType(read(TokenType.KEYWORD).getText());
+	public Type readType() {
+		return Type.getType(next());
+		//		return PrimitiveType.getPrimitiveType(read(TokenType.KEYWORD).getText());
 	}
 
 	public String readName() {
@@ -85,6 +91,19 @@ public class Tokenizer {
 		}
 		throw invalidToken(token, "type: " + type);
 	}
+
+	public void ignore(AbstractToken text) {
+		next();
+	}
+
+	//	public void openBlock() {
+	//		ignore(Symbol.OPEN_BRACE);
+	//
+	//		if (peekNext().is(Symbol.COLON) && chars[current] == ':') {
+	//			next();
+	//			next();
+	//		}
+	//	}
 
 	public Token read(AbstractToken text) {
 		//		int index = current;

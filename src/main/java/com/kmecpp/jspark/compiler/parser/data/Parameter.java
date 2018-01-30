@@ -1,18 +1,16 @@
 package com.kmecpp.jspark.compiler.parser.data;
 
-import com.kmecpp.jspark.language.PrimitiveType;
-
 public class Parameter {
 
-	private final PrimitiveType type;
+	private final Type type;
 	private final String name;
 
-	public Parameter(PrimitiveType type, String name) {
+	public Parameter(Type type, String name) {
 		this.type = type;
 		this.name = name;
 	}
 
-	public PrimitiveType getType() {
+	public Type getType() {
 		return type;
 	}
 
@@ -22,7 +20,7 @@ public class Parameter {
 
 	@Override
 	public String toString() {
-		return type.getIdentifier() + " " + name;
+		return type.getFullName() + " " + name;
 	}
 
 }

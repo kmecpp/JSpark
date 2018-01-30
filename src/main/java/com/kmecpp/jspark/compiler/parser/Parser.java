@@ -5,11 +5,8 @@ import java.util.ArrayList;
 
 import com.kmecpp.jspark.compiler.parser.data.Parameter;
 import com.kmecpp.jspark.compiler.parser.data.Type;
+import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Import;
-import com.kmecpp.jspark.compiler.parser.statement.MethodInvocation;
-import com.kmecpp.jspark.compiler.parser.statement.UnaryStatement;
-import com.kmecpp.jspark.compiler.parser.statement.VariableAssignment;
-import com.kmecpp.jspark.compiler.parser.statement.VariableDeclaration;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.AnonymousBlock;
 import com.kmecpp.jspark.compiler.parser.statement.block.Conditional;
@@ -18,6 +15,11 @@ import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Static;
+import com.kmecpp.jspark.compiler.parser.statement.statements.MethodInvocation;
+import com.kmecpp.jspark.compiler.parser.statement.statements.ReturnStatement;
+import com.kmecpp.jspark.compiler.parser.statement.statements.UnaryStatement;
+import com.kmecpp.jspark.compiler.parser.statement.statements.VariableAssignment;
+import com.kmecpp.jspark.compiler.parser.statement.statements.VariableDeclaration;
 import com.kmecpp.jspark.compiler.tokenizer.InvalidTokenException;
 import com.kmecpp.jspark.compiler.tokenizer.Token;
 import com.kmecpp.jspark.compiler.tokenizer.TokenType;
@@ -77,7 +79,7 @@ public class Parser {
 				}
 
 				else if (token.isPrimitiveType()) {
-					parseVariableDeclaration(module); //Parse Fields
+					module.addStatement(parseVariableDeclaration(module)); //Parse Fields
 				}
 
 				else if (token.is(Keyword.DEF)) {
@@ -128,20 +130,22 @@ public class Parser {
 			Token token = tokenizer.next();
 
 			if (token.isPrimitiveType()) {
-				parseVariableDeclaration(block);
+				block.addStatement(parseVariableDeclaration(block));
 			}
 
 			else if (token.isIdentifier()) {
 				Token nextToken = tokenizer.peekNext();
 				//Method invocations
-				if (nextToken.is(Symbol.PERIOD)) {
+				if (nextToken.is(Symbol.PERIOD) || nextToken.is(Symbol.OPEN_PAREN)) {
 					block.addStatement(parseMethodInvocation(block));
 				}
 
 				else if (nextToken.isOperator()) {
 					Operator operator = nextToken.asOperator();
 
-					if (!block.containsVariable(token.getText())) {
+					Variable variable = block.getVariable(token.getText());
+
+					if (variable == null) {
 						error(token, "Variable '" + token.getText() + "' is not defined!");
 					}
 
@@ -153,9 +157,7 @@ public class Parser {
 					//Variable assignment
 					else if (operator.isAssignment()) {
 						tokenizer.next();
-						block.addStatement(new VariableAssignment(block, token.getText(), tokenizer.readExpression(block, Symbol.SEMICOLON)));
-						System.out.println(block.getStatements().get(block.getStatements().size() - 1));
-						System.out.println("Assign!");
+						block.addStatement(new VariableAssignment(block, variable, tokenizer.readExpression(block, Symbol.SEMICOLON)));
 					}
 
 					else {
@@ -178,25 +180,29 @@ public class Parser {
 					Loop loop = new Loop(block);
 
 					if (token.is(Keyword.FOR)) {
-						if (tokenizer.peekNext().isInt()) {
-							if (loop.containsVariable("i")) {
-								error(token, "Default loop variable 'i' is already defined!");
-							}
-
-							loop.setInitialization(new AnonymousBlock(loop, new VariableDeclaration(loop, Type.INT, "i", "0")));
-							loop.setTermination(new Expression(loop, "i < " + tokenizer.next().asInt()));
-							loop.setIncrement(new AnonymousBlock(loop, new VariableAssignment(loop, "i", "i + 1")));
-							tokenizer.read(Symbol.OPEN_BRACE);
-						} else {
+						if (tokenizer.peekNext().is(Symbol.OPEN_PAREN)) {
 							tokenizer.read(Symbol.OPEN_PAREN);
 							tokenizer.next();
 
-							loop.setInitialization(parseVariableDeclaration(new AnonymousBlock(loop)));
+							loop.setInitialization(parseVariableDeclaration(loop));
 
 							//							loop.setInitialization(parseVariableDeclaration(loop));
 							loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
 							//							AnonymousBlock increment = ;
 							loop.setIncrement(parseStatements(new AnonymousBlock(loop)));
+						} else {
+							if (loop.isVariableDefined("i")) {
+								error(token, "Default loop variable 'i' is already defined!");
+							}
+
+							Variable variable = new Variable(Type.INT, "i", null);
+							loop.setInitialization(new VariableDeclaration(loop, variable, "0"));
+							StringBuilder sb = new StringBuilder("i < ");
+							for (Token t : tokenizer.readThrough(Symbol.OPEN_BRACE)) {
+								sb.append(t.toString());
+							}
+							loop.setTermination(new Expression(loop, sb.toString()));
+							loop.setIncrement(new AnonymousBlock(loop, new VariableAssignment(loop, variable, "i + 1")));
 						}
 					} else {
 						loop.setTermination(tokenizer.readExpression(loop, Symbol.OPEN_BRACE));
@@ -208,6 +214,10 @@ public class Parser {
 
 				else if (token.is(Keyword.IF)) {
 					block.addStatement(parseConditional(block));
+				}
+
+				else if (token.is(Keyword.RETURN)) {
+					block.addStatement(new ReturnStatement((Method) block, tokenizer.readExpression(block, Symbol.SEMICOLON)));
 				}
 
 				else {
@@ -229,19 +239,24 @@ public class Parser {
 	}
 
 	public MethodInvocation parseMethodInvocation(AbstractBlock block) {
-		String target = tokenizer.getCurrentToken().getText();
-		tokenizer.read(Symbol.PERIOD);
-		String method = tokenizer.readName();
-		tokenizer.read(Symbol.OPEN_PAREN);
+		String target;
+		String method;
 
+		if (tokenizer.peekNext().is(Symbol.PERIOD)) {
+			target = tokenizer.getCurrentToken().getText();
+			tokenizer.read(Symbol.PERIOD);
+			method = tokenizer.readName();
+		} else {
+			target = "this";
+			method = tokenizer.getCurrentToken().getText();
+		}
+
+		tokenizer.read(Symbol.OPEN_PAREN);
 		ArrayList<Expression> params = new ArrayList<>();
 		while (!tokenizer.getCurrentToken().is(Symbol.CLOSE_PAREN)) {
 			params.add(tokenizer.readExpression(block, Symbol.COMMMA));
 		}
-		//		tokenizer.read(Symbol.CLOSE_PAREN);
-		tokenizer.read(Symbol.SEMICOLON);
-		//		System.out.println(new MethodInvocation(block, target, method, params));
-
+		tokenizer.ignore(Symbol.SEMICOLON);
 		return new MethodInvocation(block, target, method, params);
 	}
 
@@ -262,26 +277,42 @@ public class Parser {
 	 * Runtime: var = var.getExpression().evaluate();
 	 * 
 	 */
-	public <T extends AbstractBlock> T parseVariableDeclaration(T block) {
+	public VariableDeclaration parseVariableDeclaration(AbstractBlock block) {
 		Type type = Type.getType(tokenizer.getCurrentToken());
 		String name = tokenizer.readName();
 
-		if (block.containsVariable(name)) {
+		if (block.isVariableDefined(name)) {
 			error(tokenizer.getCurrentToken(), "Variable '" + name + "' already defined!");
 		}
 
+		//TODO: Multiple variable declarations
+		//		HashMap<Variable, Expression> declarations = new HashMap<>();
+		//		ArrayList<String> currentExpression = new ArrayList<>();
+		//		while (true) {
+		//			Token token = tokenizer.next();
+		//
+		//			if (token.is(Symbol.COMMMA) || token.is(Symbol.SEMICOLON)) {
+		//				if (token.is(Symbol.SEMICOLON)) {
+		//					break;
+		//				}
+		//			} else {
+		//				currentExpression.add(token);
+		//			}
+		//		}
+		//		declarations.put(new Variable(), currentExpression);
+		//		tokenizer.read(Symbol.SEMICOLON);
+
+		VariableDeclaration variableDeclaration;
+		Variable variable = new Variable(type, name, null);
 		if (tokenizer.peekNext().is(Operator.ASSIGN)) {
 			tokenizer.read(Operator.ASSIGN);
-			Expression expression = tokenizer.readExpression(block, Symbol.SEMICOLON);
-			//			block.addStatement(new VariableDeclaration(block, type, name, expression));
-
-			block.addStatement(new VariableDeclaration(block, type, name, expression));
+			variableDeclaration = new VariableDeclaration(block, variable, tokenizer.readExpression(block, Symbol.SEMICOLON));
 		} else {
 			tokenizer.read(Symbol.SEMICOLON);
-			//			block.addStatement(new VariableDeclaration(block, type, name, null));
-			block.addStatement(new VariableDeclaration(block, type, name, (Expression) null));
+			variableDeclaration = new VariableDeclaration(block, variable, (Expression) null);
 		}
-		return block;
+		//		block.addStatement(variableDeclaration);;
+		return variableDeclaration;
 	}
 
 	public Conditional parseConditional(AbstractBlock block) {
@@ -321,7 +352,7 @@ public class Parser {
 			error(token, "Expected unary statement!");
 			return null;
 		}
-		tokenizer.read(Symbol.SEMICOLON);
+		tokenizer.ignore(Symbol.SEMICOLON);
 		return statement;
 	}
 

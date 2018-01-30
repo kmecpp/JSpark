@@ -1,12 +1,16 @@
 package com.kmecpp.jspark.language;
 
+import java.util.ArrayList;
+
 public enum PrimitiveType {
 
 	INTEGER("int", 0),
 	DECIMAL("dec", 0.0),
 	STRING("string", ""),
 	BOOLEAN("boolean", false),
+	LIST("list", new ArrayList<>()),
 
+	VOID("void", null),
 	OBJECT(null, null),
 
 	;

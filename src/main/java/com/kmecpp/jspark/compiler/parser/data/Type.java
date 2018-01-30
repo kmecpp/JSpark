@@ -8,10 +8,12 @@ public class Type {
 	private final String fullName;
 	private final PrimitiveType primitive;
 
+	public static final Type VOID = new Type(PrimitiveType.VOID);
 	public static final Type INT = new Type(PrimitiveType.INTEGER);
 	public static final Type DEC = new Type(PrimitiveType.DECIMAL);
 	public static final Type BOOLEAN = new Type(PrimitiveType.BOOLEAN);
 	public static final Type STRING = new Type(PrimitiveType.STRING);
+	public static final Type LIST = new Type(PrimitiveType.LIST);
 
 	public Type(String fullName) {
 		this.fullName = fullName;
@@ -49,6 +51,10 @@ public class Type {
 		return primitive != null;
 	}
 
+	public boolean isList() {
+		return primitive == PrimitiveType.LIST;
+	}
+
 	public boolean isString() {
 		return primitive == PrimitiveType.STRING;
 	}
@@ -67,6 +73,16 @@ public class Type {
 
 	public PrimitiveType getPrimitiveType() {
 		return primitive;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return fullName.equals(fullName);
 	}
 
 }

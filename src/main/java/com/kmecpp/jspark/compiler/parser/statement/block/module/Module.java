@@ -9,11 +9,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.kmecpp.jspark.JSpark;
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Import;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.NamedBlock;
-import com.kmecpp.jspark.language.PrimitiveType;
+import com.kmecpp.jspark.compiler.transpiler.Transpiler;
 
 public abstract class Module extends NamedBlock {
 
@@ -81,30 +82,49 @@ public abstract class Module extends NamedBlock {
 		methods.add(method);
 	}
 
-	public Optional<Method> getMethod(String name, PrimitiveType... params) {
+	public Optional<Method> getMethod(String name, Type... params) {
 		for (Method method : methods) {
-			if (method.matches(name, params)) {
+			if (method.matches(name, (Type[]) params)) {
 				return Optional.of(method);
 			}
 		}
 		return Optional.empty();
 	}
 
-	public boolean hasMethod(String name, PrimitiveType... params) {
+	public boolean hasMethod(String name, Type... params) {
 		return getMethod(name, params).isPresent();
 	}
 
 	public void executeStaticMethod(String name, ArrayList<Variable> args) {
-		PrimitiveType[] types = new PrimitiveType[args.size()];
+		Type[] types = new Type[args.size()];
 		for (int i = 0; i < types.length; i++) {
-			types[i] = args.get(i).getType().getPrimitiveType();
+			types[i] = args.get(i).getType();
 		}
 		Optional<Method> method = getMethod(name, types);
 		if (method.isPresent()) {
 			method.get().execute();
 		} else {
-			throw new IllegalArgumentException("Method does not exist: " + name + "(" + String.join(", ", Arrays.stream(types).map(PrimitiveType::getIdentifier).collect(Collectors.toList())) + ")");
+			throw new IllegalArgumentException("Method does not exist: " + name + "(" + String.join(", ", Arrays.stream(types).map(Type::getFullName).collect(Collectors.toList())) + ")");
 		}
+	}
+
+	@Override
+	public String toJavaCode() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("package " + packageName + ";");
+
+		sb.append("public class " + name + "{");
+		for (Variable field : variables.values()) {
+			sb.append("private " + Transpiler.getJavaType(field.getType()) + " " + field.getName() + ";");
+		}
+
+		for (Method method : methods) {
+			sb.append(method.toJavaCode());
+			//			sb.append("public " + method.getReturnType() + " " + method.getName());
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 
 }

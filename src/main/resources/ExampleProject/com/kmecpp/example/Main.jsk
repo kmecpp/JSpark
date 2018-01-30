@@ -15,21 +15,40 @@ static Main {
 		
 //		Console.println(-10);
 		
-		int i = -1;
+//		int i = -1, j = 0;
 		
-		if(i == 0) {
-			Console.println("TIS ZERO!");
-		} else if (i > 0) {
-			Console.println("POSITIVE!!!");
-		}else if(i < -10) {
-			Console.println("SUPER NEG");
-		}else if(i < -5) {
-			Console.println("NEG");
-		}else {
-			Console.println("Basically zero");
-		}
-								
-		Console.println("Start: " + i);
+//		for(int i = 0; i < 10; i++) {
+//			
+//		}
+		
+//		if(i == 0) {
+//			Console.println("TIS ZERO!");
+//		} else if (i > 0) {
+//			Console.println("POSITIVE!!!");
+//		}else if(i < -10) {
+//			Console.println("SUPER NEG");
+//		}else if(i < -5) {
+//			Console.println("NEG");
+//		}else {
+//			Console.println("Basically zero");
+//		}
+//								
+//		Console.println("Start: " + i);
+//		
+//		for(int i = 0; i < 10; i++) {
+//			Console.println(i);
+//		}
+		
+		
+//		list l = [x^2 : 20 if x % 2 == 0];
+//		Console.println(l);
+		
+		primes(10);
+		
+//		int i = 0;
+//		for(int j = 0; j < 10; j++) {
+//			Console.println(j);
+//		}
 		
 		
 //		for 10 {
@@ -47,6 +66,14 @@ static Main {
 		//string message = "hi";
 		//Console.println(message);
 		}
+	
+	def primes(int n) {
+		for n {
+			if([x for(1, n) if i % x == 0] == 2) {
+				Console.println(i);
+			}
+		}
+	}
 	
 //	def print(string s){
 //		Console.println(s);

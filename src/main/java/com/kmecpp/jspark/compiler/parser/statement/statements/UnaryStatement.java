@@ -1,6 +1,7 @@
-package com.kmecpp.jspark.compiler.parser.statement;
+package com.kmecpp.jspark.compiler.parser.statement.statements;
 
 import com.kmecpp.jspark.compiler.parser.data.Variable;
+import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.language.Operator;
 

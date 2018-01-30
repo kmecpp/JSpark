@@ -1,5 +1,6 @@
 package com.kmecpp.jspark.language;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.naming.OperationNotSupportedException;
@@ -119,40 +120,64 @@ public enum Operator implements AbstractToken {
 
 			//RELATIONAL
 		case EQUALS:
-			if (var1.isInteger() && var2.isInteger()) {
-				return new Variable(Type.INT, (int) var1.getValue() == (int) var2.getValue());
+			if (var1.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var1.getValue()).size() == (int) var2.getValue());
+			} else if (var2.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var2.getValue()).size() == (int) var1.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.BOOLEAN, (int) var1.getValue() == (int) var2.getValue());
 			} else {
-				return new Variable(Type.DEC, (double) var1.getValue() == (double) var2.getValue());
+				return new Variable(Type.BOOLEAN, (double) var1.getValue() == (double) var2.getValue());
 			}
 		case NOT_EQUALS:
-			if (var1.isInteger() && var2.isInteger()) {
-				return new Variable(Type.INT, (int) var1.getValue() != (int) var2.getValue());
+			if (var1.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var1.getValue()).size() != (int) var2.getValue());
+			} else if (var2.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var2.getValue()).size() != (int) var1.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.BOOLEAN, (int) var1.getValue() != (int) var2.getValue());
 			} else {
-				return new Variable(Type.DEC, (double) var1.getValue() % (double) var2.getValue());
+				return new Variable(Type.BOOLEAN, (double) var1.getValue() % (double) var2.getValue());
 			}
 		case LESS:
-			if (var1.isInteger() && var2.isInteger()) {
-				return new Variable(Type.INT, (int) var1.getValue() < (int) var2.getValue());
+			if (var1.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var1.getValue()).size() < (int) var2.getValue());
+			} else if (var2.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var2.getValue()).size() < (int) var1.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.BOOLEAN, (int) var1.getValue() < (int) var2.getValue());
 			} else {
-				return new Variable(Type.DEC, (double) var1.getValue() < (double) var2.getValue());
+				return new Variable(Type.BOOLEAN, (double) var1.getValue() < (double) var2.getValue());
 			}
 		case LESS_EQUALS:
-			if (var1.isInteger() && var2.isInteger()) {
-				return new Variable(Type.INT, (int) var1.getValue() <= (int) var2.getValue());
+			if (var1.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var1.getValue()).size() <= (int) var2.getValue());
+			} else if (var2.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var2.getValue()).size() <= (int) var1.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.BOOLEAN, (int) var1.getValue() <= (int) var2.getValue());
 			} else {
-				return new Variable(Type.DEC, (double) var1.getValue() <= (double) var2.getValue());
+				return new Variable(Type.BOOLEAN, (double) var1.getValue() <= (double) var2.getValue());
 			}
 		case GREATER:
-			if (var1.isInteger() && var2.isInteger()) {
-				return new Variable(Type.INT, (int) var1.getValue() > (int) var2.getValue());
+			if (var1.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var1.getValue()).size() > (int) var2.getValue());
+			} else if (var2.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var2.getValue()).size() > (int) var1.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.BOOLEAN, (int) var1.getValue() > (int) var2.getValue());
 			} else {
-				return new Variable(Type.DEC, (double) var1.getValue() > (double) var2.getValue());
+				return new Variable(Type.BOOLEAN, (double) var1.getValue() > (double) var2.getValue());
 			}
 		case GREATER_EQUALS:
-			if (var1.isInteger() && var2.isInteger()) {
-				return new Variable(Type.INT, (int) var1.getValue() >= (int) var2.getValue());
+			if (var1.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var1.getValue()).size() >= (int) var2.getValue());
+			} else if (var2.isList()) {
+				return new Variable(Type.BOOLEAN, ((ArrayList<?>) var2.getValue()).size() >= (int) var1.getValue());
+			} else if (var1.isInteger() && var2.isInteger()) {
+				return new Variable(Type.BOOLEAN, (int) var1.getValue() >= (int) var2.getValue());
 			} else {
-				return new Variable(Type.DEC, (double) var1.getValue() >= (double) var2.getValue());
+				return new Variable(Type.BOOLEAN, (double) var1.getValue() >= (double) var2.getValue());
 			}
 		default:
 			return null;

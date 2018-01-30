@@ -18,7 +18,8 @@ public enum Keyword implements AbstractToken {
 	STATIC,
 	IMPORT,
 	PUBLIC,
-	PRIVATE
+	PRIVATE,
+	RETURN,
 
 	;
 

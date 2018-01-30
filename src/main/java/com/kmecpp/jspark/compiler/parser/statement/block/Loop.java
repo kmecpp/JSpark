@@ -1,13 +1,12 @@
 package com.kmecpp.jspark.compiler.parser.statement.block;
 
-import java.util.stream.Collectors;
-
 import com.kmecpp.jspark.compiler.parser.Expression;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
+import com.kmecpp.jspark.compiler.parser.statement.statements.VariableDeclaration;
 
 public class Loop extends AbstractBlock {
 
-	private AbstractBlock initialization;
+	private VariableDeclaration initialization;
 	private Expression termination;
 	private AnonymousBlock increment;
 
@@ -18,7 +17,7 @@ public class Loop extends AbstractBlock {
 		//		this.increment = increment;
 	}
 
-	public void setInitialization(AbstractBlock initialization) {
+	public void setInitialization(VariableDeclaration initialization) {
 		this.initialization = initialization;
 	}
 
@@ -30,7 +29,7 @@ public class Loop extends AbstractBlock {
 		this.increment = increment;
 	}
 
-	public AbstractBlock getInitialization() {
+	public VariableDeclaration getInitialization() {
 		return initialization;
 	}
 
@@ -59,9 +58,7 @@ public class Loop extends AbstractBlock {
 
 	@Override
 	public String toJavaCode() {
-		return "for(" + initialization.toJavaCode() + ";" + termination + ";" + increment.toJavaCode() + ") {"
-				+ String.join(";", statements.stream().map(String::valueOf).collect(Collectors.toList()))
-				+ "}";
+		return "for(" + initialization.toJavaCode() + ";" + termination + ";" + increment.toJavaCode() + ")" + super.toJavaCode();
 	}
 
 }

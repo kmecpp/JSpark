@@ -1,5 +1,7 @@
 package com.kmecpp.jspark.compiler.tokenizer;
 
+import com.kmecpp.jspark.compiler.parser.data.Variable;
+import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.language.AbstractToken;
 import com.kmecpp.jspark.language.Keyword;
 import com.kmecpp.jspark.language.Operator;
@@ -47,6 +49,10 @@ public class Token {
 
 	public Operator asOperator() {
 		return Operator.fromString(string);
+	}
+
+	public Variable getVariable(AbstractBlock block) {
+		return block.getVariable(string);
 	}
 
 	//	public boolean is(Keyword keyword) {

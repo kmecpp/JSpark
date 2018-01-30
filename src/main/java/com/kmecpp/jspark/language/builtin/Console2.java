@@ -1,10 +1,9 @@
 package com.kmecpp.jspark.language.builtin;
 
 import com.kmecpp.jspark.compiler.parser.data.Parameter;
-import com.kmecpp.jspark.compiler.parser.data.Variable;
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.statement.block.Method;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Class;
-import com.kmecpp.jspark.language.PrimitiveType;
 
 public class Console2 extends Class {
 
@@ -23,12 +22,7 @@ public class Console2 extends Class {
 	private class Println extends Method {
 
 		public Println() {
-			super(instance, "println", new Parameter[] { new Parameter(PrimitiveType.OBJECT, "obj") });
-		}
-
-		@Override
-		public Variable invoke(Variable... values) {
-			return null;
+			super(instance, "println", new Parameter[] { new Parameter(Type.STRING, "obj") });
 		}
 
 	}

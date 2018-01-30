@@ -111,8 +111,6 @@ public class MethodInvocation extends Statement {
 	private void invokeMethod(Class<?> cls, Object target) throws Exception {
 		Object[] values = new Object[params.size()];
 
-		System.out.println(method);
-
 		methodSearch: for (java.lang.reflect.Method method : cls.getMethods()) {
 			Class<?>[] targetTypes = method.getParameterTypes();
 			if (targetTypes.length != values.length || !method.getName().equals(this.method)) {

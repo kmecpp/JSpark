@@ -24,6 +24,97 @@ public class ListParser {
 		this.comprehension = comprehension;
 	}
 
+	public LinkedList<Token> getTokens() {
+		return tokens;
+	}
+
+	public boolean isComprehension() {
+		return comprehension;
+	}
+
+	public int getOriginalIndexOffset() {
+		return tokens.size() + 1;
+	}
+
+	public static class ListSpec {
+
+		private final Expression expression, condition, min, max;
+
+		public ListSpec(Expression expression, Expression condition, Expression min, Expression max) {
+			this.expression = expression;
+			this.condition = condition;
+			this.min = min;
+			this.max = max;
+		}
+
+		public Expression getExpression() {
+			return expression;
+		}
+
+		public Expression getCondition() {
+			return condition;
+		}
+
+		public Expression getMin() {
+			return min;
+		}
+
+		public Expression getMax() {
+			return max;
+		}
+
+	}
+
+	public ListSpec getSpec() {
+		AnonymousBlock listScope = new AnonymousBlock(block);
+		ArrayList<Token> expressionTokens = new ArrayList<>();
+		Expression listStart = null, listEnd = null;
+		ArrayList<Token> conditionTokens = new ArrayList<>();
+		Variable variable = null;
+
+		int part = 0;
+		while (!tokens.isEmpty()) {
+			Token token = tokens.pop();
+
+			if (part == 0) {
+				if (token.is(Keyword.FOR)) {
+					part++;
+				} else {
+					expressionTokens.add(token);
+					if (token.isIdentifier() && !block.isVariableDefined(token.getText())) {
+						if (listScope.getVariables().size() > 0) {
+							error("List comprehension can only have one variable! Found two: " + listScope.getVariables().keySet().toArray()[0] + ", " + token.getText());
+						}
+						variable = new Variable(Type.INT, token.getText(), 0);
+						listScope.getVariables().put(token.getText(), variable);
+					}
+				}
+
+			} else if (part == 1) {
+				if (token.isInt()) {
+					listEnd = new Expression(block, token.asString());
+				} else {
+					listStart = readExpression(block, Symbol.COMMMA);
+					listEnd = readExpression(block, Symbol.CLOSE_PAREN);
+				}
+
+				if (!tokens.isEmpty() && tokens.peek().is(Keyword.IF)) {
+					tokens.pop();
+					part++;
+				} else if (tokens.size() > 0) {
+					error("Unexpected token parsing list: '" + tokens.peek() + "'");
+				}
+			} else {
+				conditionTokens.add(token);
+			}
+		}
+
+		final Expression expression = new Expression(listScope, expressionTokens);
+		final Expression condition = conditionTokens.isEmpty() ? null : new Expression(listScope, conditionTokens);
+		return new ListSpec(expression, condition, listStart, listEnd);
+
+	}
+
 	public Variable parse() {
 		ArrayList<Object> list = new ArrayList<>();
 		if (comprehension) { //[x : 10 if x % 2 == 0]
@@ -56,16 +147,16 @@ public class ListParser {
 					//						part++;
 					//					} else {
 					if (token.isInt()) {
-						listStart = new Expression(listScope, "0");
-						read(Symbol.PERIOD);
-						read(Symbol.PERIOD);
-						listEnd = new Expression(listScope, token.asString());
+						//						listStart = new Expression(listScope, "0");
+						//						read(Symbol.PERIOD);
+						//						read(Symbol.PERIOD);
+						listEnd = new Expression(block, token.asString());
 					} else {
-						listStart = readExpression(listScope, Symbol.COMMMA);
-						listEnd = readExpression(listScope, Symbol.CLOSE_PAREN);
+						listStart = readExpression(block, Symbol.COMMMA);
+						listEnd = readExpression(block, Symbol.CLOSE_PAREN);
 					}
 
-					if (tokens.peek().is(Keyword.IF)) {
+					if (!tokens.isEmpty() && tokens.peek().is(Keyword.IF)) {
 						tokens.pop();
 						part++;
 					} else if (tokens.size() > 0) {
@@ -79,6 +170,9 @@ public class ListParser {
 			final Expression expression = new Expression(listScope, expressionTokens);
 			//			final int max = (int) new Expression(block, rangeTokens).evaluate();
 			final Expression condition = conditionTokens.isEmpty() ? null : new Expression(listScope, conditionTokens);
+			//			System.out.println(condition);
+			//			System.out.println(listStart);
+			//			System.out.println(listEnd);
 			for (int i = (int) listStart.evaluate(); i < (int) listEnd.evaluate(); i++) {
 				variable.setValue(i);
 				if (condition == null || (boolean) condition.evaluate()) {

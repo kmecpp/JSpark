@@ -1,6 +1,7 @@
 package com.kmecpp.jspark.compiler.transpiler;
 
 import com.kmecpp.jspark.compiler.parser.data.Type;
+import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
 
 public class Transpiler {
@@ -19,9 +20,18 @@ public class Transpiler {
 		StringBuilder sb = new StringBuilder();
 		String code = getJavaCode();
 
+		int forLoopBind = 0;
 		StringBuilder indent = new StringBuilder();
 		for (int i = 0; i < code.length(); i++) {
 			char c = code.charAt(i);
+
+			if (c == 'f' && code.charAt(i + 1) == 'o' && code.charAt(i + 2) == 'r' && !Character.isLetter(code.charAt(i + 3))) {
+				forLoopBind = 2;
+			}
+
+			//			if (c == 'd' && code.charAt(i + 1) == 'e' && code.charAt(i + 2) == 'f' && code.charAt(i + 2) == ' ') {
+			//				sb.append("\n" + indent);
+			//			}
 
 			if (c == '{') {
 				sb.append(" " + c);
@@ -32,12 +42,23 @@ public class Transpiler {
 				sb.deleteCharAt(sb.length() - 1);
 				sb.append(c + "\n" + indent);
 			} else if (c == ';') {
-				sb.append(c + "\n" + indent);
+				sb.append(c);
+
+				if (forLoopBind <= 0) {
+					sb.append("\n" + indent);
+				} else {
+					forLoopBind--;
+				}
 			} else {
 				sb.append(c);
 			}
 
 		}
+		return sb.toString();
+	}
+
+	public static String toJavaCode(Statement statement) {
+		StringBuilder sb = new StringBuilder();
 		return sb.toString();
 	}
 

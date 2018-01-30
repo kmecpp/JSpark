@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.Statement;
 import com.kmecpp.jspark.compiler.parser.statement.block.module.Module;
+import com.kmecpp.jspark.compiler.tokenizer.Token;
 
 public abstract class AbstractBlock extends Statement {
 
@@ -21,6 +22,11 @@ public abstract class AbstractBlock extends Statement {
 
 	public AbstractBlock getParentBlock() {
 		return block;
+	}
+
+	@Override
+	public boolean isBlock() {
+		return true;
 	}
 
 	public Module getModule() {
@@ -40,12 +46,29 @@ public abstract class AbstractBlock extends Statement {
 		//		return variables.containsKey(variableName);
 	}
 
+	public Variable getVariable(Token token) {
+		return getVariable(token.getText());
+	}
+
 	public Variable getVariable(String variableName) {
 		Variable var = variables.get(variableName);
 		if (var == null && block != null) {
 			return block.getVariable(variableName); //This handles variable scope
 		}
 		return var;
+	}
+
+	public String getAvailableVariableName(String prefix) {
+		String name = prefix;
+		if (isVariableDefined(prefix)) {
+			int i = 0;
+			while (isVariableDefined(name + prefix)) {
+				i++;
+			}
+			return prefix + i;
+		} else {
+			return prefix;
+		}
 	}
 
 	//	public Object getValue(String variableName) {
@@ -81,7 +104,7 @@ public abstract class AbstractBlock extends Statement {
 	public String toJavaCode() {
 		StringBuilder sb = new StringBuilder("{");
 		for (Statement statement : statements) {
-			sb.append(statement.toJavaCode());
+			sb.append(statement.toJavaCode() + (statement.isBlock() ? "" : ";"));
 		}
 		sb.append("}");
 		return sb.toString();

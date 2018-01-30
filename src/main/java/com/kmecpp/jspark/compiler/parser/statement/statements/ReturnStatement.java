@@ -29,7 +29,7 @@ public class ReturnStatement extends Statement {
 
 	@Override
 	public String toJavaCode() {
-		return "return " + expression + ";";
+		return "return " + expression;
 	}
 
 }

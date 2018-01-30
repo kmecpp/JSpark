@@ -125,7 +125,7 @@ public class Parser {
 	 * GENERIC BLOCK PARSING
 	 * 
 	 */
-	private <T extends AbstractBlock> T parseStatements(T block) {
+	private <T extends AbstractBlock> T parseStatements(T block) {//, boolean lineTermination 
 		while (true) {
 			Token token = tokenizer.next();
 
@@ -143,7 +143,7 @@ public class Parser {
 				else if (nextToken.isOperator()) {
 					Operator operator = nextToken.asOperator();
 
-					Variable variable = block.getVariable(token.getText());
+					Variable variable = block.getVariable(token);
 
 					if (variable == null) {
 						error(token, "Variable '" + token.getText() + "' is not defined!");
@@ -202,7 +202,7 @@ public class Parser {
 								sb.append(t.toString());
 							}
 							loop.setTermination(new Expression(loop, sb.toString()));
-							loop.setIncrement(new AnonymousBlock(loop, new VariableAssignment(loop, variable, "i + 1")));
+							loop.setIncrement(new AnonymousBlock(loop, new UnaryStatement(block, variable, Operator.INCREMENT_DELAYED)));
 						}
 					} else {
 						loop.setTermination(tokenizer.readExpression(loop, Symbol.OPEN_BRACE));
@@ -345,9 +345,9 @@ public class Parser {
 
 		UnaryStatement statement;
 		if (token.isIdentifier()) {
-			statement = new UnaryStatement(block, tokenizer.getCurrentToken().getText(), tokenizer.read(TokenType.OPERATOR).asOperator());
+			statement = new UnaryStatement(block, block.getVariable(tokenizer.getCurrentToken()), tokenizer.read(TokenType.OPERATOR).asOperator());
 		} else if (token.isOperator() && token.asOperator().isUnary()) {
-			statement = new UnaryStatement(block, tokenizer.read(TokenType.IDENTIFIER).getText(), token.asOperator());
+			statement = new UnaryStatement(block, block.getVariable(tokenizer.read(TokenType.IDENTIFIER)), token.asOperator());
 		} else {
 			error(token, "Expected unary statement!");
 			return null;

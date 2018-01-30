@@ -7,15 +7,15 @@ import com.kmecpp.jspark.language.Operator;
 
 public class UnaryStatement extends Statement {
 
-	private final String variableName;
+	private final Variable variable;
 	private final Operator unaryOperator;
 
-	public UnaryStatement(AbstractBlock block, String variableName, Operator unaryOperator) {
+	public UnaryStatement(AbstractBlock block, Variable variable, Operator unaryOperator) {
 		super(block);
 		if (!unaryOperator.isUnary()) {
 			throw new IllegalArgumentException("Not a unary operator: " + unaryOperator);
 		}
-		this.variableName = variableName;
+		this.variable = variable;
 		this.unaryOperator = unaryOperator;
 	}
 
@@ -25,7 +25,6 @@ public class UnaryStatement extends Statement {
 
 	@Override
 	public void execute() {
-		Variable variable = block.getVariable(variableName);
 		if (variable.isInteger()) {
 			variable.setValue(unaryOperator.applyInt(variable));
 		} else {
@@ -35,7 +34,7 @@ public class UnaryStatement extends Statement {
 
 	@Override
 	public String toJavaCode() {
-		return variableName + unaryOperator.getString() + ";";
+		return variable.getName() + unaryOperator.getString();
 	}
 
 }

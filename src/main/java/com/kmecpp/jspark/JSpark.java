@@ -31,11 +31,16 @@ public class JSpark {
 	 * 
 	 * Present Features:
 	 * 
-	 * - Trivial for loops, and normal ones. While too?
+	 * - Class structure
+	 * - Method syntax, invocations
 	 * - Conditionals
+	 * - Variables/fields
+	 * - Complex expression parsing
+	 * - Trivial for loops, and normal ones. While too?
+	 * - Flexible syntax, putting a complex expression into a conditional
 	 * - Error message contexts
-	 * - Transpiler
-	 * - Variables and fields
+	 * - List comprehensions
+	 * - Transpiler: works with classes, fields, methods, print outs, list comprehensions, for loops;
 	 * 
 	 * @formatter:off
 	 * Main.jsk
@@ -75,7 +80,24 @@ public class JSpark {
 		//		profiler.displayResults();
 
 		//		displayJavaCode();
+		//		System.out.println(Arrays.toString(seriesUp(5)));
 	}
+
+	//	public static int[] seriesUp(int n) {
+	//		int[] result = new int[n * (n + 1) / 2];
+	//		//		for (int i = 0, j = 1; i < result.length; result[i] = i % j, i = , j = (j == i ? j + 1 : j)) {
+	//		//			System.out.println(j);
+	//		//		}
+	//		return result;
+	//		//		int pos = 0;
+	//		//		int i = 1;
+	//		//		while (i <= n + 1) {
+	//		//			for (int j = 1; j < i; j++)
+	//		//				result[pos++] = j;
+	//		//			i++;
+	//		//		}
+	//		//		return result;
+	//	}
 
 	public static void displayJavaCode() {
 		for (Module module : runtime.getModules()) {

@@ -50,10 +50,10 @@ public enum Operator implements AbstractToken {
 
 	;
 
-	private String string;
-	private int type;
-	private int precedence;
-	private boolean unary;
+	private final String string;
+	private final int type;
+	private final int precedence;
+	private final boolean unary;
 
 	private static final HashMap<String, Operator> operators = new HashMap<>();
 

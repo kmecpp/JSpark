@@ -1,5 +1,8 @@
 package com.kmecpp.jspark.compiler.parser.data;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 public class Variable {
 
 	private final Type type;
@@ -27,7 +30,7 @@ public class Variable {
 	public boolean isDeclared() {
 		return name != null;
 	}
-	
+
 	public boolean isList() {
 		return type.isList();
 	}
@@ -75,6 +78,12 @@ public class Variable {
 
 	@Override
 	public String toString() {
+		if (type.isList()) {
+			return "ArrayList " + name + " = new ArrayList(Arrays.asList(" +
+					((ArrayList<?>) value).stream().map(String::valueOf).collect(Collectors.joining(", "))
+					+ "))";
+		}
+
 		return type.getFullName() + (name != null ? " " + name : "") + (value != null ? " = " + value : "");
 	}
 

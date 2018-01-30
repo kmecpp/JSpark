@@ -6,6 +6,7 @@ public enum Keyword implements AbstractToken {
 	DEC,
 	STRING,
 	BOOLEAN,
+	LIST,
 
 	IF,
 	ELSE,

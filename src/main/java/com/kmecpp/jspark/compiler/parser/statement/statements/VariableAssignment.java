@@ -46,7 +46,7 @@ public class VariableAssignment extends Statement {
 
 	@Override
 	public String toJavaCode() {
-		return toString() + ";";
+		return toString();
 	}
 
 }

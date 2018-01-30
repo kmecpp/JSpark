@@ -10,6 +10,10 @@ public abstract class Statement {
 		this.block = block;
 	}
 
+	public boolean isBlock() {
+		return false;
+	}
+
 	public abstract void execute();
 
 	public abstract String toJavaCode();

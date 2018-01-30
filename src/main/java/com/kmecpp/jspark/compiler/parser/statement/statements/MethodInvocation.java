@@ -111,6 +111,8 @@ public class MethodInvocation extends Statement {
 	private void invokeMethod(Class<?> cls, Object target) throws Exception {
 		Object[] values = new Object[params.size()];
 
+		System.out.println(method);
+
 		methodSearch: for (java.lang.reflect.Method method : cls.getMethods()) {
 			Class<?>[] targetTypes = method.getParameterTypes();
 			if (targetTypes.length != values.length || !method.getName().equals(this.method)) {
@@ -143,7 +145,10 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public String toJavaCode() {
-		return target + "." + method + "(" + params.stream().map(String::valueOf).collect(Collectors.joining(" ")) + ");";
+		if (target.equals("Console") && method.equals("println")) {
+			return "System.out.println(" + params.stream().map(String::valueOf).collect(Collectors.joining(" ")) + ")";
+		}
+		return target + "." + method + "(" + params.stream().map(String::valueOf).collect(Collectors.joining(" ")) + ")";
 	}
 
 }

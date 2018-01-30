@@ -74,12 +74,17 @@ public class Expression {
 		Stack<Token> operators = new Stack<>();
 		Stack<Variable> operands = new Stack<>();
 
+		Token previousToken = null;
 		for (int i = 0; i < tokens.size(); i++) {
 			Token token = tokens.get(i);
 
 			//			System.out.println(operators + ", " + operands);
 			if (token.is(Symbol.OPEN_PAREN)) {
-				operators.push(token);
+				if (previousToken != null && previousToken.isIdentifier()) {
+					//TODO: METHOD INVOCATIONS
+				} else {
+					operators.push(token);
+				}
 			} else if (token.isOperator()) {
 				Operator operator = token.asOperator();
 				while (!operators.isEmpty() && !operators.peek().is(Symbol.OPEN_PAREN) && operators.peek().asOperator().getPrecedence() >= operator.getPrecedence()) {
@@ -102,22 +107,16 @@ public class Expression {
 				}
 				operators.pop();
 			} else if (token.isIdentifier()) {
-				operands.push(block.getVariable(token.getText()));
-			} else if (token.is(Symbol.OPEN_BRACKET)) {
-				LinkedList<Token> listTokens = new LinkedList<>();
-				boolean comprehension = false;
-				for (int j = i + 1;; j++) {
-					Token listToken = tokens.get(j);
-					if (listToken.is(Symbol.CLOSE_BRACKET)) {
-						i = j;
-						break;
-					} else if (listToken.is(Keyword.FOR)) {
-						comprehension = true;
-					}
-					listTokens.add(listToken);
+				Variable variable = block.getVariable(token.getText());
+				if (variable == null) {
+					throw new RuntimeException("Variable '" + token.getText() + "' is is undefined in the expression \"" + toString() + "\"");
+				} else {
+					operands.push(variable);
 				}
-
-				operands.push(new ListParser(block, listTokens, comprehension).parse());
+			} else if (token.is(Symbol.OPEN_BRACKET)) {
+				ListParser listParser = parseList(i);
+				i += listParser.getOriginalIndexOffset();
+				operands.push(listParser.parse());
 			} else if (token.isInt()) {
 				operands.push(new Variable(Type.INT, token.asInt()));
 			} else if (token.isDecimal()) {
@@ -129,6 +128,7 @@ public class Expression {
 			} else {
 				System.err.println("Unknown token in expression: '" + token + "'");
 			}
+			previousToken = token;
 		}
 		while (!operators.isEmpty()) {
 			process(operands, operators);
@@ -172,6 +172,21 @@ public class Expression {
 		} else {
 			throw new RuntimeException("Expression could not be evaluated! Operands: " + operands + ", Operators: " + operators);
 		}
+	}
+
+	private ListParser parseList(int index) {
+		LinkedList<Token> listTokens = new LinkedList<>();
+		boolean comprehension = false;
+		for (int j = index + 1;; j++) {
+			Token listToken = tokens.get(j);
+			if (listToken.is(Symbol.CLOSE_BRACKET)) {
+				break;
+			} else if (listToken.is(Keyword.FOR)) {
+				comprehension = true;
+			}
+			listTokens.add(listToken);
+		}
+		return new ListParser(block, listTokens, comprehension);
 	}
 
 	//	private void process(Stack<Token> operands, Stack<Token> operators) {
@@ -281,7 +296,35 @@ public class Expression {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		Token lastToken = null;
-		for (Token token : tokens) {
+		//		String listName = "";
+		for (int i = 0; i < tokens.size(); i++) {
+			Token token = tokens.get(i);
+
+			//			if (token.is(Symbol.OPEN_BRACKET)) {
+			//				ListParser parser = parseList(i);
+			//				i += parser.getOriginalIndexOffset();
+			//				//				String listName = block.getAvailableVariableName("list");
+			//				StringBuilder listStr = new StringBuilder("ArrayList " + listName + " = ");
+			//				if (parser.isComprehension()) {
+			//					listStr.append("new ArrayList();");
+			//					ListSpec spec = parser.getSpec();
+			//					listStr.append("for(int i = " + spec.getMin() + "; i < " + spec.getMax() + "; i++){");
+			//					if (spec.getCondition() != null) {
+			//						listStr.append("if(" + spec.getCondition() + ") {");
+			//						listStr.append(listName + ".add(" + spec.getExpression() + "); \n}");
+			//					} else {
+			//						listStr.append(listName + ".add(" + spec.getExpression() + ");");
+			//					}
+			//					listStr.append("}}\n");
+			//				} else {
+			//					listStr.append("new ArrayList(Arrays.asList("
+			//							+ ((ArrayList<?>) parser.parse().getValue()).stream().map(String::valueOf).collect(Collectors.joining(", "))
+			//							+ "))");
+			//				}
+			//				sb.append(listStr);
+			//				break;
+			//			}
+
 			if (token.isString()) {
 				sb.append(token.toString());
 			}

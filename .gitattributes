@@ -1,0 +1,2 @@
+$ cat .gitattributes
+*.jsk linguist-language=JSpark

@@ -1,4 +1,8 @@
-static Test {
+static Main {
+
+	string name;
+	int id;
+
 	
 	def main() {
 //		Console.println([x for 10 if x % 2 == 0]);

@@ -48,6 +48,14 @@ public abstract class Module extends NamedBlock {
 		return (packageName.isEmpty() ? "" : packageName + ".") + name;
 	}
 
+	public boolean isClass() {
+		return this instanceof Class;
+	}
+
+	public boolean isStatic() {
+		return this instanceof Static;
+	}
+
 	public ArrayList<Import> getImports() {
 		return imports;
 	}

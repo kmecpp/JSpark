@@ -18,7 +18,7 @@ public class ReturnStatement extends Statement {
 		if (expression == null) {
 			return Type.VOID;
 		}
-		return expression.getReturnType();
+		return expression.getResultType();
 	}
 
 	@Override

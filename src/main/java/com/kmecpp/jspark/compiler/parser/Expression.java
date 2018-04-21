@@ -18,7 +18,7 @@ public class Expression {
 
 	private AbstractBlock block;
 	private ArrayList<Token> tokens;
-	private Type returnType;
+	private Type resultType;
 
 	public Expression(AbstractBlock block, String expression) {
 		this(block, Tokenizer.parseTokens(expression));
@@ -30,17 +30,17 @@ public class Expression {
 
 		for (Token token : tokens) {
 			if (token.isString()) {
-				returnType = Type.STRING;
+				resultType = Type.STRING;
 				break;
 			} else if (token.isDecimal()) {
-				returnType = Type.DEC;
+				resultType = Type.DEC;
 				break;
 			} else if (token.isBoolean()) {
-				returnType = Type.BOOLEAN;
+				resultType = Type.BOOLEAN;
 				break;
 			}
 		}
-		returnType = Type.INT;
+		resultType = Type.INT;
 		//		this.variables = block.getVariables();
 	}
 
@@ -52,8 +52,8 @@ public class Expression {
 		return block;
 	}
 
-	public Type getReturnType() {
-		return returnType;
+	public Type getResultType() {
+		return resultType;
 	}
 
 	//	public Value evaluate() {

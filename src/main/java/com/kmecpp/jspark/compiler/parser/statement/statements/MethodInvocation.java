@@ -63,6 +63,16 @@ public class MethodInvocation extends Statement {
 
 	@Override
 	public void execute() {
+		if (Keyword.THIS.is(this.target) || this.target == null) {
+			Module module = block.getModule();
+			if (module.isStatic()) {
+				Object target = block.getModule();
+				//				block.getModule().invokeMethod(null, method, params);
+			} else {
+				//				JSpark.getRuntime().getInstance()
+			}
+		}
+
 		Object target = Keyword.THIS.is(this.target) ? block.getModule() : block.getVariable(this.target);
 
 		Variable var = block.getVariable(this.target);
@@ -102,8 +112,9 @@ public class MethodInvocation extends Statement {
 		} else if (target instanceof Module) {
 			Type[] paramTypes = new Type[params.size()];
 			for (int i = 0; i < paramTypes.length; i++) {
-				paramTypes[i] = params.get(i).getReturnType();
+				paramTypes[i] = params.get(i).getResultType();
 			}
+
 			((Module) target).getMethod(method, paramTypes).get().invoke(params);
 		}
 	}

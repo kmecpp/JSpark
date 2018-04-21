@@ -38,17 +38,15 @@ public class Tokenizer {
 		return new Expression(block, readThrough(end));
 	}
 
-	public ArrayList<Token> readThrough(AbstractToken token) {
+	public ArrayList<Token> readThrough(AbstractToken end) {
 		ArrayList<Token> tokens = new ArrayList<>();
-		int param = 0;
-		while (param > 0 || !peekNext().is(token)) {
+		int paren = 0;
+		while (paren > 0 || !peekNext().is(end)) {
 			Token t = next();
-			//			System.out.println(param + ", " + t);
-
 			if (t.is(Symbol.OPEN_PAREN)) {
-				param++;
+				paren++;
 			} else if (t.is(Symbol.CLOSE_PAREN)) {
-				if (--param < 0 || peekNext().is(token)) {
+				if (--paren < 0 || peekNext().is(end)) {
 					return tokens;
 				}
 			} else if (t.is(Symbol.CLOSE_BRACE) || t.is(Symbol.SEMICOLON)) {
@@ -57,8 +55,7 @@ public class Tokenizer {
 
 			tokens.add(t);
 		}
-		read(token);
-		//		System.out.println("TOKENS: " + tokens);
+		read(end);
 		return tokens;
 	}
 

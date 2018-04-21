@@ -78,11 +78,11 @@ public class Variable {
 
 	@Override
 	public String toString() {
-		if (type.isList()) {
-			return "ArrayList " + name + " = new ArrayList(Arrays.asList(" +
-					((ArrayList<?>) value).stream().map(String::valueOf).collect(Collectors.joining(", "))
-					+ "))";
-		}
+//		if (type.isList()) {
+//			return "ArrayList " + name + " = new ArrayList(Arrays.asList(" +
+//					((ArrayList<?>) value).stream().map(String::valueOf).collect(Collectors.joining(", "))
+//					+ "))";
+//		}
 
 		return type.getFullName() + (name != null ? " " + name : "") + (value != null ? " = " + value : "");
 	}

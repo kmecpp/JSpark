@@ -1,0 +1,96 @@
+static Test {
+
+	string name;
+	int id;
+	
+	def returnTest() {
+	}
+		
+//	def main() {
+//		Person person = new Person();
+//		int j = ((3 + 30) / 10);
+//		i = i / 6;
+		
+//		int a,b := 3;
+//		if(a :== 3, 4) {
+//			
+//		}
+		
+//		Console.println(-10);
+		
+//		int i = -1, j = 0;
+		
+//		for(int i = 0; i < 10; i++) {
+//			
+//		}
+		
+//		if(i == 0) {
+//			Console.println("TIS ZERO!");
+//		} else if (i > 0) {
+//			Console.println("POSITIVE!!!");
+//		}else if(i < -10) {
+//			Console.println("SUPER NEG");
+//		}else if(i < -5) {
+//			Console.println("NEG");
+//		}else {
+//			Console.println("Basically zero");
+//		}
+//								
+//		Console.println("Start: " + i);
+//		
+//		for(int i = 0; i < 10; i++) {
+//			Console.println(i);
+//		}
+		
+		
+//		list l = [x^2 : 20 if x % 2 == 0];
+//		Console.println(l);
+		
+//		primes(10);
+		
+//		int i = 0;
+//		for(int j = 0; j < 10; j++) {
+//			Console.println(j);
+//		}
+		
+		
+//		for 10 {
+//			Console.println(i); 
+//		}
+//		Console.println("Result: " + j);
+
+		
+//		for 10 {
+//			Console.println("Hi");
+//		}
+//		Console.println("I: " + ++i);
+//		while(i < 10) {
+//			Console.println(i);
+//			i++;
+//		}
+		
+		//string message = "hi";
+		//Console.println(message);
+//		}
+	
+	def primes(int n) {
+		int d  =3;
+//		list l = [1, 2, 3, 4];
+		list l = [i^2 for(1, n)];
+		Console.println(l);
+//		Console.println([[i for(1, i)] for(1, n)]);
+//		for n {
+//			if([x for(1, n) if i % x == 0] == 2) {
+//				Console.println(i);
+//			}
+//		}
+	}
+	
+//	def print(string s){
+//		Console.println(s);
+//		
+//		int i = 3 + Integer.of(3).abs();
+//	}
+
+
+}

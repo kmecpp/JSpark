@@ -3,8 +3,15 @@ static Main {
 	string name;
 	int id;
 
+	def test() {
+		return 1;
+	}
 	
 	def main() {
+		Console.println(test());
+//		for(int i = 0; i < 10; i++) {
+//		Console.println(i)
+//	}
 //		Console.println([x for 10 if x % 2 == 0]);
 	}
 	

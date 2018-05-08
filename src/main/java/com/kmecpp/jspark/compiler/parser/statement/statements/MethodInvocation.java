@@ -69,7 +69,7 @@ public class MethodInvocation extends Statement {
 				Object target = block.getModule();
 				//				block.getModule().invokeMethod(null, method, params);
 			} else {
-				//				JSpark.getRuntime().getInstance()
+//								JSpark.getRuntime().getInstance()
 			}
 		}
 

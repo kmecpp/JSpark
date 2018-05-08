@@ -1,5 +1,6 @@
 package com.kmecpp.jspark.compiler.tokenizer;
 
+import com.kmecpp.jspark.compiler.parser.data.Type;
 import com.kmecpp.jspark.compiler.parser.data.Variable;
 import com.kmecpp.jspark.compiler.parser.statement.block.AbstractBlock;
 import com.kmecpp.jspark.language.AbstractToken;
@@ -53,6 +54,20 @@ public class Token {
 
 	public Variable getVariable(AbstractBlock block) {
 		return block.getVariable(string);
+	}
+
+	public Variable asVariable() {
+		if (isInt()) {
+			return new Variable(Type.INT, asInt());
+		} else if (isDecimal()) {
+			return new Variable(Type.DEC, asDouble());
+		} else if (isBoolean()) {
+			return new Variable(Type.BOOLEAN, asBoolean());
+		} else if (isString()) {
+			return new Variable(Type.STRING, getText());
+		} else {
+			throw new RuntimeException("Unknown variable type: '" + string + "'");
+		}
 	}
 
 	//	public boolean is(Keyword keyword) {

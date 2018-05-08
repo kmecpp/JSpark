@@ -1,8 +1,5 @@
 package com.kmecpp.jspark.compiler.parser.data;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-
 public class Variable {
 
 	private final Type type;

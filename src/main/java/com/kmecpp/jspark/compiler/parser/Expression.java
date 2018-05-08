@@ -85,7 +85,7 @@ public class Expression {
 				} else {
 					operators.push(token);
 				}
-			} else if (token.isOperator()) {
+			} else if (token.isOperator() || token.is(Keyword.NEW)) {
 				Operator operator = token.asOperator();
 				while (!operators.isEmpty() && !operators.peek().is(Symbol.OPEN_PAREN) && operators.peek().asOperator().getPrecedence() >= operator.getPrecedence()) {
 					process(operands, operators);
@@ -107,6 +107,10 @@ public class Expression {
 				}
 				operators.pop();
 			} else if (token.isIdentifier()) {
+				if (tokens.get(i + 1).is(Symbol.OPEN_PAREN)) {
+					//TODO
+					//					block.getModule().executeStaticMethod(token.getText(), )
+				}
 				Variable variable = block.getVariable(token.getText());
 				if (variable == null) {
 					throw new RuntimeException("Variable '" + token.getText() + "' is is undefined in the expression \"" + toString() + "\"");
@@ -117,16 +121,9 @@ public class Expression {
 				ListParser listParser = parseList(i);
 				i += listParser.getOriginalIndexOffset();
 				operands.push(listParser.parse());
-			} else if (token.isInt()) {
-				operands.push(new Variable(Type.INT, token.asInt()));
-			} else if (token.isDecimal()) {
-				operands.push(new Variable(Type.DEC, token.asDouble()));
-			} else if (token.isBoolean()) {
-				operands.push(new Variable(Type.BOOLEAN, token.asBoolean()));
-			} else if (token.isString()) {
-				operands.push(new Variable(Type.STRING, token.getText()));
 			} else {
-				System.err.println("Unknown token in expression: '" + token + "'");
+				operands.push(token.asVariable());
+				//				System.err.println("Unknown token in expression: '" + token + "'");
 			}
 			previousToken = token;
 		}

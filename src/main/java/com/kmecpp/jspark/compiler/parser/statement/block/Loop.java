@@ -56,15 +56,17 @@ public class Loop extends AbstractBlock {
 		}
 	}
 
-	@Override
+	@Override 
 	public String toJavaCode() {
 		StringBuilder statements = new StringBuilder();
-		for (Statement statement : increment.getStatements()) {
-			statements.append(statement.toJavaCode() + ", ");
+		if (increment != null) {
+			for (Statement statement : increment.getStatements()) {
+				statements.append(statement.toJavaCode() + ", ");
+			}
+			statements.delete(statements.length() - 2, statements.length());
 		}
-		statements.delete(statements.length() - 2, statements.length());
 
-		return "for(" + initialization.toJavaCode() + "; " + termination + "; " + statements + ")" + super.toJavaCode();
+		return "for(" + (initialization != null ? initialization.toJavaCode() : "") + "; " + termination + "; " + statements + ")" + super.toJavaCode();
 	}
 
 }

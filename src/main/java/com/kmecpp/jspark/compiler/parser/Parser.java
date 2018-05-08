@@ -128,6 +128,7 @@ public class Parser {
 	private <T extends AbstractBlock> T parseStatements(T block) {//, boolean lineTermination 
 		while (true) {
 			Token token = tokenizer.next();
+			System.out.println("Statement: " + token);
 
 			if (token.isPrimitiveType()) {
 				block.addStatement(parseVariableDeclaration(block));
@@ -157,7 +158,7 @@ public class Parser {
 					//Variable assignment
 					else if (operator.isAssignment()) {
 						tokenizer.next();
-						block.addStatement(new VariableAssignment(block, variable, tokenizer.readExpression(block, Symbol.SEMICOLON)));
+						block.addStatement(new VariableAssignment(block, variable, parseExpression(block)));
 					}
 
 					else {
@@ -187,7 +188,7 @@ public class Parser {
 							loop.setInitialization(parseVariableDeclaration(loop));
 
 							//							loop.setInitialization(parseVariableDeclaration(loop));
-							loop.setTermination(tokenizer.readExpression(loop, Symbol.SEMICOLON));
+							loop.setTermination(parseExpression(loop));
 							//							AnonymousBlock increment = ;
 							loop.setIncrement(parseStatements(new AnonymousBlock(loop)));
 						} else {
@@ -205,7 +206,8 @@ public class Parser {
 							loop.setIncrement(new AnonymousBlock(loop, new UnaryStatement(block, variable, Operator.INCREMENT_DELAYED)));
 						}
 					} else {
-						loop.setTermination(tokenizer.readExpression(loop, Symbol.OPEN_BRACE));
+						//						tokenizer.read(Symbol.OPEN_PAREN);
+						loop.setTermination(parseExpression(loop));
 					}
 					parseStatements(loop);
 					block.addStatement(loop);
@@ -217,7 +219,7 @@ public class Parser {
 				}
 
 				else if (token.is(Keyword.RETURN)) {
-					block.addStatement(new ReturnStatement((Method) block, tokenizer.readExpression(block, Symbol.SEMICOLON)));
+					block.addStatement(new ReturnStatement((Method) block, parseExpression(block)));
 				}
 
 				else {
@@ -230,12 +232,52 @@ public class Parser {
 			}
 
 			else {
+				System.out.println("Returning!");
 				return block;
 				//				error("Invalid start of statement: '" + token + "'");
 			}
 		}
 		//		tokenizer.read(Symbol.CLOSE_BRACE);
 		//				return statements;
+	}
+
+	public Expression parseExpression(AbstractBlock block) {
+		ArrayList<Token> tokens = new ArrayList<>();
+		int paren = 0;
+		while (paren >= 0) {
+			Token token = tokenizer.next();
+			//			if (token.is(end)) {
+			//				break;
+			//			}
+
+			if (token.is(Symbol.SEMICOLON) || token.is(Symbol.COMMMA) || token.is(Symbol.OPEN_BRACE)) {
+				break;
+			} else if (token.is(Symbol.OPEN_PAREN)) {
+				paren++;
+			} else if (token.is(Symbol.CLOSE_PAREN)) {
+				if (--paren < 0) {
+					break;
+				}
+			} else if (token.is(Symbol.CLOSE_BRACE) || token.is(Symbol.SEMICOLON)) {
+				throw new RuntimeException("Mismatched parentheses in expression: '" + new Expression(null, tokens) + "'");
+			}
+
+			//TODO
+			if (token.isInt()) {
+
+			} else if (token.isDecimal()) {
+
+			} else if (token.isBoolean()) {
+
+			} else if (token.isString()) {
+
+			}
+
+			tokens.add(token);
+		}
+		//		System.out.println(tokenizer.next());
+		//		System.out.println("T: " + tokens);
+		return new Expression(block, tokens);
 	}
 
 	public MethodInvocation parseMethodInvocation(AbstractBlock block) {
@@ -254,7 +296,7 @@ public class Parser {
 		tokenizer.read(Symbol.OPEN_PAREN);
 		ArrayList<Expression> params = new ArrayList<>();
 		while (!tokenizer.getCurrentToken().is(Symbol.CLOSE_PAREN)) {
-			params.add(tokenizer.readExpression(block, Symbol.COMMMA));
+			params.add(parseExpression(block));
 		}
 		tokenizer.ignore(Symbol.SEMICOLON);
 		return new MethodInvocation(block, target, method, params);
@@ -306,7 +348,7 @@ public class Parser {
 		Variable variable = new Variable(type, name, null);
 		if (tokenizer.peekNext().is(Operator.ASSIGN)) {
 			tokenizer.read(Operator.ASSIGN);
-			variableDeclaration = new VariableDeclaration(block, variable, tokenizer.readExpression(block, Symbol.SEMICOLON));
+			variableDeclaration = new VariableDeclaration(block, variable, parseExpression(block));
 		} else {
 			tokenizer.read(Symbol.SEMICOLON);
 			variableDeclaration = new VariableDeclaration(block, variable, (Expression) null);
@@ -320,7 +362,7 @@ public class Parser {
 
 		//Read if statement
 		tokenizer.read(Symbol.OPEN_PAREN);
-		conditional.setExpression(tokenizer.readExpression(conditional, Symbol.CLOSE_PAREN));
+		conditional.setExpression(parseExpression(conditional));
 		tokenizer.read(Symbol.OPEN_BRACE);
 		parseStatements(conditional);
 

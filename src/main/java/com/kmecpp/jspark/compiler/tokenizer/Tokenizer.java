@@ -34,7 +34,7 @@ public class Tokenizer {
 		return new Tokenizer(str);
 	}
 
-	public Expression readExpression(AbstractBlock block, AbstractToken end) {
+	public Expression readExpresseion(AbstractBlock block, AbstractToken end) {
 		return new Expression(block, readThrough(end));
 	}
 
@@ -43,15 +43,16 @@ public class Tokenizer {
 		int paren = 0;
 		while (paren > 0 || !peekNext().is(end)) {
 			Token t = next();
-			if (t.is(Symbol.OPEN_PAREN)) {
+			if (t.is(Symbol.OPEN_PAREN) || t.is(Symbol.OPEN_BRACE)) {
 				paren++;
-			} else if (t.is(Symbol.CLOSE_PAREN)) {
+			} else if (t.is(Symbol.CLOSE_PAREN) || t.is(Symbol.CLOSE_BRACE)) {
 				if (--paren < 0 || peekNext().is(end)) {
 					return tokens;
 				}
-			} else if (t.is(Symbol.CLOSE_BRACE) || t.is(Symbol.SEMICOLON)) {
-				throw new RuntimeException("Mismatched parentheses in expression: '" + new Expression(null, tokens) + "'");
 			}
+			//			else if (t.is(Symbol.CLOSE_BRACE) || t.is(Symbol.SEMICOLON)) {
+			//				throw new RuntimeException("Mismatched parentheses in expression: '" + new Expression(null, tokens) + "'");
+			//			}
 
 			tokens.add(t);
 		}
